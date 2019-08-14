@@ -1,0 +1,7 @@
+{
+   "ip":"192.168.150.13",
+   "port":"1304",
+   "query":true,
+   "admin":true,
+   "protocol":"TCP"
+}
