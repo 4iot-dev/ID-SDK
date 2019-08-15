@@ -10,7 +10,7 @@ IDIS-SDK:IDIS系统开发包
 #### IDIS-SDK与IDIS版本对应关系说明
 > |IDIS-SDK版本|IDIS版本                              |
 > | :-------- | :--------|
->|1.0.0  |企业版1.3.1 |
+>|2.0.0  |企业版1.3.1 |
 
 #### 快速使用
 1. jar包获取：下载开源项目IDIS-SDK，导出jar包，并从该项目中获取依赖jar包，log4j-1.2.17.jar、gson-2.3.1.jar、commons-codec-1.12.jar、commons-logging-1.2.jar。
