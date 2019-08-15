@@ -1,9 +1,9 @@
 # IDIS-SDK changes
 
 * * *  
-**Changes in 1.0.0**
+**Changes in 2.0.0**  
 
-首次发布IDIS-SDK
+适用IDIS版本：企业版本V1.3.1-0  
 
 [add] 通道管理接口
 
@@ -15,4 +15,4 @@
 
 [add] 支持分布式身份认证
 
-  2019-08-01
+  2019-08-15
