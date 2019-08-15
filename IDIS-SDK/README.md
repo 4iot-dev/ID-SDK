@@ -8,7 +8,7 @@
 
 ## 简介
 
-欢迎使用 IDIS-SDK 。智能分布式标识系统即IDIS系统，是由工业互联网与物联网研究所（简称工物所）研发、用于对标识的管理和解析的系统。为方便用户使用该系统，工物所提供了IDIS-SDK以方便IDIS用户定制开发自有系统、快速接入工业互联网标识节点，如下图。这里向您介绍如何获取IDIS-SDK并快速使用。如果您在使用IDIS-SDK的过程中遇到任何问题，欢迎在当前GitHub[提交 Issues](https://github.com/caict-developer/IDIS-SDK/issues/new)。
+欢迎使用 IDIS-SDK 。智能分布式标识系统即IDIS系统，是由工业互联网与物联网研究所（简称工物所）研发、用于对标识的管理和解析的系统。为方便用户使用该系统，工物所提供了IDIS-SDK以方便IDIS用户定制开发自有系统、快速接入工业互联网标识节点，如下图。这里向您介绍如何获取IDIS-SDK并快速使用。如果您在使用IDIS-SDK的过程中遇到任何问题，欢迎在当前GitHub[提交 Issues](https://github.com/4iot-dev/IDIS-SDK/issues/new)。
 ![Alt text](./docs/relations.jpg)
 
 
@@ -18,7 +18,7 @@
 
 2. IDIS-SDK运行依赖gson-2.3.1.jar、commons-codec-1.12.jar、commons-logging-1.2.jar、log4j-1.2.17.jar。  
    添加依赖包步骤如下：
-    在Eclipse项目中导入JAR包将IDIS-SDK-1.0.0.jar以及其依赖的gson-2.3.1.jar，commons-codec-1.12.jar，commons-logging-1.2.jar，log4j-1.2.17.jar拷贝到您的项目中。
+    在Eclipse项目中导入JAR包将IDIS-SDK-2.0.0.jar以及其依赖的gson-2.3.1.jar，commons-codec-1.12.jar，commons-logging-1.2.jar，log4j-1.2.17.jar拷贝到您的项目中。
     在Eclipse中选择您的工程，右击选择 Properties > Java Build Path > Add JARs。
 
 3. IDIS-SDK需要JDK1.8以上的版本。
@@ -42,7 +42,7 @@
 
 ## 问题反馈
 
-[提交 Issue](https://github.com/caict-developer/IDIS-SDK/issues/new)。
+[提交 Issue](https://github.com/4iot-dev/IDIS-SDK/issues/new)。
 邮件反馈：fengyuan@caict.ac.cn
 我们将尽快给予回复。
 
