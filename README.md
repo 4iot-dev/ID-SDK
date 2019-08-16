@@ -22,8 +22,10 @@
     在Eclipse中选择您的工程，右击选择 Properties > Java Build Path > Add JARs。
 
 3. IDIS-SDK需要JDK1.8以上的版本。
-##  IDIS-SDK使用
-通过IDIS-SDK连接IDIS系统进行标识操作，主要分3个步骤：
+##  IDIS-SDK使用  
+IDIS-SDK目录：开发包源代码  
+IDIS-SDK-DEMO目录：IDIS-SDK开发包演示demo  
+通过IDIS-SDK连接IDIS系统进行标识操作，参照IDIS-SDK-DEMO，主要分3个步骤：
 
 1. 创建IDIS-SDK的连接通道管理对象IChannelManageService。
 
