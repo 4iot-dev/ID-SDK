@@ -131,9 +131,6 @@ public class IdentifierResolveEngine {
 		logger.info("end----loadConfig()---");
 	}
 	private void createConnection(String ip, int port,String protocol) throws IdentifierException{
-		/*String b_v6 = System.getProperty("java.net.preferIPv6Addresses");
-		if("false".equalsIgnoreCase(b_v6) || b_v6 == null)
-			System.setProperty("java.net.preferIPv6Addresses", "true");*/
 		if(!IPV4_REGEX.matcher(ip).matches()&&!IPV6_COMPRESS_REGEX.matcher(ip).matches()&&!IPV6_STD_REGEX.matcher(ip).matches())
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_ILLEGAL_IP, "ip非法");
 		if(!PORT_REGEX.matcher(Integer.toString(port)).matches())
@@ -147,6 +144,8 @@ public class IdentifierResolveEngine {
 		}
 		messageIDMaker.setSeed(System.currentTimeMillis());
 		setSiteInfo(ip, port, protocol);
+		if ("UDP".equalsIgnoreCase(protocol))
+			return;
 		try {
 			// 打开socket通道
 			longConnSocket = SocketChannel.open().socket();
@@ -190,7 +189,8 @@ public class IdentifierResolveEngine {
 	@Override
 	public void finalize() throws Throwable {
 		try {
-			longConnIn.close();
+			if (longConnIn != null)
+				longConnIn.close();
 		} catch (Exception e1) {
 		}
 		try {
@@ -198,7 +198,8 @@ public class IdentifierResolveEngine {
 		} catch (Exception e3) {
 		}
 		try {
-			longConnSocket.close();
+			if (longConnSocket != null)
+				longConnSocket.close();
 		} catch (Exception e2) {
 		}
 		super.finalize();
