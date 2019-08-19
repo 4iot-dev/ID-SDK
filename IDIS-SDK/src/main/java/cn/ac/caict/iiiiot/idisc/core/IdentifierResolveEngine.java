@@ -358,6 +358,8 @@ public class IdentifierResolveEngine {
 					else 
 						throw new IdentifierException (e.getExceptionCode(),IdentifierException.getCodeDescription(e.getExceptionCode()));
 				}
+				if(response == null) 
+					continue;
 				return response;
 			}
 		} catch (SocketException e) {
@@ -411,8 +413,8 @@ public class IdentifierResolveEngine {
 		int packetSum = 0;
 		MsgEnvelope rcvEnvelope = new MsgEnvelope();
 		BaseResponse response = null;
+		int packageNum = 0;
 		while (!bAllPackets && System.currentTimeMillis() <= timeout) {
-			int packageNum = 0;
 			byte[] receiveBuf = new byte[maxUDPDataSize + Common.MESSAGE_ENVELOPE_SIZE];// 接收到的每个包size
 			DatagramPacket dpReceive = new DatagramPacket(receiveBuf, receiveBuf.length);
 			try {
@@ -431,6 +433,7 @@ public class IdentifierResolveEngine {
 				continue;
 			// 计算需要接收数据包数量
 			if (packetSum == 0) {
+				System.out.println("当前信息中记录的消息长度：" + rcvEnvelope.messageLength);
 				packetSum = rcvEnvelope.messageLength / maxUDPDataSize;
 				if (rcvEnvelope.messageLength % maxUDPDataSize != 0) {
 					packetSum++;
