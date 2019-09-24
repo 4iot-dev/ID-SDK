@@ -117,7 +117,7 @@ public class SiteInfo {
 		}
 
 		return "version: " + majorProtocolVersion + '.' + minorProtocolVersion + "; serial:" + serialNumber
-				+ "servers=[" + servList + "]";
+				+ " servers=[" + servList + "]";
 	}
 
 	@Override

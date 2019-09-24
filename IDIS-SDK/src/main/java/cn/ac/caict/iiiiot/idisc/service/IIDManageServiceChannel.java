@@ -79,7 +79,7 @@ public interface IIDManageServiceChannel {
 	/**
 	 * @param identifier 目标标识名称
 	 * @param indexes 待移除标识值索引
-	 * @param settings 移除标识值消息响应结果
+	 * @param settings 移除标识值操作的消息设置
 	 * @return 移除标识消息响应结果
 	 * @throws IdentifierException
 	 */
@@ -88,5 +88,10 @@ public interface IIDManageServiceChannel {
 	 * @return 判断当前连接是否登录
 	 */
 	public boolean isLogin();
+	/**
+	 * @param settings 获取站点信息操作的消息设置
+	 * @return 返回站点信息的响应结果
+	 */
+	public BaseResponse getServerSiteInfo(MsgSettings settings) throws IdentifierException;
 
 }

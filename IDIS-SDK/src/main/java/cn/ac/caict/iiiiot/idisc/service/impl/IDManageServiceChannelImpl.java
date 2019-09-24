@@ -32,6 +32,7 @@ import cn.ac.caict.iiiiot.idisc.core.LoginIdisRequest;
 import cn.ac.caict.iiiiot.idisc.core.ModifyValueRequest;
 import cn.ac.caict.iiiiot.idisc.core.RemoveValueRequest;
 import cn.ac.caict.iiiiot.idisc.core.ResolutionRequest;
+import cn.ac.caict.iiiiot.idisc.core.SiteRequest;
 import cn.ac.caict.iiiiot.idisc.data.IdentifierValue;
 import cn.ac.caict.iiiiot.idisc.data.MsgSettings;
 import cn.ac.caict.iiiiot.idisc.log.IdisLog;
@@ -294,6 +295,27 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 			log.error("移除标识值失败!");
 		}
 		log.info("removeIdentifierValueRequest---method---end");
+		return response;
+	}
+	
+	@Override
+	public BaseResponse getServerSiteInfo(MsgSettings settings) throws IdentifierException {
+		log.info("getServerSiteInfo---method---begin");
+		if(resolverEngine == null){
+			throw new IdentifierException(ExceptionCommon.IDENTIFIER_ENGINE_ERROR, "解析引擎异常!");
+		}
+		BaseResponse response = null;
+		SiteRequest req = new SiteRequest();
+		long beforeTime = new Date().getTime();
+		response = resolverEngine.processRequest(req,null);
+		long afterTime = new Date().getTime();
+		System.out.println("移除标识值耗时(毫秒):" + (afterTime - beforeTime));
+		if (response != null && (response.responseCode == MessageCommon.RC_SUCCESS)){
+			log.info("成功获取站点信息!");
+		}else{
+			log.error("获取站点信息失败!");
+		}
+		log.info("getServerSiteInfo---method---end");
 		return response;
 	}
 	/////////////////////////////////////////////////private-functions///////////////////////////////////////////

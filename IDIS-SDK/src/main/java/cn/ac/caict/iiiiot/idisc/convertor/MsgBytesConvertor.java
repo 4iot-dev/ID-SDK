@@ -29,6 +29,7 @@ import cn.ac.caict.iiiiot.idisc.core.ModifyValueRequest;
 import cn.ac.caict.iiiiot.idisc.core.MsgEnvelope;
 import cn.ac.caict.iiiiot.idisc.core.RemoveValueRequest;
 import cn.ac.caict.iiiiot.idisc.core.ResolutionRequest;
+import cn.ac.caict.iiiiot.idisc.core.SiteRequest;
 import cn.ac.caict.iiiiot.idisc.data.IdentifierValue;
 import cn.ac.caict.iiiiot.idisc.utils.Common;
 import cn.ac.caict.iiiiot.idisc.utils.ExceptionCommon;
@@ -36,7 +37,7 @@ import cn.ac.caict.iiiiot.idisc.utils.MessageCommon;
 
 public abstract class MsgBytesConvertor extends BaseConvertor {
 	public static final byte[] messageConvertIntoBytes(BaseMessage msg) throws IdentifierException {
-		byte msg_buf[] = null;
+		byte[] msg_buf = null;
 		if (msg.opCode == MessageCommon.OC_RESOLUTION)
 			msg_buf = convertResolutionReqToBytes((ResolutionRequest) msg);
 		else if (msg.opCode == MessageCommon.OC_LOGIN)
@@ -55,6 +56,9 @@ public abstract class MsgBytesConvertor extends BaseConvertor {
 			msg_buf = convertModifyValueReqToBytes((ModifyValueRequest) msg);
 		else if (msg.opCode == MessageCommon.OC_REMOVE_VALUE)
 			msg_buf = convertRemoveValueReqToBytes((RemoveValueRequest) msg);
+		else if(msg.opCode == MessageCommon.OC_GET_SITE){
+			msg_buf = convertSiteReqToBytes((SiteRequest) msg);
+		}
 		else
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_INTERNAL_ERROR, "未知操作: " + msg.opCode);
 		if (msg_buf == null)
@@ -110,6 +114,16 @@ public abstract class MsgBytesConvertor extends BaseConvertor {
 		byte[] buf = new byte[calcStorageSize(value)];
 		convertIdentifierValueToByte(buf, 0, value);
 		return buf;
+	}
+	
+	public static byte[] convertSiteReqToBytes(SiteRequest req) {
+		// TODO Auto-generated method stub
+		int idSize = req.identifier.length;
+		int idLen = Common.FOUR_SIZE;
+		byte[] msg = new byte[Common.MESSAGE_HEADER_SIZE + idSize + idLen];
+		int offset = writeHeader(req, msg, idSize + idLen);
+		writeByteArray(msg,offset,req.identifier);
+		return msg;
 	}
 	//////////////////////////////////////////////// private-founctions//////////////////////////////////////////////////////
 	private static byte[] convertResolutionReqToBytes(ResolutionRequest req) {

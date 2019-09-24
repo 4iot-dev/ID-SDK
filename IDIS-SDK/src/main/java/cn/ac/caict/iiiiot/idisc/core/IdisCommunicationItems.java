@@ -59,8 +59,8 @@ public class IdisCommunicationItems {
 	public static final String getTypeName(byte type) {
 		if(type == ST_OUT_OF_SERVICE)
 			return "stop-service";
-		else if (type == ST_OUT_OF_SERVICE)
-			return "admin and query";
+		else if (type == ST_ADMIN_AND_QUERY)
+			return "admin&query";
 		else if (type == ST_QUERY)
 			return "query";
 		else if (type == ST_ADMIN)
@@ -74,6 +74,8 @@ public class IdisCommunicationItems {
 			return "TCP";
 		else if (protocol == TS_IDF_UDP)
 			return "UDP";
+		else if (protocol == TS_IDF_HTTP)
+			return "HTTP";
 		else
 			return "UNKNOWN";
 	}

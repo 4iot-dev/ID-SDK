@@ -1,4 +1,5 @@
 package cn.ac.caict.iiiiot.idisc.convertor;
+import cn.ac.caict.iiiiot.idisc.core.Attribute;
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +25,15 @@ import cn.ac.caict.iiiiot.idisc.core.CreateIdentifierResponse;
 import cn.ac.caict.iiiiot.idisc.core.ErrorResponse;
 import cn.ac.caict.iiiiot.idisc.core.GenericResponse;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
+import cn.ac.caict.iiiiot.idisc.core.IdisCommunicationItems;
 import cn.ac.caict.iiiiot.idisc.core.LoginIdisResponse;
 import cn.ac.caict.iiiiot.idisc.core.MsgEnvelope;
 import cn.ac.caict.iiiiot.idisc.core.MsgHeader;
 import cn.ac.caict.iiiiot.idisc.core.ResolutionResponse;
+import cn.ac.caict.iiiiot.idisc.core.ServerInfo;
 import cn.ac.caict.iiiiot.idisc.core.ServiceReferralResponse;
+import cn.ac.caict.iiiiot.idisc.core.SiteInfo;
+import cn.ac.caict.iiiiot.idisc.core.SiteResponse;
 import cn.ac.caict.iiiiot.idisc.data.IdentifierValue;
 import cn.ac.caict.iiiiot.idisc.data.ValueReference;
 import cn.ac.caict.iiiiot.idisc.utils.Common;
@@ -85,6 +90,9 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 			else if(msgHeader.opCode == MessageCommon.OC_DELETE_IDENTIFIER || msgHeader.opCode == MessageCommon.OC_ADD_VALUE ||
 					msgHeader.opCode == MessageCommon.OC_MODIFY_VALUE || msgHeader.opCode == MessageCommon.OC_REMOVE_VALUE)
 				message = convertBytesToGenericResponse(msg, bodyOffset, envelope);
+			else if(msgHeader.opCode == MessageCommon.OC_GET_SITE){
+				message = convertBytesToSiteResponse(msg,bodyOffset,bodyLenAfterRD,envelope);
+			}
 			else
 				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_INTERNAL_ERROR,"未知操作码: " + msgHeader.opCode);
 				
@@ -191,6 +199,86 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 			offset += Common.FOUR_SIZE;
 		}
 		return offset - origOffset;
+	}
+	
+	public static final SiteInfo convertBodyBytestoSiteInfo(byte[] bodyData, int offset) throws IdentifierException{
+		SiteInfo si = new SiteInfo();
+		si.dataFormatVersion = bodyData[offset]<<8 | bodyData[offset + 1];//第2个byte是否需要&0x00ff
+		offset += 2;
+		
+		si.majorProtocolVersion = bodyData[offset];
+		offset += 1;
+		si.minorProtocolVersion = bodyData[offset];
+		offset += 1;
+		
+		si.serialNumber = bodyData[offset]<<8 | bodyData[offset + 1];
+		offset += 2;
+		
+		si.isPrimarySite = (SiteInfo.PRIMARY_SITE & bodyData[offset]) > 0;
+		si.isMultiPrimarySite = (SiteInfo.MULTI_PRIMARY & bodyData[offset]) > 0;
+		offset += 1;
+		
+		si.hashOption = bodyData[offset];
+		offset += 1;
+		
+		si.hashFilter = readByteArray(bodyData, offset);
+		offset += Common.FOUR_SIZE + si.hashFilter.length;
+		
+		int arr_size = read4Bytes(bodyData, offset);
+		offset += Common.FOUR_SIZE;
+		if(arr_size <0 || arr_size > Common.MAX_ARRAY_SIZE)
+			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MESSAGE_FORMAT_ERROR, "消息尺寸越界");
+		
+		si.attributes = new Attribute[arr_size];
+		for(int i=0; i<si.attributes.length; i++) {
+			si.attributes[i] = new Attribute();
+			si.attributes[i].name = readByteArray(bodyData, offset);
+			offset += Common.FOUR_SIZE + si.attributes[i].name.length;
+			si.attributes[i].value = readByteArray(bodyData, offset);
+			offset += Common.FOUR_SIZE + si.attributes[i].value.length;
+		}
+		
+		int numberServ = read4Bytes(bodyData, offset);
+		offset += Common.FOUR_SIZE;
+		if(numberServ <0 || numberServ > Common.MAX_ARRAY_SIZE)
+			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MESSAGE_FORMAT_ERROR, "消息尺寸越界");
+		
+		si.servers = new ServerInfo[numberServ];
+		for(int j = 0; j < si.servers.length; j++) {
+			si.servers[j] = new ServerInfo();
+			si.servers[j].serverId = read4Bytes(bodyData, offset);
+			offset += Common.FOUR_SIZE;
+			
+			si.servers[j].ipBytes = new byte[Common.IP_ADDRESS_SIZE_SIXTEEN];
+			System.arraycopy(bodyData, offset, si.servers[j].ipBytes, 0, Common.IP_ADDRESS_SIZE_SIXTEEN);
+			offset += Common.IP_ADDRESS_SIZE_SIXTEEN;
+			
+			si.servers[j].publicKey = readByteArray(bodyData, offset);
+            offset += Common.FOUR_SIZE + si.servers[j].publicKey.length;
+            
+            int numberItems = read4Bytes(bodyData, offset);
+            offset += Common.FOUR_SIZE;
+            
+            if(numberItems < 0 || numberItems > Common.MAX_ARRAY_SIZE)
+    			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MESSAGE_FORMAT_ERROR, "消息尺寸越界");
+            
+            IdisCommunicationItems[] items = new IdisCommunicationItems[numberItems];
+            si.servers[j].communicationItems = items;
+            
+            for(int k = 0; k < items.length; k++) {
+            	items[k] = new IdisCommunicationItems();
+            	items[k].type = bodyData[offset];
+            	offset += 1;
+            	items[k].protocol = bodyData[offset];
+            	offset += 1;
+            	items[k].port = read4Bytes(bodyData, offset);
+            	offset += Common.FOUR_SIZE;
+            }
+            
+		}
+		if (offset < bodyData.length) 
+			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MESSAGE_FORMAT_ERROR, "解码后有冗余数据"); 
+		return si;
 	}
 	////////////////////////////////////////////////////private-founctions//////////////////////////////////////////////////////////////////
 	private static boolean hasDigestInMsgHeader(MsgHeader msgHeader){
@@ -316,13 +404,13 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 		return new ServiceReferralResponse(responseCode, identifier, values);
 	}
 	
-	private static final BaseResponse convertBytesToErrorResponse(byte[] msg, int loc, int endPos, MsgEnvelope env) throws IdentifierException{
-		return new ErrorResponse(readByteArray(msg, loc));
+	private static final BaseResponse convertBytesToErrorResponse(byte[] msg, int offset, int endPos, MsgEnvelope env) throws IdentifierException{
+		return new ErrorResponse(readByteArray(msg, offset));
 	}
 	
 	private static final ChallengeResponse convertBytesToChallengeResponse(byte[] msg, int offset, int opCode, MsgEnvelope env)
 			throws IdentifierException {
-		byte nonce[] = null;
+		byte[] nonce = null;
 
 		nonce = readByteArray(msg, offset);
 		offset += Common.FOUR_SIZE + nonce.length;
@@ -330,11 +418,18 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 		return new ChallengeResponse(opCode, nonce);
 	}
 	
-	private static LoginIdisResponse convertBytesToLoginIdisResponse(byte[] msg, int loc, MsgEnvelope env){
+	private static LoginIdisResponse convertBytesToLoginIdisResponse(byte[] msg, int offset, MsgEnvelope env){
 		return new LoginIdisResponse(null, null);
 	}
 	
-	private static GenericResponse convertBytesToGenericResponse(byte[] msg, int loc, MsgEnvelope env) {
+	private static GenericResponse convertBytesToGenericResponse(byte[] msg, int offset, MsgEnvelope env) {
 		return new GenericResponse();
+	}
+	
+	private static SiteResponse convertBytesToSiteResponse(byte[] msg, int offset, int length, MsgEnvelope env) throws IdentifierException{
+		byte[] body = new byte[length];
+		System.arraycopy(msg, offset, body, 0, length);
+		SiteInfo site = convertBodyBytestoSiteInfo(body,0);
+		return new SiteResponse(site);
 	}
 }

@@ -32,7 +32,7 @@ public class ObjBytesConvertor extends BaseConvertor {
 		pos += write2Bytes(result_bytes, pos, admInfo.permissions);
 		pos += writeByteArray(result_bytes, pos, admInfo.admId);
 		pos += write4Bytes(result_bytes, pos, admInfo.admIdIndex);
-		return null;
+		return result_bytes;
 	}
 
 	public static final byte[] siteInfoCovertToBytes(SiteInfo site) {
@@ -62,52 +62,52 @@ public class ObjBytesConvertor extends BaseConvertor {
 			}
 		}
 
-		byte[] siteByteInfo = new byte[infoLen];
+		byte[] result_bytes = new byte[infoLen];
 		int offset = 0;
-		offset += write2Bytes(siteByteInfo, offset, site.dataFormatVersion);
-		siteByteInfo[offset++] = site.majorProtocolVersion;
-		siteByteInfo[offset++] = site.minorProtocolVersion;
-		offset += write2Bytes(siteByteInfo, offset, site.serialNumber);
-		siteByteInfo[offset++] = (byte) ((site.isPrimarySite ? SiteInfo.PRIMARY_SITE : 0)
+		offset += write2Bytes(result_bytes, offset, site.dataFormatVersion);
+		result_bytes[offset++] = site.majorProtocolVersion;
+		result_bytes[offset++] = site.minorProtocolVersion;
+		offset += write2Bytes(result_bytes, offset, site.serialNumber);
+		result_bytes[offset++] = (byte) ((site.isPrimarySite ? SiteInfo.PRIMARY_SITE : 0)
 				| (site.isMultiPrimarySite ? SiteInfo.MULTI_PRIMARY : 0));
-		siteByteInfo[offset++] = site.hashOption;
-		offset += writeByteArray(siteByteInfo, offset, site.hashFilter);
+		result_bytes[offset++] = site.hashOption;
+		offset += writeByteArray(result_bytes, offset, site.hashFilter);
 
 		if (site.attributes == null) {
-			offset += write4Bytes(siteByteInfo, offset, 0);
+			offset += write4Bytes(result_bytes, offset, 0);
 		} else {
-			offset += write4Bytes(siteByteInfo, offset, site.attributes.length);
+			offset += write4Bytes(result_bytes, offset, site.attributes.length);
 			for (Attribute attribute : site.attributes) {
-				offset += writeByteArray(siteByteInfo, offset, attribute.name);
-				offset += writeByteArray(siteByteInfo, offset, attribute.value);
+				offset += writeByteArray(result_bytes, offset, attribute.name);
+				offset += writeByteArray(result_bytes, offset, attribute.value);
 			}
 		}
 
 		if (site.servers == null) {
-			offset += write4Bytes(siteByteInfo, offset, 0);
+			offset += write4Bytes(result_bytes, offset, 0);
 		} else {
-			offset += write4Bytes(siteByteInfo, offset, site.servers.length);
+			offset += write4Bytes(result_bytes, offset, site.servers.length);
 			for (ServerInfo server : site.servers) {
-				offset += write4Bytes(siteByteInfo, offset, server.serverId);
+				offset += write4Bytes(result_bytes, offset, server.serverId);
 
-				System.arraycopy(server.ipBytes, 0, siteByteInfo,
+				System.arraycopy(server.ipBytes, 0, result_bytes,
 						offset + Common.IP_ADDRESS_SIZE_SIXTEEN - server.ipBytes.length, server.ipBytes.length);
 				offset += Common.IP_ADDRESS_SIZE_SIXTEEN;
 
-				offset += writeByteArray(siteByteInfo, offset, server.publicKey);
+				offset += writeByteArray(result_bytes, offset, server.publicKey);
 
 				if (server.communicationItems == null) {
-					offset += write4Bytes(siteByteInfo, offset, 0);
+					offset += write4Bytes(result_bytes, offset, 0);
 				} else {
-					offset += write4Bytes(siteByteInfo, offset, server.communicationItems.length);
+					offset += write4Bytes(result_bytes, offset, server.communicationItems.length);
 					for (IdisCommunicationItems item : server.communicationItems) {
-						siteByteInfo[offset++] = item.type;
-						siteByteInfo[offset++] = item.protocol;
-						offset += write4Bytes(siteByteInfo, offset, item.port);
+						result_bytes[offset++] = item.type;
+						result_bytes[offset++] = item.protocol;
+						offset += write4Bytes(result_bytes, offset, item.port);
 					}
 				}
 			}
 		}
-		return siteByteInfo;
+		return result_bytes;
 	}
 }

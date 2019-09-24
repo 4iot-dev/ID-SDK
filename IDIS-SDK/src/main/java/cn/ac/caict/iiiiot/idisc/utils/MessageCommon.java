@@ -34,6 +34,7 @@ public abstract class MessageCommon {
 	// ********消息操作码*****************************
 	public static final int OC_RESERVED = 0;
 	public static final int OC_RESOLUTION = 1;
+	public static final int OC_GET_SITE = 2;
 	public static final int OC_CREATE_IDENTIFIER = 100;
 	public static final int OC_DELETE_IDENTIFIER = 101;
 	public static final int OC_ADD_VALUE = 102;
