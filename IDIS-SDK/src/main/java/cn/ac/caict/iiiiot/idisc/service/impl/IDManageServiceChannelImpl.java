@@ -93,8 +93,7 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 			IdisLog.getLogger(IDManageServiceChannelImpl.class).info("private key is null,maybe file is not exit,please check it!");
 			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"privakeyFilePath文件可能不存在");
 		}
-		String identifierIC = identifier.toLowerCase();
-		byte[] userIdentifier = Util.encodeString(identifierIC);
+		byte[] userIdentifier = Util.encodeString(identifier);
 		AbstractAuthentication authInfo = new PubKeyAuthentication(userIdentifier, index, privKey);
 		BaseResponse response = null;
 		LoginIdisRequest loginReq = new LoginIdisRequest(userIdentifier, index, authInfo);
