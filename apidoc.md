@@ -206,7 +206,7 @@ try {
 
 **1\. login**
 ###### 接口功能
-> 与IDIS服务的连接通道建立后，若进行标识管理操作，须首先登录。该操作需要捕获异常(异常码描述参照附表2)。
+> 与IDIS服务的连接通道建立后，若IDIS服务开启分布式身份认证，在进行标识管理操作前必须首先登录。该操作需要捕获异常(异常码描述参照附表2)。
 ###### 输入参数
 > |参数|必选|类型|说明|
 >| :-------- | :--------| :--------| :--------|     
@@ -478,6 +478,34 @@ try {
 	if(channel != null){
 		boolean bLogin = channel.isLogin();
 	}
+} catch (IdentifierException e) {
+	e.printStackTrace();
+}
+```
+**9\. getServerSiteInfo**
+###### 接口功能
+> 获取服务器站点信息
+###### 输入参数
+> |参数|必选|类型|说明|
+>| :-------- | :--------| :--------| :--------|     
+>|settings   |false |MsgSettings |消息设置                          |
+###### 返回值
+> |类型|说明                              |
+>| :-------- | :--------| 
+>|BaseResponse   |返回码为1站点信息获取成功，返回码不为1则获取站点信息失败 (其他返回码参照附表1) |
+###### 接口示例
+``` java
+//创建通道管理实例
+IChannelManageService chnnlService = new ChannelManageServiceImpl();
+try {
+	//根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
+	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
+	MsgSettings settings = new MsgSettings();
+		BaseResponse response = channel.getServerSiteInfo(settings);
+		if (response instanceof SiteResponse){
+			SiteInfo si = ((SiteResponse) response).getSiteInfo();
+			System.out.println("siteInfo:" + si);
+		}	
 } catch (IdentifierException e) {
 	e.printStackTrace();
 }
