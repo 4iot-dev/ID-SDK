@@ -1,6 +1,16 @@
 package cn.ac.caict.iiiiot.idisc.utils;
 
+import java.util.regex.Pattern;
+
 public abstract class Common {
+	public static final Pattern IPV4_REGEX = Pattern.compile("^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
+	
+	public static final Pattern IPV6_STD_REGEX = Pattern.compile("^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
+	
+	public static final Pattern IPV6_COMPRESS_REGEX = Pattern.compile("^((?:[0-9A-Fa-f]{1,4}(:[0-9A-Fa-f]{1,4})*)?)::((?:([0-9A-Fa-f]{1,4}:)*[0-9A-Fa-f]{1,4})?)$");
+	
+	public static final Pattern PORT_REGEX = Pattern.compile("^([1-9]|[1-9]\\d{1,3}|[1-6][0-5][0-5][0-3][0-5])$");
+	
 	public static final int RESOLUTION_RESULT_UNKNOWN = 0;
 	
 	public static final int RESOLUTION_RESULT_TRUSTY = 1;

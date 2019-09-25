@@ -1008,4 +1008,13 @@ public abstract class Util {
 		}
 		return sb.toString();
 	}
+	
+	public static boolean isIPV4(String ip){
+		if(ip == null)
+			return false;
+		if(Common.IPV4_REGEX.matcher(ip).matches())
+			return true;
+		else
+			return false;
+	}
 }

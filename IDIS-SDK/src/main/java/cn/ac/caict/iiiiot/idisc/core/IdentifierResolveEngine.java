@@ -52,10 +52,6 @@ import cn.ac.caict.iiiiot.idisc.utils.Util;
 import java.util.regex.Pattern;
 
 public class IdentifierResolveEngine {
-	public static final Pattern IPV4_REGEX = Pattern.compile("^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
-	public static final Pattern IPV6_STD_REGEX = Pattern.compile("^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
-	public static final Pattern IPV6_COMPRESS_REGEX = Pattern.compile("^((?:[0-9A-Fa-f]{1,4}(:[0-9A-Fa-f]{1,4})*)?)::((?:([0-9A-Fa-f]{1,4}:)*[0-9A-Fa-f]{1,4})?)$");
-	public static final Pattern PORT_REGEX = Pattern.compile("^([1-9]|[1-9]\\d{1,3}|[1-6][0-5][0-5][0-3][0-5])$");
 	private Socket longConnSocket = null;
 	private OutputStream longConnOut = null;
 	private InputStream longConnIn = null;
@@ -67,14 +63,14 @@ public class IdentifierResolveEngine {
 	private Map<String,Object> config = null;
 	private Log logger = IdisLog.getLogger(IdentifierResolveEngine.class);
 	
-	public void setSiteInfo(String ip, int port, String protocol) {
+	private void initSiteInfo(String ip, int port, String protocol){
 		byte iPro = IdisCommunicationItems.TS_IDF_TCP;
 		if(protocol == null || protocol.equalsIgnoreCase("tcp"))
 			iPro = IdisCommunicationItems.TS_IDF_TCP;
 		else if(protocol.equalsIgnoreCase("udp"))
 			iPro = IdisCommunicationItems.TS_IDF_UDP;
 		byte[] b;
-		if(isIPV4(ip)){
+		if(Util.isIPV4(ip)){
 			String[] st = ip.split("\\.");
 			b = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) Integer.parseInt(st[0]),
 					(byte) Integer.parseInt(st[1]), (byte) Integer.parseInt(st[2]), (byte) Integer.parseInt(st[3]) };
@@ -90,12 +86,22 @@ public class IdentifierResolveEngine {
 		SiteInfo si = new SiteInfo();
 		si.servers = new ServerInfo[] { s };
 		siteInfo = new SiteInfo[] { si };
+
+	}
+	public void updateSiteInfo() {
+		SiteRequest request = new SiteRequest();
+		SiteInfo si = new SiteInfo();
+		try {
+			BaseResponse response = processRequest(request, null);
+			if(response != null && response instanceof SiteResponse){
+				si = ((SiteResponse)response).getSiteInfo();
+				siteInfo = new SiteInfo[]{si};
+			}
+		} catch (IdentifierException e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public SiteInfo[] getSiteInfo(){
-		return siteInfo;
-	}
-
 	int preferredProtocols[] = { IdisCommunicationItems.TS_IDF_TCP, IdisCommunicationItems.TS_IDF_UDP };
 
 	private void loadConfig() throws IOException {
@@ -131,9 +137,9 @@ public class IdentifierResolveEngine {
 		logger.info("end----loadConfig()---");
 	}
 	private void createConnection(String ip, int port,String protocol) throws IdentifierException{
-		if(!IPV4_REGEX.matcher(ip).matches()&&!IPV6_COMPRESS_REGEX.matcher(ip).matches()&&!IPV6_STD_REGEX.matcher(ip).matches())
+		if(!Common.IPV4_REGEX.matcher(ip).matches()&&!Common.IPV6_COMPRESS_REGEX.matcher(ip).matches()&&!Common.IPV6_STD_REGEX.matcher(ip).matches())
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_ILLEGAL_IP, "ip非法");
-		if(!PORT_REGEX.matcher(Integer.toString(port)).matches())
+		if(!Common.PORT_REGEX.matcher(Integer.toString(port)).matches())
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_ILLEGAL_PORT, "端口非法");
 		if(protocol == null || !"tcp".equalsIgnoreCase(protocol)&&!"udp".equalsIgnoreCase(protocol))
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_UNKNOWN_PROTOCOL, "暂不支持该协议");
@@ -143,8 +149,8 @@ public class IdentifierResolveEngine {
 			messageIDMaker = new SecureRandom();
 		}
 		messageIDMaker.setSeed(System.currentTimeMillis());
-		setSiteInfo(ip, port, protocol);
-		if ("UDP".equalsIgnoreCase(protocol))
+		initSiteInfo(ip, port, protocol);
+		if (!"TCP".equalsIgnoreCase(protocol))
 			return;
 		try {
 			// 打开socket通道
@@ -172,6 +178,7 @@ public class IdentifierResolveEngine {
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_LONGCONNSOCKET_CREATE_FAILED,
 					IdentifierException.getCodeDescription(ExceptionCommon.EXCEPTIONCODE_LONGCONNSOCKET_CREATE_FAILED));
 		}
+		updateSiteInfo();
 	}
 	public IdentifierResolveEngine(String ip, int port,String protocol) throws IdentifierException {
 		createConnection(ip,port,protocol);
@@ -571,14 +578,5 @@ public class IdentifierResolveEngine {
 				logger.info("sendRequestWithTCP--method--end");
 			}
 		}
-	}
-	
-	private boolean isIPV4(String ip){
-		if(ip == null)
-			return false;
-		if(IPV4_REGEX.matcher(ip).matches())
-			return true;
-		else
-			return false;
 	}
 }
