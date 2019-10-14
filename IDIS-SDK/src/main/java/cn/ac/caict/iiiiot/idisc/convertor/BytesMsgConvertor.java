@@ -1,5 +1,4 @@
 package cn.ac.caict.iiiiot.idisc.convertor;
-import cn.ac.caict.iiiiot.idisc.core.Attribute;
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +17,7 @@ import cn.ac.caict.iiiiot.idisc.core.Attribute;
  * http://www.caict.ac.cn  
  * https://www.citln.cn/
  */
+import cn.ac.caict.iiiiot.idisc.core.Attribute;
 import cn.ac.caict.iiiiot.idisc.core.BaseMessage;
 import cn.ac.caict.iiiiot.idisc.core.BaseResponse;
 import cn.ac.caict.iiiiot.idisc.core.ChallengeResponse;
@@ -105,7 +105,8 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 				  (msgHeader.responseCode == MessageCommon.RC_IDENTIFIER_ALREADY_EXISTS) || (msgHeader.responseCode == MessageCommon.RC_VALUE_ALREADY_EXISTS) ||
 				  (msgHeader.responseCode == MessageCommon.RC_INVALID_VALUE) || (msgHeader.responseCode == MessageCommon.RC_SERVER_TOO_BUSY) ||
 				  (msgHeader.responseCode == MessageCommon.RC_PROTOCOL_ERROR) || (msgHeader.responseCode == MessageCommon.RC_INVALID_IDENTIFIER) || 
-				  (msgHeader.responseCode == MessageCommon.RC_RELOGIN) || (msgHeader.responseCode == MessageCommon.RC_LOGIN_FIRST))){
+				  (msgHeader.responseCode == MessageCommon.RC_RELOGIN) || (msgHeader.responseCode == MessageCommon.RC_LOGIN_FIRST) ||
+				  (msgHeader.responseCode == MessageCommon.RC_OPERATION_NOT_SUPPORTED))){
 			message = convertBytesToErrorResponse(msg, bodyOffset, envelope.messageLength + offset, envelope);
 		} else if (msgHeader.responseCode == MessageCommon.RC_AUTHENTICATION_NEEDED){
 			message = convertBytesToChallengeResponse(msg, bodyOffset, msgHeader.opCode, envelope);
@@ -280,7 +281,7 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MESSAGE_FORMAT_ERROR, "解码后有冗余数据"); 
 		return si;
 	}
-	////////////////////////////////////////////////////private-founctions//////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////private-functions//////////////////////////////////////////////////////////////////
 	private static boolean hasDigestInMsgHeader(MsgHeader msgHeader){
 		return msgHeader.responseCode != MessageCommon.RC_RESERVED && (Common.FLAG_9TH_MSG_RRDG & msgHeader.opFlags) != 0;
 	}

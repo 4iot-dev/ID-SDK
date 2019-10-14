@@ -84,24 +84,38 @@ public abstract class Common {
 	public static final byte GLOBAL_NA[] = Util.encodeString("0/");
 	
 	public static final byte NA_IDENTIFIRE_PREFIX[] = Util.encodeString("0.NA/");
+	
+	public static final String HS_SITE = "HS_SITE";
 
-	public static final byte TYPE_SITE[] = Util.encodeString("HS_SITE");
+	public static final byte TYPE_SITE[] = Util.encodeString(HS_SITE);
 	
-	public static final byte TYPE_PREFIX_SITE[] = Util.encodeString("HS_SITE.PREFIX");
+	public static final String HS_SITE_PREFIX = "HS_SITE.PREFIX";
 	
-	public static final byte TYPE_SERV[] = Util.encodeString("HS_SERV");
+	public static final byte TYPE_PREFIX_SITE[] = Util.encodeString(HS_SITE_PREFIX);
 	
-	public static final byte TYPE_SECRET_KEY[] = Util.encodeString("HS_SECKEY");
+	public static final String HS_SERV = "HS_SERV";
 	
-	public static final byte TYPE_PUBLIC_KEY[] = Util.encodeString("HS_PUBKEY");
+	public static final byte TYPE_SERV[] = Util.encodeString(HS_SERV);
 	
-	public static final byte TYPE_ADMIN[] = Util.encodeString("HS_ADMIN");
+	public static final String HS_PUBKEY = "HS_PUBKEY";
 	
-	public static final byte TYPE_ADMIN_GROUP[] = Util.encodeString("HS_VLIST");
+	public static final byte TYPE_PUBLIC_KEY[] = Util.encodeString(HS_PUBKEY);
 	
-	public static final byte TYPE_SIGNATURE[] = Util.encodeString("HS_SIGNATURE");
+	public static final String HS_ADMIN = "HS_ADMIN";
 	
-	public static final byte TYPE_CERT[] = Util.encodeString("HS_CERT");
+	public static final byte TYPE_ADMIN[] = Util.encodeString(HS_ADMIN);
+	
+	public static final String HS_VLIST = "HS_VLIST";
+	
+	public static final byte TYPE_ADMIN_GROUP[] = Util.encodeString(HS_VLIST);
+	
+	public static final String HS_SIGNATURE = "HS_SIGNATURE";
+	
+	public static final byte TYPE_SIGNATURE[] = Util.encodeString(HS_SIGNATURE);
+	
+	public static final String HS_CERT = "HS_CERT";
+	
+	public static final byte TYPE_CERT[] = Util.encodeString(HS_CERT);
 
 	public static final byte HASH_ALG_MD5[] = Util.encodeString("MD5");
 	
