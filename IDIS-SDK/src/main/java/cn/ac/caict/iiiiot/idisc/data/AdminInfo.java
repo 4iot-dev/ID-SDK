@@ -45,38 +45,72 @@ public class AdminInfo {
 	public static final int PERM_ADD_ADMIN = 0x0200;
 	public static final int PERM_READ_VALUE = 0x0400;
     public static final int PERM_SHOW_ALL_IDENTIFIERS = 0x0800;	
-	public byte[] admId;
+    // 管理员标识
+    public byte[] admId;
+    // 索引-对应标识下公钥类型的标识值
     public int admIdIndex;
+    // 管理员权限，用4字节整数表示，每个权限由不同比特位诠释
     public int permissions = 0;
     
     public AdminInfo() {}
+    
+    public AdminInfo(byte[] admId,int admIndex,int permissions){
+    	this.admId = admId;
+    	this.admIdIndex = admIndex;
+    	this.permissions = permissions;
+    }
 
 	public AdminInfo(String admId, int admIdIndex,
 
-			boolean createIdentifier, boolean deleteIdentifier,
+			boolean perm_createId, boolean perm_deleteId,
 
-			boolean addNA, boolean deleteNA,
+			boolean perm_addNA, boolean perm_deleteNA,
 
-			boolean modifyValue, boolean removeValue, boolean addValue,
+			boolean perm_modifyValue, boolean perm_removeValue, boolean perm_addValue,
 
-			boolean modifyAdmin, boolean removeAdmin, boolean addAdmin,
+			boolean perm_modifyAdmin, boolean perm_removeAdmin, boolean perm_addAdmin,
 
-			boolean readValue,boolean showAll) {
+			boolean perm_readValue,boolean perm_showAll) {
+		
 		this.admId = Util.encodeString(admId);
+		
 		this.admIdIndex = admIdIndex;
-		permissions |= createIdentifier ? PERM_CREATE_IDENTIFIER : 0;
-		permissions |= deleteIdentifier ? PERM_DELETE_IDENTIFIER : 0;
-		permissions |= addNA ? PERM_ADD_NA : 0;
-		permissions |= deleteNA ? PERM_DELETE_NA : 0;
-		permissions |= modifyValue ? PERM_MODIFY_VALUE : 0;
-		permissions |= removeValue ? PERM_REMOVE_VALUE : 0;
-		permissions |= addValue ? PERM_ADD_VALUE : 0;
-		permissions |= modifyAdmin ? PERM_MODIFY_ADMIN : 0;
-		permissions |= removeAdmin ? PERM_REMOVE_ADMIN : 0;
-		permissions |= addAdmin ? PERM_ADD_ADMIN : 0;
-		permissions |= readValue ? PERM_READ_VALUE : 0;
-		permissions |= addAdmin ? PERM_SHOW_ALL_IDENTIFIERS : 0;
+		
+		initPermissions(perm_createId, perm_deleteId, perm_addNA, perm_deleteNA, perm_modifyValue, perm_removeValue, perm_addValue, perm_modifyAdmin, perm_removeAdmin, perm_addAdmin, perm_readValue, perm_showAll);
 	}
 
+	public void initPermissions(boolean perm_createId, boolean perm_deleteId,
 
+			boolean perm_addNA, boolean perm_deleteNA,
+
+			boolean perm_modifyValue, boolean perm_removeValue, boolean perm_addValue,
+
+			boolean perm_modifyAdmin, boolean perm_removeAdmin, boolean perm_addAdmin,
+
+			boolean perm_readValue,boolean perm_showAll){
+		
+		permissions |= perm_createId ? PERM_CREATE_IDENTIFIER : 0;
+		
+		permissions |= perm_deleteId ? PERM_DELETE_IDENTIFIER : 0;
+		
+		permissions |= perm_addNA ? PERM_ADD_NA : 0;
+		
+		permissions |= perm_deleteNA ? PERM_DELETE_NA : 0;
+		
+		permissions |= perm_modifyValue ? PERM_MODIFY_VALUE : 0;
+		
+		permissions |= perm_removeValue ? PERM_REMOVE_VALUE : 0;
+		
+		permissions |= perm_addValue ? PERM_ADD_VALUE : 0;
+		
+		permissions |= perm_modifyAdmin ? PERM_MODIFY_ADMIN : 0;
+		
+		permissions |= perm_removeAdmin ? PERM_REMOVE_ADMIN : 0;
+		
+		permissions |= perm_addAdmin ? PERM_ADD_ADMIN : 0;
+		
+		permissions |= perm_readValue ? PERM_READ_VALUE : 0;
+		
+		permissions |= perm_addAdmin ? PERM_SHOW_ALL_IDENTIFIERS : 0;
+	}
 }

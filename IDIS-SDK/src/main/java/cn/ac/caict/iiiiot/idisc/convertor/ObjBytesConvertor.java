@@ -22,22 +22,23 @@ import cn.ac.caict.iiiiot.idisc.core.IdisCommunicationItems;
 import cn.ac.caict.iiiiot.idisc.core.ServerInfo;
 import cn.ac.caict.iiiiot.idisc.core.SiteInfo;
 import cn.ac.caict.iiiiot.idisc.data.AdminInfo;
+import cn.ac.caict.iiiiot.idisc.data.ValueReference;
 import cn.ac.caict.iiiiot.idisc.utils.Common;
 
 public class ObjBytesConvertor extends BaseConvertor {
 	public static final byte[] admInfoConvertToBytes(AdminInfo admInfo) {
 		int infoLen = Common.TWO_SIZE + Common.FOUR_SIZE + Common.FOUR_SIZE + admInfo.admId.length;
 		byte[] result_bytes = new byte[infoLen];
-		int pos = 0;
-		pos += write2Bytes(result_bytes, pos, admInfo.permissions);
-		pos += writeByteArray(result_bytes, pos, admInfo.admId);
-		pos += write4Bytes(result_bytes, pos, admInfo.admIdIndex);
+		int offset = 0;
+		offset += write2Bytes(result_bytes, offset, admInfo.permissions);
+		offset += writeByteArray(result_bytes, offset, admInfo.admId);
+		offset += write4Bytes(result_bytes, offset, admInfo.admIdIndex);
 		return result_bytes;
 	}
 
 	public static final byte[] siteInfoCovertToBytes(SiteInfo site) {
 		int infoLen = 0;
-		//data-Version+protocolVersion+serialNumber+primary+hashOption
+		// dataVersion+protocolVersion+serialNumber+primary+hashOption
 		infoLen += 2 + 2 + 2 + 1 + 1; 
 		// hashFilter
 		infoLen += Common.FOUR_SIZE + (site.hashFilter == null ? 0 : site.hashFilter.length);
@@ -48,14 +49,15 @@ public class ObjBytesConvertor extends BaseConvertor {
 				infoLen += Common.FOUR_SIZE + attribute.value.length;
 			}
 		}
-		infoLen += Common.FOUR_SIZE; // number of servers
+		// servers个数
+		infoLen += Common.FOUR_SIZE; 
 		if (site.servers != null) {
 			for (ServerInfo server : site.servers) {
-				infoLen += Common.FOUR_SIZE; // serverId
+				infoLen += Common.FOUR_SIZE;
 				infoLen += Common.IP_ADDRESS_SIZE_SIXTEEN; 
 				infoLen += Common.FOUR_SIZE + (server.publicKey == null ? 0 : server.publicKey.length); 
-
-				infoLen += Common.FOUR_SIZE; // number of communicateItems
+				// communicateItems个数
+				infoLen += Common.FOUR_SIZE;
 				if (server.communicationItems != null) {
 					infoLen += (Common.FOUR_SIZE + 1 + 1) * server.communicationItems.length;
 				}
@@ -110,4 +112,27 @@ public class ObjBytesConvertor extends BaseConvertor {
 		}
 		return result_bytes;
 	}
+
+	public static byte[] vListCovertToBytes(ValueReference[] vList) {
+		int size = Common.FOUR_SIZE;
+		if(vList != null){
+			for(int i=0; i<vList.length; i++){
+				size += Common.FOUR_SIZE;
+				size += vList[i].identifier.length;
+				size += Common.FOUR_SIZE;
+			}
+		}
+		byte[] result_bytes = new byte[size];
+		int offset = 0;
+		offset += write4Bytes(result_bytes, offset, vList == null ? 0:vList.length);
+		
+		if(vList != null) {
+			for(int i=0; i<vList.length; i++){
+				offset += writeByteArray(result_bytes, offset, vList[i].identifier);
+				offset += write4Bytes(result_bytes,offset, vList[i].index);
+			}
+		}
+		return result_bytes;
+	}
+	
 }
