@@ -36,11 +36,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
-
 import org.apache.commons.logging.Log;
-
 import com.google.gson.Gson;
-
 import cn.ac.caict.iiiiot.idisc.convertor.BytesMsgConvertor;
 import cn.ac.caict.iiiiot.idisc.convertor.MsgBytesConvertor;
 import cn.ac.caict.iiiiot.idisc.log.IdisLog;
@@ -48,8 +45,6 @@ import cn.ac.caict.iiiiot.idisc.utils.Common;
 import cn.ac.caict.iiiiot.idisc.utils.ExceptionCommon;
 import cn.ac.caict.iiiiot.idisc.utils.MessageCommon;
 import cn.ac.caict.iiiiot.idisc.utils.Util;
-
-import java.util.regex.Pattern;
 
 public class IdentifierResolveEngine {
 	private Socket longConnSocket = null;
@@ -69,14 +64,7 @@ public class IdentifierResolveEngine {
 			iPro = IdisCommunicationItems.TS_IDF_TCP;
 		else if(protocol.equalsIgnoreCase("udp"))
 			iPro = IdisCommunicationItems.TS_IDF_UDP;
-		byte[] b;
-		if(Util.isIPV4(ip)){
-			String[] st = ip.split("\\.");
-			b = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) Integer.parseInt(st[0]),
-					(byte) Integer.parseInt(st[1]), (byte) Integer.parseInt(st[2]), (byte) Integer.parseInt(st[3]) };
-		}else{
-			b = Util.encodeString(ip);
-		}
+		byte[] b = Util.convertIPStr2Bytes(ip);
 		
 		IdisCommunicationItems i = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,iPro, port);
 		ServerInfo s = new ServerInfo();
@@ -99,6 +87,7 @@ public class IdentifierResolveEngine {
 			}
 		} catch (IdentifierException e) {
 			e.printStackTrace();
+			logger.error("SiteInfo获取失败，将使用默认站点信息配置");
 		}
 	}
 	

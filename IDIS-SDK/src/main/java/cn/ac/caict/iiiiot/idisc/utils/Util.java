@@ -30,6 +30,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPrivateCrtKeySpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -303,7 +304,7 @@ public abstract class Util {
 		return -1;
 	}
 
-	public static final byte CASE_DIFF = 'A' - 'a';
+	public static final byte DIFFER = 'A' - 'a';
 
 	public static final byte[] upperCase(byte[] b) {
 		if (b == null || b.length == 0)
@@ -314,7 +315,7 @@ public abstract class Util {
 
 		for (int i = sz - 1; i >= 0; i--) {
 			if (b2[i] >= 'a' && b2[i] <= 'z')
-				b2[i] += CASE_DIFF;
+				b2[i] += DIFFER;
 		}
 		return b2;
 	}
@@ -330,7 +331,7 @@ public abstract class Util {
 			return b;
 		for (int i = 0; i < b.length; i++) {
 			if (b[i] >= 'a' && b[i] <= 'z')
-				b[i] += CASE_DIFF;
+				b[i] += DIFFER;
 		}
 		return b;
 	}
@@ -347,7 +348,7 @@ public abstract class Util {
 		boolean inPrefix = true;
 		for (int i = 0; i < sz; i++) {
 			if (inPrefix && b2[i] >= 'a' && b2[i] <= 'z')
-				b2[i] += CASE_DIFF;
+				b2[i] += DIFFER;
 			if (b2[i] == '/')
 				inPrefix = false;
 		}
@@ -368,13 +369,13 @@ public abstract class Util {
 		boolean inPrefix = true;
 		for (int i = 0; i < b.length; i++) {
 			if (inPrefix && b[i] >= 'a' && b[i] <= 'z')
-				b[i] += CASE_DIFF;
+				b[i] += DIFFER;
 			if (b[i] == '/')
 				inPrefix = false;
 		}
 		return b;
 	}
-	
+
 	public static final boolean equalsCaseInsensitive(byte b1[], byte b2[]) {
 		if (b1 == null && b2 == null)
 			return true;
@@ -406,9 +407,9 @@ public abstract class Util {
 			if (byte1 == byte2)
 				continue;
 			if (byte1 >= 'a' && byte1 <= 'z')
-				byte1 += CASE_DIFF;
+				byte1 += DIFFER;
 			if (byte2 >= 'a' && byte2 <= 'z')
-				byte2 += CASE_DIFF;
+				byte2 += DIFFER;
 			if (byte1 != byte2)
 				return false;
 		}
@@ -451,9 +452,9 @@ public abstract class Util {
 			if (byte1 == byte2)
 				continue;
 			if (inPrefix && byte1 >= 'a' && byte1 <= 'z')
-				byte1 += CASE_DIFF;
+				byte1 += DIFFER;
 			if (inPrefix && byte2 >= 'a' && byte2 <= 'z')
-				byte2 += CASE_DIFF;
+				byte2 += DIFFER;
 			if (byte1 != byte2)
 				return false;
 		}
@@ -470,9 +471,9 @@ public abstract class Util {
 			if (byte1 == byte2)
 				continue;
 			if (byte1 >= 'a' && byte1 <= 'z')
-				byte1 += CASE_DIFF;
+				byte1 += DIFFER;
 			if (byte2 >= 'a' && byte2 <= 'z')
-				byte2 += CASE_DIFF;
+				byte2 += DIFFER;
 			if (byte1 != byte2)
 				return false;
 		}
@@ -600,18 +601,18 @@ public abstract class Util {
 	}
 
 	public static PublicKey getPublicKeyFromBytes(byte pkBuf[], int offset) throws Exception {
-		byte keyType[] = BaseConvertor.readByteArray(pkBuf, offset);
+		byte[] keyType = BaseConvertor.readByteArray(pkBuf, offset);
 		offset += Common.FOUR_SIZE + keyType.length;
 		int flags = BaseConvertor.read2Bytes(pkBuf, offset); // 暂不使用
 		offset += Common.TWO_SIZE;
 		if (Util.equalsBytes(keyType, Common.KEY_ENCODING_DSA_PUBLIC)) {
-			byte q[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] q = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + q.length;
-			byte p[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] p = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + p.length;
-			byte g[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] g = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + g.length;
-			byte y[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] y = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + y.length;
 
 			DSAPublicKeySpec keySpec = new DSAPublicKeySpec(new BigInteger(1, y), new BigInteger(1, p),
@@ -623,9 +624,9 @@ public abstract class Util {
 				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_ENCRYPTION_ERROR, "不支持DSA加密算法", e);
 			}
 		} else if (Util.equalsBytes(keyType, Common.KEY_ENCODING_RSA_PUBLIC)) {
-			byte ex[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] ex = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + ex.length;
-			byte m[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] m = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + m.length;
 			RSAPublicKeySpec keySpec = new RSAPublicKeySpec(new BigInteger(1, m), new BigInteger(1, ex));
 			try {
@@ -636,14 +637,13 @@ public abstract class Util {
 			}
 		} else if (Util.equalsBytes(keyType, Common.KEY_ENCODING_DH_PUBLIC)) {
 
-			byte y[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] y = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + y.length;
-			byte p[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] p = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + p.length;
-			byte g[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] g = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + g.length;
-			DHPublicKeySpec keySpec = new DHPublicKeySpec(new BigInteger(1, y), new BigInteger(1, p),
-					new BigInteger(1, g));
+			DHPublicKeySpec keySpec = new DHPublicKeySpec(new BigInteger(1, y), new BigInteger(1, p),new BigInteger(1, g));
 			try {
 				KeyFactory dhKeyFactory = KeyFactory.getInstance("DiffieHellman");
 				return dhKeyFactory.generatePublic(keySpec);
@@ -657,16 +657,16 @@ public abstract class Util {
 
 	public static PrivateKey getPrivateKeyFromBytes(byte pkBuf[], int offset)
 			throws IOException, IdentifierException, InvalidKeySpecException {
-		byte keyType[] = BaseConvertor.readByteArray(pkBuf, offset);
+		byte[] keyType = BaseConvertor.readByteArray(pkBuf, offset);
 		offset += Common.FOUR_SIZE + keyType.length;
 		if (Util.equalsBytes(keyType, Common.KEY_ENCODING_DSA_PRIVATE)) {
-			byte x[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] x = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + x.length;
-			byte p[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] p = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + p.length;
-			byte q[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] q = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + q.length;
-			byte g[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] g = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + g.length;
 			DSAPrivateKeySpec keySpec = new DSAPrivateKeySpec(new BigInteger(1, x), new BigInteger(1, p),
 					new BigInteger(1, q), new BigInteger(1, g));
@@ -677,9 +677,9 @@ public abstract class Util {
 				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_ENCRYPTION_ERROR, "不支持DSA加密算法", e);
 			}
 		} else if (Util.equalsBytes(keyType, Common.KEY_ENCODING_RSA_PRIVATE)) {
-			byte m[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] m = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + m.length;
-			byte exp[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] exp = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + exp.length;
 			RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(new BigInteger(1, m), new BigInteger(1, exp));
 			try {
@@ -689,21 +689,21 @@ public abstract class Util {
 				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_ENCRYPTION_ERROR, "不支持RSA加密算法", e);
 			}
 		} else if (Util.equalsBytes(keyType, Common.KEY_ENCODING_RSACRT_PRIVATE)) {
-			byte n[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] n = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + n.length;
-			byte pubEx[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] pubEx = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + pubEx.length;
-			byte ex[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] ex = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + ex.length;
-			byte p[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] p = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + p.length;
-			byte q[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] q = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + q.length;
-			byte exP[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] exP = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + exP.length;
-			byte exQ[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] exQ = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + exQ.length;
-			byte coeff[] = BaseConvertor.readByteArray(pkBuf, offset);
+			byte[] coeff = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + coeff.length;
 			RSAPrivateCrtKeySpec keySpec = new RSAPrivateCrtKeySpec(new BigInteger(1, n), new BigInteger(1, pubEx),
 					new BigInteger(1, ex), new BigInteger(1, p), new BigInteger(1, q), new BigInteger(1, exP),
@@ -732,7 +732,7 @@ public abstract class Util {
 						Cipher.DECRYPT_MODE, iv);
 				return decryptCipher.doFinal(ciphertext, 0, ciphertext.length);
 			} catch (Exception e) {
-				throw new Exception("Unable to decrypt");
+				throw new Exception("无法解码");
 			}
 		case Common.ENCRYPT_PBKDF2_DESEDE_CBC_PKCS5:
 			try {
@@ -785,55 +785,55 @@ public abstract class Util {
 	public static byte[] getBytesFromPrivateKey(PrivateKey key) throws Exception {
 		if (key instanceof DSAPrivateKey) {
 			DSAPrivateKey dsaKey = (DSAPrivateKey) key;
-			byte x[] = dsaKey.getX().toByteArray();
+			byte[] x = dsaKey.getX().toByteArray();
 			DSAParams params = dsaKey.getParams();
-			byte p[] = params.getP().toByteArray();
-			byte q[] = params.getQ().toByteArray();
-			byte g[] = params.getG().toByteArray();
-			byte enc[] = new byte[Common.FOUR_SIZE * 5 + Common.KEY_ENCODING_DSA_PRIVATE.length + x.length + p.length
+			byte[] p = params.getP().toByteArray();
+			byte[] q = params.getQ().toByteArray();
+			byte[] g = params.getG().toByteArray();
+			byte[] enc = new byte[Common.FOUR_SIZE * 5 + Common.KEY_ENCODING_DSA_PRIVATE.length + x.length + p.length
 					+ q.length + g.length];
-			int loc = 0;
-			loc += BaseConvertor.writeByteArray(enc, loc, Common.KEY_ENCODING_DSA_PRIVATE);
-			loc += BaseConvertor.writeByteArray(enc, loc, x);
-			loc += BaseConvertor.writeByteArray(enc, loc, p);
-			loc += BaseConvertor.writeByteArray(enc, loc, q);
-			loc += BaseConvertor.writeByteArray(enc, loc, g);
+			int offset = 0;
+			offset += BaseConvertor.writeByteArray(enc, offset, Common.KEY_ENCODING_DSA_PRIVATE);
+			offset += BaseConvertor.writeByteArray(enc, offset, x);
+			offset += BaseConvertor.writeByteArray(enc, offset, p);
+			offset += BaseConvertor.writeByteArray(enc, offset, q);
+			offset += BaseConvertor.writeByteArray(enc, offset, g);
 			return enc;
 		} else if (key instanceof RSAPrivateKey) {
 			RSAPrivateKey rsaKey = (RSAPrivateKey) key;
 			if (rsaKey instanceof RSAPrivateCrtKey) {
 				RSAPrivateCrtKey rsacrtKey = (RSAPrivateCrtKey) rsaKey;
-				byte x[] = rsacrtKey.getModulus().toByteArray();
-				byte ex[] = rsacrtKey.getPrivateExponent().toByteArray();
-				byte pubEx[] = rsacrtKey.getPublicExponent().toByteArray();
-				byte p[] = rsacrtKey.getPrimeP().toByteArray();
-				byte q[] = rsacrtKey.getPrimeQ().toByteArray();
-				byte exP[] = rsacrtKey.getPrimeExponentP().toByteArray();
-				byte exQ[] = rsacrtKey.getPrimeExponentQ().toByteArray();
-				byte coeff[] = rsacrtKey.getCrtCoefficient().toByteArray();
+				byte[] x = rsacrtKey.getModulus().toByteArray();
+				byte[] ex = rsacrtKey.getPrivateExponent().toByteArray();
+				byte[] pubEx = rsacrtKey.getPublicExponent().toByteArray();
+				byte[] p = rsacrtKey.getPrimeP().toByteArray();
+				byte[] q = rsacrtKey.getPrimeQ().toByteArray();
+				byte[] exP = rsacrtKey.getPrimeExponentP().toByteArray();
+				byte[] exQ = rsacrtKey.getPrimeExponentQ().toByteArray();
+				byte[] coeff = rsacrtKey.getCrtCoefficient().toByteArray();
 
 				byte enc[] = new byte[Common.FOUR_SIZE * 9 + Common.KEY_ENCODING_RSACRT_PRIVATE.length + x.length
 						+ ex.length + pubEx.length + p.length + q.length + exP.length + exQ.length + coeff.length];
-				int loc = 0;
-				loc += BaseConvertor.writeByteArray(enc, loc, Common.KEY_ENCODING_RSACRT_PRIVATE);
-				loc += BaseConvertor.writeByteArray(enc, loc, x);
-				loc += BaseConvertor.writeByteArray(enc, loc, pubEx);
-				loc += BaseConvertor.writeByteArray(enc, loc, ex);
-				loc += BaseConvertor.writeByteArray(enc, loc, p);
-				loc += BaseConvertor.writeByteArray(enc, loc, q);
-				loc += BaseConvertor.writeByteArray(enc, loc, exP);
-				loc += BaseConvertor.writeByteArray(enc, loc, exQ);
-				loc += BaseConvertor.writeByteArray(enc, loc, coeff);
+				int offset = 0;
+				offset += BaseConvertor.writeByteArray(enc, offset, Common.KEY_ENCODING_RSACRT_PRIVATE);
+				offset += BaseConvertor.writeByteArray(enc, offset, x);
+				offset += BaseConvertor.writeByteArray(enc, offset, pubEx);
+				offset += BaseConvertor.writeByteArray(enc, offset, ex);
+				offset += BaseConvertor.writeByteArray(enc, offset, p);
+				offset += BaseConvertor.writeByteArray(enc, offset, q);
+				offset += BaseConvertor.writeByteArray(enc, offset, exP);
+				offset += BaseConvertor.writeByteArray(enc, offset, exQ);
+				offset += BaseConvertor.writeByteArray(enc, offset, coeff);
 				return enc;
 			} else {
-				byte x[] = rsaKey.getModulus().toByteArray();
-				byte y[] = rsaKey.getPrivateExponent().toByteArray();
-				byte enc[] = new byte[Common.FOUR_SIZE * 3 + Common.KEY_ENCODING_RSA_PRIVATE.length + x.length
+				byte[] x = rsaKey.getModulus().toByteArray();
+				byte[] y = rsaKey.getPrivateExponent().toByteArray();
+				byte[] enc = new byte[Common.FOUR_SIZE * 3 + Common.KEY_ENCODING_RSA_PRIVATE.length + x.length
 						+ y.length];
-				int loc = 0;
-				loc += BaseConvertor.writeByteArray(enc, loc, Common.KEY_ENCODING_RSA_PRIVATE);
-				loc += BaseConvertor.writeByteArray(enc, loc, x);
-				loc += BaseConvertor.writeByteArray(enc, loc, y);
+				int offset = 0;
+				offset += BaseConvertor.writeByteArray(enc, offset, Common.KEY_ENCODING_RSA_PRIVATE);
+				offset += BaseConvertor.writeByteArray(enc, offset, x);
+				offset += BaseConvertor.writeByteArray(enc, offset, y);
 				return enc;
 			}
 		} else {
@@ -842,9 +842,26 @@ public abstract class Util {
 	}
 
 	public static PublicKey getPublicKeyFromFile(String filename) throws Exception {
-		File f = new File(filename);
-		FileInputStream in = new FileInputStream(f);
-		byte buf[] = new byte[(int) f.length()];
+		File pubKeyFile = new File(filename);
+		if (!pubKeyFile.exists()) {
+			System.out.println(filename + "文件不存在!");
+			return null;
+		}
+		String fileName = pubKeyFile.getName();
+		String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+		if (BIN.equalsIgnoreCase(suffix)) {
+			return getPublicKeyFromBinFile(pubKeyFile);
+		} else if (PEM.equalsIgnoreCase(suffix)) {
+			return getPublicKeyKeyFromPemFile(pubKeyFile);
+		} else {
+			System.out.println("不支持的公钥文件格式：" + suffix);
+			return null;
+		}
+	}
+
+	private static PublicKey getPublicKeyFromBinFile(File pubKeyFile) throws Exception {
+		FileInputStream in = new FileInputStream(pubKeyFile);
+		byte buf[] = new byte[(int) pubKeyFile.length()];
 		try {
 			int r, n = 0;
 			while ((r = in.read(buf, n, buf.length - n)) > 0)
@@ -853,6 +870,79 @@ public abstract class Util {
 			in.close();
 		}
 		return getPublicKeyFromBytes(buf, 0);
+	}
+	
+	private static PublicKey getPublicKeyKeyFromPemFile(File pubKeyFile) {
+		InputStream in;
+		try {
+			in = new FileInputStream(pubKeyFile);
+			int fLen = (int) pubKeyFile.length();
+			byte[] strBuffer = new byte[fLen];
+			try {
+				in.read(strBuffer, 0, fLen);
+			} catch (IOException e) {
+				e.printStackTrace();
+				try {
+					in.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				return null;
+			}
+			StringReader reader = new StringReader(new String(strBuffer));
+			BufferedReader bufferedReader = new BufferedReader(reader);
+			String line;
+			StringBuilder contentsBase64 = new StringBuilder();
+			String type = null;
+			try {
+				while ((line = bufferedReader.readLine()) != null) {
+					if (line.trim().isEmpty() || line.isEmpty())
+						continue;
+					if (type == null) {
+						Pattern typePattern = Pattern.compile(STARTPATTERN);
+						Matcher matcher = typePattern.matcher(line);
+						if (matcher.matches())
+							type = matcher.group(1);
+						else
+							type = "";
+						System.out.println("type=" + type);
+						continue;
+					}
+					Pattern endPattern = Pattern.compile(ENDPATTERN);
+					if (endPattern.matcher(line).matches())
+						break;
+					contentsBase64.append(line);
+				}
+				bufferedReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+			System.out.println("contentsBase64" + contentsBase64);
+			byte[] bytes = Base64.decodeBase64(contentsBase64.toString());
+			boolean encrypted = "PUBLIC".equals(type);
+			if (!encrypted && !"PUBLIC".equals(type)) {
+				System.out.println("文件起始应该是\"-----BEGIN PUBLIC KEY-----\"");
+				return null;
+			}
+			try {
+				X509EncodedKeySpec keySpec = new X509EncodedKeySpec(bytes);
+				try {
+					return KeyFactory.getInstance("RSA").generatePublic(keySpec);
+				} catch (InvalidKeySpecException e) {
+					return KeyFactory.getInstance("DSA").generatePublic(keySpec);
+				}
+			} catch (NoSuchAlgorithmException e) {
+				throw new AssertionError(e);
+			} catch (InvalidKeySpecException e) {
+				throw new Exception("RSA和DSA格式的公钥生成器都无法生成公钥", e);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static PrivateKey getPrivateKeyFromFile(String privakeyFilePath, String password) {
@@ -881,7 +971,7 @@ public abstract class Util {
 
 	private static PrivateKey getPrivateKeyFromBinFile(File privKeyFile, String password) throws Exception {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		byte buf[] = new byte[4096];
+		byte[] buf = new byte[4096];
 		FileInputStream fin = new FileInputStream(privKeyFile);
 		try {
 			int r = 0;
@@ -891,7 +981,7 @@ public abstract class Util {
 			fin.close();
 		}
 		buf = bout.toByteArray();
-		byte passphrase[] = encodeString(password);
+		byte[] passphrase = encodeString(password);
 		buf = decrypt(buf, passphrase);
 		return getPrivateKeyFromBytes(buf, 0);
 	}
@@ -996,7 +1086,7 @@ public abstract class Util {
 			throw new Exception("DSA和RSA都无法解析", e);
 		}
 	}
-	
+
 	public static final String bytesToHexString(byte[] bArray) {
 		StringBuffer sb = new StringBuffer(bArray.length);
 		String sTemp;
@@ -1008,13 +1098,38 @@ public abstract class Util {
 		}
 		return sb.toString();
 	}
-	
-	public static boolean isIPV4(String ip){
-		if(ip == null)
+
+	public static boolean isIPV4(String ip) {
+		if (ip == null)
 			return false;
-		if(Common.IPV4_REGEX.matcher(ip).matches())
+		if (Common.IPV4_REGEX.matcher(ip).matches())
 			return true;
 		else
 			return false;
+	}
+
+	public static final byte[] getBytesFromFile(String filePath) throws IOException {
+		File f = new File(filePath);
+		byte[] buf = new byte[(int) f.length()];
+
+		FileInputStream input = new FileInputStream(f);
+		int n = 0;
+		int offset = 0;
+		while ((n < buf.length) && ((offset = input.read(buf, n, buf.length - n)) >= 0))
+			n += offset;
+		input.close();
+		return buf;
+	}
+
+	public static final byte[] convertIPStr2Bytes(String ip) {
+		byte[] ipBytes;
+		if (Util.isIPV4(ip)) {
+			String[] st = ip.split("\\.");
+			ipBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) Integer.parseInt(st[0]),
+					(byte) Integer.parseInt(st[1]), (byte) Integer.parseInt(st[2]), (byte) Integer.parseInt(st[3]) };
+		} else {
+			ipBytes = Util.encodeString(ip);
+		}
+		return ipBytes;
 	}
 }
