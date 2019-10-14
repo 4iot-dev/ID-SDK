@@ -18,14 +18,21 @@ package cn.ac.caict.iiiiot.idisc.data;
  * https://www.citln.cn/
  */
 
+import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.commons.logging.Log;
 
+import cn.ac.caict.iiiiot.idisc.convertor.BytesObjConvertor;
+import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
+import cn.ac.caict.iiiiot.idisc.core.SiteInfo;
 import cn.ac.caict.iiiiot.idisc.log.IdisLog;
+import cn.ac.caict.iiiiot.idisc.security.Claims;
+import cn.ac.caict.iiiiot.idisc.security.SignatureStructImpl;
 import cn.ac.caict.iiiiot.idisc.utils.Common;
 import cn.ac.caict.iiiiot.idisc.utils.DateUtils;
+import cn.ac.caict.iiiiot.idisc.utils.JsonWorker;
 import cn.ac.caict.iiiiot.idisc.utils.Util;
 /**
  * 一个标识下可以设置一个标识值集，每一个标识值即IdentifierValue包括如下数据：
@@ -356,6 +363,51 @@ public class IdentifierValue {
 	public boolean hasType(byte[] theType) {
 		return Util.equalsCaseInsensitive(this.type, theType) || (theType.length < type.length && type[theType.length] == (byte) '.'
 				&& Util.startsWithCaseInsensitive(type, theType));
+	}
+	
+	public Object convertData2Object() throws IdentifierException{
+		if(type == null || type.length == 0)
+			return data;
+		switch (Util.decodeString(type)) {
+		case Common.HS_SITE_PREFIX:
+		case Common.HS_SITE:{
+			SiteInfo si = new SiteInfo();
+			si = BytesObjConvertor.bytesCovertToSiteInfo(data);
+			return si;
+		}
+		case Common.HS_ADMIN:{
+			AdminInfo ai = new AdminInfo();
+			ai = BytesObjConvertor.bytesConvertToAdminInfo(data);
+			return ai;
+		}
+		case Common.HS_VLIST:{
+			ValueReference[] arr = BytesObjConvertor.bytesCovertToVList(data);
+			return arr;
+		}
+		case Common.HS_PUBKEY:{
+			try {
+				PublicKey pubKey = Util.getPublicKeyFromBytes(data);
+				return pubKey;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return data;
+		}
+		case Common.HS_SIGNATURE:
+		case Common.HS_CERT:{
+			try {
+				SignatureStructImpl signatureStruct = new SignatureStructImpl(data);
+				String payload = signatureStruct.getPayloadString();
+				Claims claim = JsonWorker.getGson().fromJson(payload, Claims.class);
+				return claim;
+			} catch (IdentifierException e) {
+				e.printStackTrace();
+			}
+		}
+		default:
+			break;
+		}
+		return data;
 	}
 
 	// 私有方法
