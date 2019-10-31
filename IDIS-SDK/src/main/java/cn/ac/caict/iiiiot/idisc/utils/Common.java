@@ -156,6 +156,8 @@ public abstract class Common {
 	public static final byte KEY_ENCODING_RSACRT_PRIVATE[] = Util.encodeString("RSA_PRIVCRT_KEY");
 
 	public static final byte KEY_ENCODING_RSA_PUBLIC[] = Util.encodeString("RSA_PUB_KEY");
+	
+	public static final byte[] CREDENTIAL_TYPE_SIGNED = Util.encodeString("HS_SIGNED"); 
 
 	public static final int SITE_RECORD_FORMAT_VERSION = 1;
 	// 质询nonce的size

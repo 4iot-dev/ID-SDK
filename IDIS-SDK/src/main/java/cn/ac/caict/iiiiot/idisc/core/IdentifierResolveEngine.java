@@ -1,4 +1,5 @@
 package cn.ac.caict.iiiiot.idisc.core;
+
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +34,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.channels.SocketChannel;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
@@ -54,19 +56,19 @@ public class IdentifierResolveEngine {
 	private int tcpTimeout = 60 * 60;
 	private SiteInfo[] siteInfo;
 	private Random messageIDMaker;
-	private  static final int RETRY_TIMES = 3;
-	private Map<String,Object> config = null;
+	private static final int RETRY_TIMES = 3;
+	private Map<String, Object> config = null;
 	private Log logger = IdisLog.getLogger(IdentifierResolveEngine.class);
-	
-	private void initSiteInfo(String ip, int port, String protocol){
+
+	private void initSiteInfo(String ip, int port, String protocol) {
 		byte iPro = IdisCommunicationItems.TS_IDF_TCP;
-		if(protocol == null || protocol.equalsIgnoreCase("tcp"))
+		if (protocol == null || protocol.equalsIgnoreCase("tcp"))
 			iPro = IdisCommunicationItems.TS_IDF_TCP;
-		else if(protocol.equalsIgnoreCase("udp"))
+		else if (protocol.equalsIgnoreCase("udp"))
 			iPro = IdisCommunicationItems.TS_IDF_UDP;
 		byte[] b = Util.convertIPStr2Bytes(ip);
-		
-		IdisCommunicationItems i = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,iPro, port);
+
+		IdisCommunicationItems i = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY, iPro, port);
 		ServerInfo s = new ServerInfo();
 		s.setIpBytes(b);
 		s.communicationItems = new IdisCommunicationItems[] { i };
@@ -76,40 +78,41 @@ public class IdentifierResolveEngine {
 		siteInfo = new SiteInfo[] { si };
 
 	}
+
 	public void updateSiteInfo() {
 		SiteRequest request = new SiteRequest();
 		SiteInfo si = new SiteInfo();
 		try {
 			BaseResponse response = processRequest(request, null);
-			if(response != null && response instanceof SiteResponse){
-				si = ((SiteResponse)response).getSiteInfo();
-				siteInfo = new SiteInfo[]{si};
+			if (response != null && response instanceof SiteResponse) {
+				si = ((SiteResponse) response).getSiteInfo();
+				siteInfo = new SiteInfo[] { si };
 			}
 		} catch (IdentifierException e) {
 			e.printStackTrace();
 			logger.error("SiteInfo获取失败，将使用默认站点信息配置");
 		}
 	}
-	
+
 	int preferredProtocols[] = { IdisCommunicationItems.TS_IDF_TCP, IdisCommunicationItems.TS_IDF_UDP };
 
 	private void loadConfig() throws IOException {
 		logger.info("begin----loadConfig()---");
 		String path = System.getProperty("user.dir");
-		File fConfig = new File(path ,"src/config.json");
+		File fConfig = new File(path, "src/config.json");
 		System.out.println("文件路径：" + fConfig.getAbsolutePath());
 		InputStream is = null;
-		if(fConfig.exists()){
+		if (fConfig.exists()) {
 			logger.info("配置文件路径：" + fConfig.getAbsolutePath());
 			is = new BufferedInputStream(new FileInputStream(fConfig));
 		} else {
 			is = IdentifierResolveEngine.class.getResourceAsStream("/cn/caict/idisc/conf/config.json");
-			if(is == null){
+			if (is == null) {
 				System.out.println("读取idis-sdk.jar的配置文件失败");
 				logger.error("读取idis-sdk.jar的配置文件失败");
 			}
 		}
-		if(is == null){
+		if (is == null) {
 			System.out.println("资源获取失败");
 			logger.error("资源获取失败");
 			return;
@@ -125,12 +128,14 @@ public class IdentifierResolveEngine {
 		logger.info("配置信息：" + config.toString());
 		logger.info("end----loadConfig()---");
 	}
-	private void createConnection(String ip, int port,String protocol) throws IdentifierException{
-		if(!Common.IPV4_REGEX.matcher(ip).matches()&&!Common.IPV6_COMPRESS_REGEX.matcher(ip).matches()&&!Common.IPV6_STD_REGEX.matcher(ip).matches())
+
+	private void createConnection(String ip, int port, String protocol) throws IdentifierException {
+		if (!Common.IPV4_REGEX.matcher(ip).matches() && !Common.IPV6_COMPRESS_REGEX.matcher(ip).matches()
+				&& !Common.IPV6_STD_REGEX.matcher(ip).matches())
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_ILLEGAL_IP, "ip非法");
-		if(!Common.PORT_REGEX.matcher(Integer.toString(port)).matches())
+		if (!Common.PORT_REGEX.matcher(Integer.toString(port)).matches())
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_ILLEGAL_PORT, "端口非法");
-		if(protocol == null || !"tcp".equalsIgnoreCase(protocol)&&!"udp".equalsIgnoreCase(protocol))
+		if (protocol == null || !"tcp".equalsIgnoreCase(protocol) && !"udp".equalsIgnoreCase(protocol))
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_UNKNOWN_PROTOCOL, "暂不支持该协议");
 		try {
 			messageIDMaker = SecureRandom.getInstance("SHA1PRNG");
@@ -169,19 +174,22 @@ public class IdentifierResolveEngine {
 		}
 		updateSiteInfo();
 	}
-	public IdentifierResolveEngine(String ip, int port,String protocol) throws IdentifierException {
-		createConnection(ip,port,protocol);
+
+	public IdentifierResolveEngine(String ip, int port, String protocol) throws IdentifierException {
+		createConnection(ip, port, protocol);
 	}
-	 public IdentifierResolveEngine() throws IOException, IdentifierException {
-		 loadConfig();
-		 String ip = (String)config.get("ip");
-		 System.out.println("ip:" + ip);
-		 int port = Integer.parseInt((String)config.get("port"));
-		 System.out.println("port:" + port);
-		 String protocol = (String)config.get("protocol");
-		 System.out.println("protocol:" + protocol);
-		 createConnection(ip,port,protocol);
-	 }
+
+	public IdentifierResolveEngine() throws IOException, IdentifierException {
+		loadConfig();
+		String ip = (String) config.get("ip");
+		System.out.println("ip:" + ip);
+		int port = Integer.parseInt((String) config.get("port"));
+		System.out.println("port:" + port);
+		String protocol = (String) config.get("protocol");
+		System.out.println("protocol:" + protocol);
+		createConnection(ip, port, protocol);
+	}
+
 	@Override
 	public void finalize() throws Throwable {
 		try {
@@ -240,11 +248,11 @@ public class IdentifierResolveEngine {
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_IDIS_SERVER_ERROR, "server number is 0");
 		}
 		int theProtocol = siteInfo.servers[0].communicationItems[0].protocol;
-		if(protocol != theProtocol){
-			System.out.println("期望使用"+(theProtocol==IdisCommunicationItems.TS_IDF_UDP?"UDP":"TCP")+"类型处理");
+		if (protocol != theProtocol) {
+			System.out.println("期望使用" + (theProtocol == IdisCommunicationItems.TS_IDF_UDP ? "UDP" : "TCP") + "类型处理");
 			return null;
 		}
-		
+
 		BaseResponse response = null;
 
 		for (int i = 0; i < siteInfo.servers.length; i++) {
@@ -260,9 +268,9 @@ public class IdentifierResolveEngine {
 		IdisCommunicationItems itemsWithProtocol = server.findIdisCommunicationItemsByProtocol(protocol, req);
 		if (itemsWithProtocol == null) {
 			String strPro = "";
-			if(protocol == 0){
+			if (protocol == 0) {
 				strPro = "TCP";
-			} else if(protocol == 1) {
+			} else if (protocol == 1) {
 				strPro = "UDP";
 			} else {
 				strPro = "未知协议";
@@ -271,14 +279,15 @@ public class IdentifierResolveEngine {
 			return null;
 		}
 		BaseResponse response = sendRequestToIdisCommunicationItems(req, server, itemsWithProtocol);
-		
+
 		if (response != null && response.getClass() == ChallengeResponse.class
 				&& response.opCode == MessageCommon.OC_LOGIN_IDIS
 				&& response.responseCode == MessageCommon.RC_AUTHENTICATION_NEEDED) {
 			logger.info("登录idis系统发起质询---begin");
-			if (req.authInfo == null){
+			if (req.authInfo == null) {
 				logger.error("response为挑战响应，身份认证信息不能为空。req.authInfo=" + req.authInfo);
-				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_UNABLE_TO_AUTHENTICATE, "No authentication info provided");
+				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_UNABLE_TO_AUTHENTICATE,
+						"No authentication info provided");
 			}
 			System.out.println("---------------登录操作的挑战响应:" + response);
 			ChallengeResponse challResponse = (ChallengeResponse) response;
@@ -306,8 +315,8 @@ public class IdentifierResolveEngine {
 		return response;
 	}
 
-	public BaseResponse sendRequestToIdisCommunicationItems(BaseRequest req, ServerInfo server, IdisCommunicationItems items)
-			throws IdentifierException {
+	public BaseResponse sendRequestToIdisCommunicationItems(BaseRequest req, ServerInfo server,
+			IdisCommunicationItems items) throws IdentifierException {
 		InetAddress addr = server.getInetAddress();
 		int port = items.port;
 		BaseResponse response = null;
@@ -319,7 +328,8 @@ public class IdentifierResolveEngine {
 			response = sendRequestWithUDP(req, addr, port);
 			break;
 		default:
-			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_UNKNOWN_PROTOCOL, "unknown protocol: " + items.protocol);
+			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_UNKNOWN_PROTOCOL,
+					"unknown protocol: " + items.protocol);
 		}
 
 		if (response != null) {
@@ -338,23 +348,24 @@ public class IdentifierResolveEngine {
 		DatagramSocket udpSocket = null;
 		try {
 			udpSocket = new DatagramSocket(port);
-			
-			for (int t=1; t<=RETRY_TIMES; t++) {
+
+			for (int t = 1; t <= RETRY_TIMES; t++) {
 				logger.debug("重试次数：" + t + "次。");
-				long timeout = t*1000;
+				long timeout = t * 1000;
 				sendDataByUdp(req, addr, port, udpSocket);
 				timeout = +System.currentTimeMillis();
 				BaseResponse response = null;
-				try{
+				try {
 					response = receiveDataByUdp(req, addr, port, timeout, udpSocket);
-				} catch(IdentifierException e){
+				} catch (IdentifierException e) {
 					logger.error(e);
-					if(t != RETRY_TIMES)
+					if (t != RETRY_TIMES)
 						continue;
-					else 
-						throw new IdentifierException (e.getExceptionCode(),IdentifierException.getCodeDescription(e.getExceptionCode()));
+					else
+						throw new IdentifierException(e.getExceptionCode(),
+								IdentifierException.getCodeDescription(e.getExceptionCode()));
 				}
-				if(response == null) 
+				if (response == null)
 					continue;
 				return response;
 			}
@@ -373,7 +384,8 @@ public class IdentifierResolveEngine {
 		}
 		return null;
 	}
-	//1.构建要发送的数据 2.发送数据
+
+	// 1.构建要发送的数据 2.发送数据
 	private void sendDataByUdp(BaseRequest req, InetAddress addr, int port, DatagramSocket udpSocket)
 			throws IdentifierException {
 		logger.info("sendDataByUdp--method--begin");
@@ -389,14 +401,19 @@ public class IdentifierResolveEngine {
 					String.valueOf(e) + " sending UDP request to " + Util.rfcIpRepresentation(addr));
 		}
 	}
+
 	/**
-	 * 说明：接收UDP传输的消息
-	 * 1.解析信息，获取到消息长度信息 2.根据长度信息构建容器 3.在未超时的时间范围内获取每一个分包，存入指定容器
+	 * 说明：接收UDP传输的消息 1.解析信息，获取到消息长度信息 2.根据长度信息构建容器 3.在未超时的时间范围内获取每一个分包，存入指定容器
 	 * 4.容器内消息接收完整以后，转码为BaseResponse
-	 * @param req  请求消息
-	 * @param addr 服务IP地址
-	 * @param port 服务端口号
-	 * @param timeout 超时时间
+	 * 
+	 * @param req
+	 *            请求消息
+	 * @param addr
+	 *            服务IP地址
+	 * @param port
+	 *            服务端口号
+	 * @param timeout
+	 *            超时时间
 	 * @param udpSocket
 	 * @return 返回接收到响应消息
 	 * @throws IdentifierException
@@ -443,17 +460,25 @@ public class IdentifierResolveEngine {
 			bAllPackets = (packetSum == ++packageNum);
 			if (bAllPackets) {
 				logger.info("receiveDataByUdp--method--end");
-				return (BaseResponse) BytesMsgConvertor.bytesConvertInfoMessage(respMsg, 0, rcvEnvelope);
+				response =(BaseResponse) BytesMsgConvertor.bytesConvertInfoMessage(respMsg, 0, rcvEnvelope); 
+				if (req.bCertify)
+					checkMessageCredential(req, response);
+				return response;
 			}
 		}
 		logger.info("receiveDataByUdp--method--end");
 		return response;
 	}
+
 	/**
 	 * 说明：将消息体分成若干数据包
-	 * @param req 形成数据包的消息体
-	 * @param addr ip地址信息
-	 * @param port 服务端口号
+	 * 
+	 * @param req
+	 *            形成数据包的消息体
+	 * @param addr
+	 *            ip地址信息
+	 * @param port
+	 *            服务端口号
 	 */
 	private DatagramPacket[] getPacketArray(BaseRequest req, InetAddress addr, int port) throws IdentifierException {
 		logger.info("getPacketArray--method--begin");
@@ -488,7 +513,9 @@ public class IdentifierResolveEngine {
 
 	/**
 	 * 说明：为请求消息创建信封对象（定义信封的各标志位信息）
-	 * @param req 即将发送的请求消息
+	 * 
+	 * @param req
+	 *            即将发送的请求消息
 	 * @return 返回信封对象
 	 * @throws IdentifierException
 	 */
@@ -510,13 +537,16 @@ public class IdentifierResolveEngine {
 		logger.info("createEnvelope--method--end");
 		return mEnvlp;
 	}
+
 	/**
-	 * 说明：tcp使用长连接收发数据 
-	 * 1.发送数据:信封+请求消息 
-	 * 2.接收数据:接收信息，接收消息体
-	 * @param req 请求消息
-	 * @param addr 请求ip对象
-	 * @param port 请求端口
+	 * 说明：tcp使用长连接收发数据 1.发送数据:信封+请求消息 2.接收数据:接收信息，接收消息体
+	 * 
+	 * @param req
+	 *            请求消息
+	 * @param addr
+	 *            请求ip对象
+	 * @param port
+	 *            请求端口
 	 * @return 发送TCP消息后的响应数据
 	 */
 	private BaseResponse sendRequestWithTCP(BaseRequest req, InetAddress addr, int port) throws IdentifierException {
@@ -554,6 +584,8 @@ public class IdentifierResolveEngine {
 					n += offsize;
 				}
 				response = (BaseResponse) BytesMsgConvertor.bytesConvertInfoMessage(receiveMsg, 0, rvcEnv);
+				if (req.bCertify)
+					checkMessageCredential(req, response);
 				if (!response.continuous) {
 					logger.info("接收响应数据结束：response--" + response);
 					return response;
@@ -567,5 +599,37 @@ public class IdentifierResolveEngine {
 				logger.info("sendRequestWithTCP--method--end");
 			}
 		}
+	}
+
+	private void checkMessageCredential(BaseRequest request, BaseResponse response) throws IdentifierException {
+		logger.info("checkMessageCredential--method--begin");
+		if (request.returnRequestDigest) {
+			byte[] requestDigest = Util.doDigest(response.rdHashType, request.getEncodedMessageBody());
+			if (!Util.equalsBytes(requestDigest, response.requestDigest)) {
+				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_SECURITY_ALERT, "请求消息与响应消息摘要不同，发出安全警告！！");
+			}
+		}
+		if (request.serverPubKeyBytes == null) {
+			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_SECURITY_ALERT,"没有用于验证凭据的公钥！！");
+		}
+
+		PublicKey pubKey;
+		boolean sucessGetPubkey = false;
+		try {
+			pubKey = Util.getPublicKeyFromBytes(request.serverPubKeyBytes, 0);
+			sucessGetPubkey = true;
+			if (response.signature == null || response.signature.length <= 0) {
+				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MISSING_OR_INVALID_SIGNATURE,"签名数据不存在无法验证！！");
+			}
+			if (!response.checkCredential(pubKey)) {
+				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MISSING_OR_INVALID_SIGNATURE, "消息凭据验证失败！！");
+			}
+		} catch (Exception e) {
+			if(!sucessGetPubkey)
+				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_INVALID_VALUE, "无法获取公钥对象！！", e);
+			else
+				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MISSING_OR_INVALID_SIGNATURE,"无法验证消息凭据异常如下: " + response, e);
+		}
+		logger.info("checkMessageCredential--method--end");
 	}
 }

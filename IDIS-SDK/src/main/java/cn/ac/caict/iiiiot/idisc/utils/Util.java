@@ -1086,6 +1086,25 @@ public abstract class Util {
 			throw new Exception("DSA和RSA都无法解析", e);
 		}
 	}
+	
+	public static String getSigAlgFromSignKeyType(byte[] hashAlg, String sigKeyType) throws IdentifierException {
+		if (Util.equalsBytes(hashAlg, Common.HASH_ALG_SHA1)
+				|| Util.equalsBytes(hashAlg, Common.HASH_ALG_SHA1_ALTERNATE))
+			return "SHA1with" + sigKeyType;
+		else if (Util.equalsBytes(hashAlg, Common.HASH_ALG_SHA256)
+				|| Util.equalsBytes(hashAlg, Common.HASH_ALG_SHA256_ALTERNATE))
+			return "SHA256with" + sigKeyType;
+		else if (Util.equalsBytes(hashAlg, Common.HASH_ALG_MD5))
+			return "MD5with" + sigKeyType;
+		else if (hashAlg.length == 1 && hashAlg[0] == Common.HASH_CODE_SHA1)
+			return "SHA1with" + sigKeyType;
+		else if (hashAlg.length == 1 && hashAlg[0] == Common.HASH_CODE_SHA256)
+			return "SHA256with" + sigKeyType;
+		else if (hashAlg.length == 1 && hashAlg[0] == Common.HASH_CODE_MD5)
+			return "MD5with" + sigKeyType;
+		throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MISSING_OR_INVALID_SIGNATURE,
+				"未知的哈希算法: " + Util.decodeString(hashAlg));
+	}
 
 	public static final String bytesToHexString(byte[] bArray) {
 		StringBuffer sb = new StringBuffer(bArray.length);

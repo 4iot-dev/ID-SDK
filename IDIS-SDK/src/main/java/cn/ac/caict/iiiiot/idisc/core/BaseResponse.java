@@ -1,4 +1,5 @@
 package cn.ac.caict.iiiiot.idisc.core;
+
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +20,13 @@ package cn.ac.caict.iiiiot.idisc.core;
  */
 import java.io.InputStream;
 import java.net.Socket;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.util.logging.Logger;
 
+import cn.ac.caict.iiiiot.idisc.convertor.BaseConvertor;
 import cn.ac.caict.iiiiot.idisc.utils.Common;
+import cn.ac.caict.iiiiot.idisc.utils.ExceptionCommon;
 import cn.ac.caict.iiiiot.idisc.utils.MessageCommon;
 import cn.ac.caict.iiiiot.idisc.utils.Util;
 
@@ -43,8 +49,8 @@ public abstract class BaseResponse extends BaseMessage {
 		this.responseCode = responseCode;
 		init(req);
 	}
-	
-	public void init(BaseRequest req) throws IdentifierException{
+
+	public void init(BaseRequest req) throws IdentifierException {
 		populateMsgSettings(req);
 		this.suggestMajorProtocolVersion = MessageCommon.MAJOR_VERSION;
 		this.suggestMinorProtocolVersion = MessageCommon.MINOR_VERSION;
@@ -64,5 +70,45 @@ public abstract class BaseResponse extends BaseMessage {
 	public final void extractRequestDigest(BaseMessage req) throws IdentifierException {
 		requestDigest = Util.doSHA256Digest(req.getEncodedMessageBody());
 		rdHashType = Common.HASH_CODE_SHA256;
+	}
+
+	public final boolean checkCredential(PublicKey pubKey) throws Exception {
+		if (signature == null || signature.length <= 0) {
+			System.out.println("签名数据为空，无法做消息凭据验证！！");
+			return false;
+		}
+		int offset = 0;
+		byte version = signature[offset++];
+		byte reserved = signature[offset++];
+		int Options = BaseConvertor.read2Bytes(signature, offset);
+		offset += Common.TWO_SIZE;
+
+		byte[] tmp_idle = BaseConvertor.readByteArray(signature, offset);
+		offset += Common.FOUR_SIZE + tmp_idle.length;
+		int other = BaseConvertor.read4Bytes(signature, offset);
+		offset += Common.FOUR_SIZE;
+
+		byte[] signType =  BaseConvertor.readByteArray(signature, offset);
+		offset += Common.FOUR_SIZE + signType.length;
+
+		if (!Util.equalsBytes(signType, Common.CREDENTIAL_TYPE_SIGNED)) {
+			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_UNKNOWN_ALGORITHM_ID,
+					"未知的签名类型：" + Util.decodeString(signType));
+		}
+
+		int sigLen = BaseConvertor.read4Bytes(signature, offset);
+		offset += Common.FOUR_SIZE;
+
+		byte hashAlgBytes[] = BaseConvertor.readByteArray(signature, offset);
+		offset += Common.FOUR_SIZE + hashAlgBytes.length;
+
+		byte sigBytes[] = BaseConvertor.readByteArray(signature, offset);
+		String algorithm = Util.getSigAlgFromSignKeyType(hashAlgBytes, pubKey.getAlgorithm());
+		Signature sig = Signature.getInstance(algorithm);
+
+		sig.initVerify(pubKey);
+
+		sig.update(getEncodedMessageBody());
+		return sig.verify(sigBytes);
 	}
 }
