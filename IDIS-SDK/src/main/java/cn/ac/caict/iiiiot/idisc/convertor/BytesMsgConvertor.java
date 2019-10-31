@@ -106,7 +106,7 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 				  (msgHeader.responseCode == MessageCommon.RC_INVALID_VALUE) || (msgHeader.responseCode == MessageCommon.RC_SERVER_TOO_BUSY) ||
 				  (msgHeader.responseCode == MessageCommon.RC_PROTOCOL_ERROR) || (msgHeader.responseCode == MessageCommon.RC_INVALID_IDENTIFIER) || 
 				  (msgHeader.responseCode == MessageCommon.RC_RELOGIN) || (msgHeader.responseCode == MessageCommon.RC_LOGIN_FIRST) ||
-				  (msgHeader.responseCode == MessageCommon.RC_OPERATION_NOT_SUPPORTED))){
+				  (msgHeader.responseCode == MessageCommon.RC_OPERATION_NOT_SUPPORTED)||(msgHeader.responseCode == MessageCommon.RC_VERIFY_CREDENTIAL_FAILED))){
 			message = convertBytesToErrorResponse(msg, bodyOffset, envelope.messageLength + offset, envelope);
 		} else if (msgHeader.responseCode == MessageCommon.RC_AUTHENTICATION_NEEDED){
 			message = convertBytesToChallengeResponse(msg, bodyOffset, msgHeader.opCode, envelope);

@@ -98,4 +98,6 @@ public abstract class MessageCommon {
 	public static final int RC_RELOGIN = 407; 
 	// 未登录
 	public static final int RC_LOGIN_FIRST = 408; 
+	// 
+	public static final int RC_VERIFY_CREDENTIAL_FAILED = 3001;
 }
