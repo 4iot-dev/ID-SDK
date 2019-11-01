@@ -116,6 +116,10 @@ public abstract class Common {
 	public static final String HS_CERT = "HS_CERT";
 	
 	public static final byte TYPE_CERT[] = Util.encodeString(HS_CERT);
+	
+	public static final String URL = "URL";
+	
+	public static final String EMAIL = "EMAIL";
 
 	public static final byte HASH_ALG_MD5[] = Util.encodeString("MD5");
 	
