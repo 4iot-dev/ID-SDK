@@ -74,7 +74,6 @@ public abstract class BaseResponse extends BaseMessage {
 
 	public final boolean checkCredential(PublicKey pubKey) throws Exception {
 		if (signature == null || signature.length <= 0) {
-			System.out.println("签名数据为空，无法做消息凭据验证！！");
 			return false;
 		}
 		int offset = 0;

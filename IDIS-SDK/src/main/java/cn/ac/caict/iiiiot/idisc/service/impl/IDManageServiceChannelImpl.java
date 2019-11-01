@@ -151,12 +151,12 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		ResolutionRequest req = new ResolutionRequest(id, reqTypes, indexes, null);
 		setMessageSettings(req,settings);
 		long beforeTime = new Date().getTime();
-		System.out.println("before processRequest req:" + req);
+		log.debug("before processRequest req:" + req);
 		BaseResponse response = resolverEngine.processRequest(req,null);
-		System.out.println("after processRequest response:" + response);
+		log.debug("after processRequest response:" + response);
 		long afterTime = new Date().getTime();
 		long time = afterTime - beforeTime;
-		System.out.println("查询耗时(毫秒):" + time);
+		log.debug("查询耗时(毫秒):" + time);
 		log.info("lookupIdentifier---method---end");
 		return response;
 	}
@@ -179,7 +179,7 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		BaseResponse response = resolverEngine.processRequest(req,null);
 		long afterTime = new Date().getTime();
 		long time = afterTime - beforeTime;
-		System.out.println("创建标识耗时(毫秒):" + time);
+		log.debug("创建标识耗时(毫秒):" + time);
 		if (response != null && (response.responseCode == MessageCommon.RC_SUCCESS)){
 			log.info("标识创建成功!");
 		}else{
@@ -206,7 +206,7 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		response = resolverEngine.processRequest(req,null);
 		long afterTime = new Date().getTime();
 		long time = afterTime - beforeTime;
-		System.out.println("删除标识耗时(毫秒):" + time);
+		log.debug("删除标识耗时(毫秒):" + time);
 		if (response != null && (response.responseCode == MessageCommon.RC_SUCCESS)){
 			log.info("删除标识成功！");
 		}else {
@@ -234,7 +234,7 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		response = resolverEngine.processRequest(req,null);
 		long afterTime = new Date().getTime();
 		long time = afterTime - beforeTime;
-		System.out.println("添加标识值耗时(毫秒):" + time);
+		log.debug("添加标识值耗时(毫秒):" + time);
 		if (response != null && (response.responseCode == MessageCommon.RC_SUCCESS)){
 			log.info("添加标识值成功!");
 		}else{
@@ -260,7 +260,7 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		BaseResponse response = resolverEngine.processRequest(req,null);
 		long afterTime = new Date().getTime();
 		long time = afterTime - beforeTime;
-		System.out.println("修改标识值耗时(毫秒):" + time);
+		log.debug("修改标识值耗时(毫秒):" + time);
 		if (response != null && (response.responseCode == MessageCommon.RC_SUCCESS)){
 			log.info("标识值修改成功！");
 		}else{
@@ -287,7 +287,7 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		response = resolverEngine.processRequest(req,null);
 		long afterTime = new Date().getTime();
 		long time = afterTime - beforeTime;
-		System.out.println("移除标识值耗时(毫秒):" + time);
+		log.debug("移除标识值耗时(毫秒):" + time);
 		if (response != null && (response.responseCode == MessageCommon.RC_SUCCESS)){
 			log.info("移除标识值成功!");
 		}else{
@@ -308,7 +308,7 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		long beforeTime = new Date().getTime();
 		response = resolverEngine.processRequest(req,null);
 		long afterTime = new Date().getTime();
-		System.out.println("移除标识值耗时(毫秒):" + (afterTime - beforeTime));
+		log.debug("移除标识值耗时(毫秒):" + (afterTime - beforeTime));
 		if (response != null && (response.responseCode == MessageCommon.RC_SUCCESS)){
 			log.info("成功获取站点信息!");
 		}else{

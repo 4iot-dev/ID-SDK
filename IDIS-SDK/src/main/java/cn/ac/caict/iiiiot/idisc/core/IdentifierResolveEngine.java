@@ -100,20 +100,17 @@ public class IdentifierResolveEngine {
 		logger.info("begin----loadConfig()---");
 		String path = System.getProperty("user.dir");
 		File fConfig = new File(path, "src/config.json");
-		System.out.println("文件路径：" + fConfig.getAbsolutePath());
+		logger.debug("配置文件路径：" + fConfig.getAbsolutePath());
 		InputStream is = null;
 		if (fConfig.exists()) {
-			logger.info("配置文件路径：" + fConfig.getAbsolutePath());
 			is = new BufferedInputStream(new FileInputStream(fConfig));
 		} else {
 			is = IdentifierResolveEngine.class.getResourceAsStream("/cn/caict/idisc/conf/config.json");
 			if (is == null) {
-				System.out.println("读取idis-sdk.jar的配置文件失败");
 				logger.error("读取idis-sdk.jar的配置文件失败");
 			}
 		}
 		if (is == null) {
-			System.out.println("资源获取失败");
 			logger.error("资源获取失败");
 			return;
 		}
@@ -125,7 +122,7 @@ public class IdentifierResolveEngine {
 		}
 		Gson gson = new Gson();
 		config = gson.fromJson(sb.toString(), Map.class);
-		logger.info("配置信息：" + config.toString());
+		logger.debug("配置信息：" + config.toString());
 		logger.info("end----loadConfig()---");
 	}
 
@@ -182,11 +179,11 @@ public class IdentifierResolveEngine {
 	public IdentifierResolveEngine() throws IOException, IdentifierException {
 		loadConfig();
 		String ip = (String) config.get("ip");
-		System.out.println("ip:" + ip);
+		logger.debug("ip:" + ip);
 		int port = Integer.parseInt((String) config.get("port"));
-		System.out.println("port:" + port);
+		logger.debug("port:" + port);
 		String protocol = (String) config.get("protocol");
-		System.out.println("protocol:" + protocol);
+		logger.debug("protocol:" + protocol);
 		createConnection(ip, port, protocol);
 	}
 
@@ -249,7 +246,7 @@ public class IdentifierResolveEngine {
 		}
 		int theProtocol = siteInfo.servers[0].communicationItems[0].protocol;
 		if (protocol != theProtocol) {
-			System.out.println("期望使用" + (theProtocol == IdisCommunicationItems.TS_IDF_UDP ? "UDP" : "TCP") + "类型处理");
+			logger.debug("期望使用" + (theProtocol == IdisCommunicationItems.TS_IDF_UDP ? "UDP" : "TCP") + "类型处理");
 			return null;
 		}
 
@@ -289,7 +286,7 @@ public class IdentifierResolveEngine {
 				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_UNABLE_TO_AUTHENTICATE,
 						"No authentication info provided");
 			}
-			System.out.println("---------------登录操作的挑战响应:" + response);
+			logger.info("---------------登录操作的挑战响应:" + response);
 			ChallengeResponse challResponse = (ChallengeResponse) response;
 			byte sig[] = req.authInfo.authenticateAction(challResponse, req);
 			int challengeSessionID = response.sessionId;
@@ -377,7 +374,7 @@ public class IdentifierResolveEngine {
 				try {
 					udpSocket.close();
 				} catch (Exception e) {
-					System.out.println("DatagramSocket关闭失败");
+					logger.error("DatagramSocket关闭失败");
 				}
 			}
 			logger.info("sendRequestWithUDP--method--end");
@@ -446,7 +443,7 @@ public class IdentifierResolveEngine {
 				continue;
 			// 计算需要接收数据包数量
 			if (packetSum == 0) {
-				System.out.println("当前信息中记录的消息长度：" + rcvEnvelope.messageLength);
+				logger.debug("当前信息中记录的消息长度：" + rcvEnvelope.messageLength);
 				packetSum = rcvEnvelope.messageLength / maxUDPDataSize;
 				if (rcvEnvelope.messageLength % maxUDPDataSize != 0) {
 					packetSum++;
@@ -489,7 +486,7 @@ public class IdentifierResolveEngine {
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_INTERNAL_ERROR, "Cannot send empty request");
 		}
 		int num = requestBuf.length / maxUDPDataSize;
-		System.out.println("requestBuf.length=" + requestBuf.length);
+		logger.info("requestBuf.length=" + requestBuf.length);
 		if (requestBuf.length % maxUDPDataSize != 0) {
 			num += 1;
 		}

@@ -18,12 +18,18 @@ package cn.ac.caict.iiiiot.idisc.security;
  * https://www.citln.cn/
  */
 import java.security.PrivateKey;
+
+import org.apache.commons.logging.Log;
+
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
+import cn.ac.caict.iiiiot.idisc.log.IdisLog;
 import cn.ac.caict.iiiiot.idisc.utils.JsonWorker;
 
 public class SignerCenter {
 	
 	private static SignerCenter signer = new SignerCenter();
+	
+	private Log logger = IdisLog.getLogger(SignerCenter.class);
     
     public static SignerCenter getInstance() {
         return signer;
@@ -31,7 +37,7 @@ public class SignerCenter {
     
     public SignatureStruct signClaims(Claims claims, PrivateKey privateKey) throws IdentifierException {
     	String payload = JsonWorker.getGson().toJson(claims);
-    	System.out.println("payload:" + payload);
+    	logger.info("payload:" + payload);
     	SignatureStruct signature = new SignatureStructImpl(payload, privateKey);
         return signature;
     }
