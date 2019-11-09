@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey;
 
 import java.security.interfaces.DSAParams;
 import java.security.interfaces.DSAPublicKey;
@@ -22,6 +23,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import cn.ac.caict.iiiiot.idisc.security.EC_Custom_PublicKey;
 import cn.ac.caict.iiiiot.idisc.security.Permission;
 
 public class JsonWorker {
@@ -86,6 +88,16 @@ public class JsonWorker {
                 json.addProperty("kty", "RSA");
                 json.addProperty("n", Base64.encodeBase64URLSafeString(n));
                 json.addProperty("e", Base64.encodeBase64URLSafeString(e));
+            } else if(key instanceof BCECPublicKey){
+            	BCECPublicKey ecKey = (BCECPublicKey)key;
+            	byte[] x = ecKey.getQ().getXCoord().getEncoded();
+            	byte[] y = ecKey.getQ().getYCoord().getEncoded();
+            	EC_Custom_PublicKey pub = new EC_Custom_PublicKey();
+            	pub.x = x;
+            	pub.y = y;
+            	json.addProperty("kty", "SM2");
+            	json.addProperty("x", Base64.encodeBase64URLSafeString(x));
+            	json.addProperty("y", Base64.encodeBase64URLSafeString(y));
             } else {
                 throw new UnsupportedOperationException("Unsupported key type " + key.getClass().getName());
             }
@@ -115,6 +127,13 @@ public class JsonWorker {
                             new BigInteger(1, e));
                     KeyFactory rsaKeyFactory = KeyFactory.getInstance("RSA");
                     return rsaKeyFactory.generatePublic(keySpec);
+                } else if("SM2".equalsIgnoreCase(kty)){
+                	byte[] x = Base64.decodeBase64(obj.get("x").getAsString());
+                	byte[] y = Base64.decodeBase64(obj.get("y").getAsString());
+                	EC_Custom_PublicKey ecKey = new EC_Custom_PublicKey();
+                	ecKey.x = x;
+                	ecKey.y = y;
+                	return ecKey;
                 } else {
                     throw new UnsupportedOperationException("Unsupported key type " + kty);
                 }

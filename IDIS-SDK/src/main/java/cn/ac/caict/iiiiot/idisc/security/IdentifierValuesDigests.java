@@ -8,6 +8,8 @@ public class IdentifierValuesDigests {
 	// 各标识值摘要列表
 	public List<IdentifierValuesDigest> digests;
 	
+	public IdentifierValuesDigests(){}
+	
 	public IdentifierValuesDigests(String alg, List<IdentifierValuesDigest> digests){
 		this.alg = alg;
 		this.digests = digests;

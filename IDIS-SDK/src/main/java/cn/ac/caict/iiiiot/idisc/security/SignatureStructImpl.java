@@ -1,13 +1,20 @@
 package cn.ac.caict.iiiiot.idisc.security;
 
+import java.math.BigInteger;
 import java.security.PrivateKey;
 import java.security.Signature;
 
 import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey;
+import org.bouncycastle.math.ec.ECPoint;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 
+import cn.ac.caict.iiiiot.idisc.convertor.BaseConvertor;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
+import cn.ac.caict.iiiiot.idisc.security.gm.SM2KeyPair;
+import cn.ac.caict.iiiiot.idisc.security.gm.SM2Tool;
 import cn.ac.caict.iiiiot.idisc.utils.ExceptionCommon;
 import cn.ac.caict.iiiiot.idisc.utils.Util;
 
@@ -34,19 +41,40 @@ public class SignatureStructImpl implements SignatureStruct {
 		} else if ("DSA".equals(keyAlg)) {
 			hashAlg = "SHA1";
 			header = Util.encodeString("{\"alg\":\"DS160\"}");
-		} else {
+		} else if ("EC".equals(keyAlg)){
+       	 	hashAlg = "SM3";
+       	 	header = Util.encodeString("{\"alg\":\"SM2SM3\"}");
+		}else {
 			throw new IllegalArgumentException("未知算法： " + keyAlg);
 		}
 		based64_Header = Base64.encodeBase64URLSafe(header);
 		based64_Payload = Base64.encodeBase64URLSafe(payload);
 		try {
-			Signature sig = Signature.getInstance(hashAlg + "with" + keyAlg);
-			sig.initSign(privateKey);
-			sig.update(based64_Header);
-			sig.update((byte) '.');
-			sig.update(based64_Payload);
-			signature = sig.sign();
-			based64_Signature = Base64.encodeBase64URLSafe(signature);
+			if("EC".equals(keyAlg)){
+				SM2Tool sm2Tool = new SM2Tool();
+        		byte[] bDot = new byte[]{(byte)'.'};
+        		byte[] signData = Util.join(based64_Header,bDot,based64_Payload);
+        		String data = new String(signData);
+        		String id = "1234567812345678";
+        		BigInteger prvKey = ((BCECPrivateKey) privateKey).getD();
+        		ECPoint pubkey = sm2Tool.G.multiply(prvKey).normalize();
+        		cn.ac.caict.iiiiot.idisc.security.gm.SM2Tool.Signature sign = sm2Tool.sign(data, id, new SM2KeyPair(pubkey,prvKey));
+        		//signature转为byte[]
+        		byte[] bR = sign.r.toByteArray();
+        		byte[] bS = sign.s.toByteArray();
+        		signature = BaseConvertor.signatureFormat(bR,bS);
+        		//将byte[]用Base64编码
+        		based64_Signature = Base64.encodeBase64URLSafe(signature);
+			} else {
+				Signature sig = Signature.getInstance(hashAlg + "with" + keyAlg);
+				sig.initSign(privateKey);
+				sig.update(based64_Header);
+				sig.update((byte) '.');
+				sig.update(based64_Payload);
+				signature = sig.sign();
+				based64_Signature = Base64.encodeBase64URLSafe(signature);
+			}
+			
 		} catch (Exception e) {
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_SECURITY_ALERT, "构建签名数据失败");
 		}

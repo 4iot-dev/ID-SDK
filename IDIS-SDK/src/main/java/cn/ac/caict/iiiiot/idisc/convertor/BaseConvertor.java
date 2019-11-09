@@ -22,6 +22,7 @@ import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
 import cn.ac.caict.iiiiot.idisc.data.IdentifierValue;
 import cn.ac.caict.iiiiot.idisc.utils.Common;
 import cn.ac.caict.iiiiot.idisc.utils.ExceptionCommon;
+import cn.ac.caict.iiiiot.idisc.utils.Util;
 
 public class BaseConvertor {
 
@@ -121,6 +122,8 @@ public class BaseConvertor {
 	}
 
 	public static final int calcStorageSize(IdentifierValue value) {
+		if (value == null)
+			return 0;
 		int sz = Common.FOUR_SIZE + Common.FOUR_SIZE + 1 + Common.FOUR_SIZE + 1 + Common.FOUR_SIZE + value.type.length
 				+ Common.FOUR_SIZE + value.data.length;
 
@@ -152,5 +155,43 @@ public class BaseConvertor {
 		}
 		int sumSize = offset - origOffset;
 		return sumSize;
+	}
+	
+	public static byte[] signatureFormat(byte[] rArr, byte[] sArr) {
+		int sum_len = 0;
+		sum_len += 1;// 30
+		sum_len += 1;// 除30外总长度
+		sum_len += 1;// r类型
+		System.out.println("r:" + Util.bytesToHexString(rArr));
+		System.out.println("r-len:" + rArr.length);
+		System.out.println("s:" + Util.bytesToHexString(sArr));
+		sum_len += 1;// r长度
+		sum_len += rArr.length;
+		sum_len += 1;// s类型
+		sum_len += 1;// s长度
+		sum_len += sArr.length;
+		int pos = 0;
+		byte[] message = new byte[sum_len];
+		byte[] first = Util.toBytes("30");
+		System.arraycopy(first, 0, message, pos, 1);
+		pos += 1;
+		System.arraycopy(new byte[] { (byte) (255 & (sum_len - 2)) }, 0, message, pos, 1);
+		pos += 1;
+		byte[] type = Util.toBytes("02");
+		System.arraycopy(type, 0, message, pos, 1);
+		pos += 1;
+		int rLen = rArr.length;
+		System.arraycopy(new byte[] { (byte) (255 & rLen) }, 0, message, pos, 1);
+		pos += 1;
+		System.arraycopy(rArr, 0, message, pos, rArr.length);
+		pos += rArr.length;
+		System.arraycopy(type, 0, message, pos, 1);
+		pos += 1;
+		int sLen = sArr.length;
+		System.arraycopy(new byte[] { (byte) (255 & sLen) }, 0, message, pos, 1);
+		pos += 1;
+		System.arraycopy(sArr, 0, message, pos, sArr.length);
+		System.out.println(Util.bytesToHexString(message));
+		return message;
 	}
 }

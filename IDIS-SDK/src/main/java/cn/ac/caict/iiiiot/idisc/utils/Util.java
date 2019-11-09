@@ -47,6 +47,7 @@ import cn.ac.caict.iiiiot.idisc.convertor.BaseConvertor;
 import cn.ac.caict.iiiiot.idisc.core.BaseMessage;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
 import cn.ac.caict.iiiiot.idisc.security.IdentifierSecurityProvider;
+import cn.hutool.crypto.SecureUtil;
 
 public abstract class Util {
 	private static final String PEM = "pem";
@@ -935,7 +936,11 @@ public abstract class Util {
 			} catch (NoSuchAlgorithmException e) {
 				throw new AssertionError(e);
 			} catch (InvalidKeySpecException e) {
-				throw new Exception("RSA和DSA格式的公钥生成器都无法生成公钥", e);
+				try {
+					return SecureUtil.generatePublicKey("SM2", bytes);
+				} catch(Exception ex) {
+					throw new Exception("RSA和DSA、SM2格式的公钥生成器都无法生成公钥", e);
+				}
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -1083,7 +1088,11 @@ public abstract class Util {
 		} catch (NoSuchAlgorithmException e) {
 			throw new Exception("不支持该算法", e);
 		} catch (InvalidKeySpecException e) {
-			throw new Exception("DSA和RSA都无法解析", e);
+			try {
+				return SecureUtil.generatePrivateKey("SM2", bytes);
+			} catch(Exception ex) {
+				throw new Exception("DSA和RSA、SM2都无法解析", e);
+			}
 		}
 	}
 	
@@ -1150,5 +1159,60 @@ public abstract class Util {
 			ipBytes = Util.encodeString(ip);
 		}
 		return ipBytes;
+	}
+	
+	public static byte[] reverseOrderArray(byte[] arr) {
+		// 定义一个反序后的数组
+		byte[] desArr = new byte[arr.length];
+		// 把原数组元素倒序遍历
+		for (int i = 0; i < arr.length; i++) {
+			// 把arr的第i个元素赋值给desArr的最后第i个元素中
+			desArr[arr.length - 1 - i] = arr[i];
+		}
+		// 返回倒序后的数组
+		return desArr;
+	}
+	
+	public static byte[] toBytes(String str) {
+		if (str == null || str.trim().equals("")) {
+			return new byte[0];
+		}
+
+		byte[] bytes = new byte[str.length() / 2];
+		for (int i = 0; i < str.length() / 2; i++) {
+			String subStr = str.substring(i * 2, i * 2 + 2);
+			bytes[i] = (byte) Integer.parseInt(subStr, 16);
+		}
+
+		return bytes;
+	}
+	
+	public static byte[] getBytesWithout00(byte[] origin) {
+		byte[] result = origin;
+		if (origin[0] == 0) {
+			result = new byte[origin.length - 1];
+			System.arraycopy(origin, 1, result, 0, result.length);
+		}
+		return result;
+	}
+	
+	/**
+	 * 字节数组拼接
+	 * 
+	 * @param params
+	 * @return
+	 */
+	public static byte[] join(byte[]...params) {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		byte[] res = null;
+		try {
+			for (int i = 0; i < params.length; i++) {
+				baos.write(params[i]);
+			}
+			res = baos.toByteArray();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return res;
 	}
 }

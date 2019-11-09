@@ -83,6 +83,8 @@ public abstract class MsgBytesConvertor extends BaseConvertor {
 		write4Bytes(udpPkt, 16, msgEnv.messageLength); // bytes 16,17,18,19
 	}
 	public static int convertIdentifierValueToByte(byte[] buf, int offset, IdentifierValue value) {
+		if(value == null)
+			return 0;
 		int origOffset = offset;
 		write4Bytes(buf, offset, value.index);
 		offset += Common.FOUR_SIZE;

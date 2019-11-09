@@ -1,5 +1,6 @@
 package cn.ac.caict.iiiiot.idisc.data;
 
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -15,7 +16,9 @@ import cn.ac.caict.iiiiot.idisc.security.Claims;
 import cn.ac.caict.iiiiot.idisc.security.IdentifierValuesDigest;
 import cn.ac.caict.iiiiot.idisc.security.IdentifierValuesDigests;
 import cn.ac.caict.iiiiot.idisc.security.Permission;
+import cn.ac.caict.iiiiot.idisc.security.gm.SM3Tool;
 import cn.ac.caict.iiiiot.idisc.utils.Common;
+import cn.ac.caict.iiiiot.idisc.utils.Util;
 
 /**
  *	1.签名所须原始数据
@@ -79,17 +82,29 @@ public class SignatureInfo {
     public IdentifierValuesDigests doDigests(IdentifierValue[] values, String alg) throws NoSuchAlgorithmException{
     	if(values == null)
     		return null;
+    	IdentifierValuesDigests allDigest = new IdentifierValuesDigests();
+    	allDigest.alg = alg;
     	List<IdentifierValuesDigest> digest_array = new ArrayList<IdentifierValuesDigest>();
-    	final MessageDigest digester = MessageDigest.getInstance(alg);
-        for (IdentifierValue value : values) {
-        	IdentifierValuesDigest valueOfDigest = doDigest(value, digester);
-        	digest_array.add(valueOfDigest);
-        }
-        IdentifierValuesDigests allDigest = new IdentifierValuesDigests(alg,digest_array);
+    	if("SHA-256".equals(alg)){
+    		final MessageDigest digester = MessageDigest.getInstance(alg);
+            for (IdentifierValue value : values) {
+            	IdentifierValuesDigest valueOfDigest = doDigest(value, digester);
+            	digest_array.add(valueOfDigest);
+            }
+    	} else if("SM3".equals(alg)) {
+    		SM3Tool sm3 = new SM3Tool();
+        	for (IdentifierValue value : values) {
+        		IdentifierValuesDigest digest = digestWithSM3(value,sm3);
+        		digest_array.add(digest);
+            }
+    	}
+    	allDigest.digests = digest_array;
         return allDigest;
     }
     
     private IdentifierValuesDigest doDigest(IdentifierValue value, MessageDigest digester){
+    	if(value == null)
+    		return null;
     	IdentifierValuesDigest digest = new IdentifierValuesDigest();
     	digester.reset();
     	byte[] buf = new byte[BaseConvertor.calcStorageSize(value)];
@@ -99,5 +114,27 @@ public class SignatureInfo {
         digest.digest = Base64.encodeBase64String(digestBytes);
         digest.index = value.index;
     	return digest;
+    }
+    
+    private IdentifierValuesDigest digestWithSM3(IdentifierValue value,SM3Tool sm3){
+    	if(value == null)
+    		return null;
+    	IdentifierValuesDigest result = new IdentifierValuesDigest();
+    	byte[] encodedHandleValue = MsgBytesConvertor.convertIdentifierValueToByte(value);
+    	
+    	try {
+    		byte[] forDig = new byte[encodedHandleValue.length - VALUE_DIGEST_OFFSET];
+    		System.arraycopy(encodedHandleValue, VALUE_DIGEST_OFFSET, forDig, 0, encodedHandleValue.length - VALUE_DIGEST_OFFSET);
+    		System.out.println("[digestWithSM3]index=" + value.getIndex() + "的HandleValue的16进制数据：" + Util.bytesToHexString(forDig));
+			byte[] digest = sm3.hash(forDig);
+			System.out.println("[digestWithSM3]index=" + value.getIndex() + "的HandleValue做sm3摘要后的16进制数据：" + Util.bytesToHexString(digest));
+	        result.digest = Base64.encodeBase64String(digest);
+	        System.out.println("[digestWithSM3]index=" + value.getIndex() + "的HandleValue做sm3摘要后再做base64编码：" + result.digest);
+	        result.index = value.getIndex();
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("Failed:handle value do digest wiht SM3!");
+		}
+    	return result;
     }
 }

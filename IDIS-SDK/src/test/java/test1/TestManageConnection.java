@@ -30,8 +30,36 @@ public class TestManageConnection {
 	public static final int CHANNEL_CLOSED = 0;
 	public static final int CHANNEL_LOGIN = 1;
 	public static final int CHANNEL_LOGOUT = 2;
+	
+	public static final String PUBLICKEY_PATH = "D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pub.pem";
+	public static final String SIGNATURE_PUBKEY_PATH = "D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pub.pem";
+	public static final String SIGNATURE_PRVKEY_PATH = "D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pri.bin";
+	public static final String CERTIFICATION_PUBKEY_PATH = "D:/sm2key/sm2_public - 副本.pem";
+	public static final String CERTIFICATION_PRVKEY_PATH = "D:/sm2key/sm2_priv - 副本.pem";
+	
+	public static final String IP = "192.168.150.25";
+	public static final int PORT = 2641;
+	public static final String PROTOCOL = "TCP";
+	public static final String OP_ID = "88.996.438";
+	
 
 	public static void main(String[] args) throws Exception {
+		//entry_1_Test();
+		entry_2_Test();
+	}
+
+	private static void entry_2_Test() throws Exception {
+		// 创建通道管理实例
+		IChannelManageService chnnlService = new ChannelManageServiceImpl();
+		IIDManageServiceChannel channel = chnnlService.generateChannel(IP, PORT, PROTOCOL);
+		//testCreate(channel);
+		testAdd(channel);
+		//testRemove(channel);
+		testLookup(channel);
+		
+	}
+
+	private static void entry_1_Test() throws Exception {
 		// 创建通道管理实例
 		IChannelManageService chnnlService = new ChannelManageServiceImpl();
 		try {
@@ -68,7 +96,7 @@ public class TestManageConnection {
 	}
 
 	private static BaseResponse testCreate(IIDManageServiceChannel channel) throws IdentifierException {
-		IdentifierValue value1 = new IdentifierValue();
+		/*IdentifierValue value1 = new IdentifierValue();
 		try {
 			value1 = makeSiteInfoValue();
 		} catch (IOException e) {
@@ -77,22 +105,22 @@ public class TestManageConnection {
 		}
 		IdentifierValue value2 = makeVListValue();
 
-		IdentifierValue value3 = new IdentifierValue(500, "HS_SERV", "88.1234");
+		IdentifierValue value3 = new IdentifierValue(500, "HS_SERV", "88.1234");*/
 
-		return channel.createIdentifier("88.1234.1234", new IdentifierValue[] { value1,value2,value3 }, new MsgSettings());
+		return channel.createIdentifier(OP_ID, null, new MsgSettings());
 	}
 
 	private static BaseResponse testAdd(IIDManageServiceChannel channel) throws Exception {
-		IdentifierValue[] values = new IdentifierValue[2];
-		values[0] = makePublicKeyValue();
-		values[1] = makeCertValue(channel);
+		IdentifierValue[] values = new IdentifierValue[1];
 		// values[0] = makeSiteInfoPrefixValue();
 		// values[0] = makeSignatureValue(channel);
 		// values[0] = makeAdminValue();
 		// values[0] = new IdentifierValue(66, "URL", "www.666.com");
 		// values[1] = new IdentifierValue(7, "email", "www.777.com");
-		// values[1] = makePublicKeyValue();
-		return channel.addIdentifierValues("88.1234", values, new MsgSettings());
+		//values[0] = makePublicKeyValue();
+		// values[0] = makeCertValue(channel);
+		values[0] = makeSignatureValue(channel);//这里有一个逻辑顺序，如果要对标识值做签名，就需要先把目标标识值添加上。
+		return channel.addIdentifierValues(OP_ID, values, new MsgSettings());
 	}
 
 	private static BaseResponse testEdit(IIDManageServiceChannel channel) throws IdentifierException {
@@ -103,19 +131,14 @@ public class TestManageConnection {
 	}
 
 	private static BaseResponse testRemove(IIDManageServiceChannel channel) throws IdentifierException {
-		IdentifierValue[] values = new IdentifierValue[2];
-		values[0] = new IdentifierValue(6, "email", "www.666e.com");
-		values[1] = new IdentifierValue(7, "url", "www.777e.com");
-		int[] arr = { 6, 7 };
-		return channel.removeIdentifierValues("88.1000.2/mm", arr, null);
+		int[] arr = { 400 };
+		return channel.removeIdentifierValues(OP_ID, arr, null);
 	}
 
 	private static BaseResponse testLookup(IIDManageServiceChannel channel) throws IdentifierException {
-		String identifier = "88.1000.2/cupA";
-		// String identifier = "88.888.888/mm";
 		int[] arr = null;
 		String[] types = null;
-		return channel.lookupIdentifier(identifier, arr, types, null);
+		return channel.lookupIdentifier(OP_ID, arr, types, null);
 	}
 
 	private static BaseResponse testGetSiteInfo(IIDManageServiceChannel channel) throws IdentifierException {
@@ -202,37 +225,36 @@ public class TestManageConnection {
 	private static IdentifierValue makePublicKeyValue() throws IdentifierException {
 		IdentifierValue iv = new IdentifierValue();
 		int index = 300;
-		IdentifierValueUtil.makeIdentifierValueOfPublicKey(iv,
-				"D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pub.pem", index);
+		IdentifierValueUtil.makeIdentifierValueOfPublicKey(iv, PUBLICKEY_PATH, index);
 		return iv;
 	}
 
 	private static IdentifierValue makeSignatureValue(IIDManageServiceChannel channel) throws Exception {
 		IdentifierValue iv = new IdentifierValue();
 		int index = 400;
-		String pubPath = "D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pub.pem";
-		PublicKey pubKey = Util.getPublicKeyFromFile(pubPath);
-		String prvPath = "D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pri.bin";
-		PrivateKey prvKey = Util.getPrivateKeyFromFile(prvPath, null);
+		//String pubPath = "D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pub.pem";
+		//PublicKey pubKey = Util.getPublicKeyFromFile(SIGNATURE_PUBKEY_PATH);
+		//String prvPath = "D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pri.bin";
+		PrivateKey prvKey = Util.getPrivateKeyFromFile(SIGNATURE_PRVKEY_PATH, null);
 
 		IdentifierValue[] values = new IdentifierValue[1];
-		BaseResponse response = channel.lookupIdentifier("88.1234.1234", null, null, null);
+		BaseResponse response = channel.lookupIdentifier(OP_ID, null, null, null);
 
 		if (response instanceof ResolutionResponse) {
 			values = ((ResolutionResponse) response).getAllIDValues();
 		}
 
-		SignatureInfo signInfo = new SignatureInfo(prvKey, pubKey, values, "300:88.1234", "88.1234.1234",
-				System.currentTimeMillis(), System.currentTimeMillis(), System.currentTimeMillis(), "SHA-256");
+		SignatureInfo signInfo = new SignatureInfo(prvKey, null, values, "300:88.996", "88.996.438",
+				System.currentTimeMillis(), System.currentTimeMillis(), System.currentTimeMillis(), "SM3");
 		IdentifierValueUtil.makeIdentifierValueOfSignature(iv, index, signInfo);
 		return iv;
 	}
 
 	private static IdentifierValue makeCertValue(IIDManageServiceChannel channel) throws Exception {
-		String pubPath = "D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pub.pem";
-		PublicKey pubKey = Util.getPublicKeyFromFile(pubPath);
-		String prvPath = "D:/工作/工作文档集/86的公私钥/86的公私钥/发证书使用的公私钥/rsa_private_pkcs8.bin";
-		PrivateKey prvKey = Util.getPrivateKeyFromFile(prvPath, null);
+		//String pubPath = "D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pub.pem";
+		PublicKey pubKey = Util.getPublicKeyFromFile(CERTIFICATION_PUBKEY_PATH);
+		//String prvPath = "D:/工作/工作文档集/86的公私钥/86的公私钥/发证书使用的公私钥/rsa_private_pkcs8.bin";
+		PrivateKey prvKey = Util.getPrivateKeyFromFile(CERTIFICATION_PRVKEY_PATH, null);
 
 		List<Permission> perms = new ArrayList<>();
 		perms.add(new Permission(null, "everything"));
@@ -243,10 +265,9 @@ public class TestManageConnection {
 		long oneYearInSeconds = 365L * 24L * 60L * 60L;
 		long expiration = System.currentTimeMillis() / 1000L + (oneYearInSeconds * 2);
 
-		SignatureInfo signInfo = new SignatureInfo(prvKey, pubKey, perms, "100:88", "300:88.1234", expiration,
+		SignatureInfo signInfo = new SignatureInfo(prvKey, pubKey, perms, "100:88", "300:88.996", expiration,
 				System.currentTimeMillis(), System.currentTimeMillis() - 600);
 		IdentifierValueUtil.makeIdentifierValueOfCertification(iv, index, signInfo);
 		return iv;
 	}
-
 }
