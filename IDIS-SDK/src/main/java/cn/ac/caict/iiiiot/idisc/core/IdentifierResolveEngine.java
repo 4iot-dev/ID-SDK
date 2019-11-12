@@ -336,8 +336,10 @@ public class IdentifierResolveEngine {
 			} else if (response.expiration < System.currentTimeMillis() / 1000) {
 				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_GOT_EXPIRED_MESSAGE);
 			}
+			return response;
+		} else {
+			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_INTERNAL_ERROR);
 		}
-		return response;
 	}
 
 	private BaseResponse sendRequestWithUDP(BaseRequest req, InetAddress addr, int port) throws IdentifierException {
