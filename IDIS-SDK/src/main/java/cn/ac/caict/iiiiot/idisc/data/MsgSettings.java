@@ -35,6 +35,9 @@ public class MsgSettings {
 	public void setTruestyQuery(boolean truestyQuery) {
 		this.truestyQuery = truestyQuery;
 	}
+	public void setCertify(boolean certify){
+		this.certify = certify;
+	}
 	public boolean isAuthoritative() {
 		return authoritative;
 	}
