@@ -52,6 +52,7 @@ public class IdentifierResolveEngine {
 	private Socket longConnSocket = null;
 	private OutputStream longConnOut = null;
 	private InputStream longConnIn = null;
+	private boolean haveSiteInfo = false;
 	private int maxUDPDataSize = Common.MAX_UDP_DATA_SIZE;
 	private int tcpTimeout = 60 * 60;
 	private SiteInfo[] siteInfo;
@@ -81,12 +82,18 @@ public class IdentifierResolveEngine {
 
 	public void updateSiteInfo() {
 		SiteRequest request = new SiteRequest();
+		// 保证获取站点信息安全
+		request.bCertify = true;
 		SiteInfo si = new SiteInfo();
 		try {
 			BaseResponse response = processRequest(request, null);
 			if (response != null && response instanceof SiteResponse) {
 				si = ((SiteResponse) response).getSiteInfo();
 				siteInfo = new SiteInfo[] { si };
+				haveSiteInfo = true;
+			} else if(response != null && response instanceof ErrorResponse){
+				ErrorResponse errorResp = (ErrorResponse)response;
+				logger.error(errorResp.toString());
 			}
 		} catch (IdentifierException e) {
 			e.printStackTrace();
@@ -215,6 +222,9 @@ public class IdentifierResolveEngine {
 	}
 
 	public BaseResponse processRequest(BaseRequest req, InetAddress caller) throws IdentifierException {
+		if (req.opCode == 2 && haveSiteInfo && siteInfo!=null && siteInfo.length>0){
+			return new SiteResponse(siteInfo[0]);
+		}
 		return sendResquestToIdisService(req, siteInfo);
 	}
 
@@ -314,6 +324,9 @@ public class IdentifierResolveEngine {
 
 	public BaseResponse sendRequestToIdisCommunicationItems(BaseRequest req, ServerInfo server,
 			IdisCommunicationItems items) throws IdentifierException {
+		if(siteInfo != null && siteInfo.length > 0 && siteInfo[0].servers != null && siteInfo[0].servers.length > 0){
+			req.serverPubKeyBytes = siteInfo[0].servers[0].publicKey;
+		}
 		InetAddress addr = server.getInetAddress();
 		int port = items.port;
 		BaseResponse response = null;
@@ -583,6 +596,11 @@ public class IdentifierResolveEngine {
 					n += offsize;
 				}
 				response = (BaseResponse) BytesMsgConvertor.bytesConvertInfoMessage(receiveMsg, 0, rvcEnv);
+				if(response instanceof SiteResponse){
+					SiteResponse siteRes = (SiteResponse)response;
+					if(siteRes.getSiteInfo() != null && siteRes.getSiteInfo().servers.length > 0)
+						req.serverPubKeyBytes = siteRes.getSiteInfo().servers[0].publicKey;
+				}
 				if (req.bCertify)
 					checkMessageCredential(req, response);
 				if (!response.continuous) {
