@@ -57,7 +57,7 @@ public class IdentifierValueUtil {
 	public static void makeIdentifierValueOfGeneralType(IdentifierValue iv, String generalType, int index, String strData) throws IdentifierException{
 		if (iv == null)
 			iv = new IdentifierValue();
-		if(!Common.URL.equalsIgnoreCase(generalType) && !Common.EMAIL.equalsIgnoreCase(generalType) && !Common.HS_SERV.equalsIgnoreCase(generalType))
+		if(!Common.URL.equalsIgnoreCase(generalType) && !Common.EMAIL.equalsIgnoreCase(generalType) && !Common.HS_SERV.equalsIgnoreCase(generalType)&& !Common.HS_ALIAS.equalsIgnoreCase(generalType))
 			System.out.println("注意：该类型\"" + generalType + "\"可能为非预定义类型！");
 		iv.setType(Util.encodeString(generalType));
 		iv.setIndex(index);

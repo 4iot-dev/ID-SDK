@@ -103,6 +103,8 @@ public abstract class Common {
 	
 	public static final String HS_ADMIN = "HS_ADMIN";
 	
+	public static final String HS_ALIAS = "HS_ALIAS";
+	
 	public static final byte TYPE_ADMIN[] = Util.encodeString(HS_ADMIN);
 	
 	public static final String HS_VLIST = "HS_VLIST";
