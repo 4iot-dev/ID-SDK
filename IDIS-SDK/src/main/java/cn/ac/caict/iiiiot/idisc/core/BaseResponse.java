@@ -106,7 +106,16 @@ public abstract class BaseResponse extends BaseMessage {
 		Signature sig = Signature.getInstance(algorithm);
 
 		sig.initVerify(pubKey);
-
+        byte[] toBeSigned = new byte[4 + 3 * Common.FOUR_SIZE]; 
+        offset = 0;
+        toBeSigned[offset++] = majorProtocolVersion;
+        toBeSigned[offset++] = minorProtocolVersion;
+        toBeSigned[offset++] = suggestMajorProtocolVersion;
+        toBeSigned[offset++] = suggestMinorProtocolVersion;
+        offset += BaseConvertor.write4Bytes(toBeSigned, offset, sessionId);
+        offset += BaseConvertor.write4Bytes(toBeSigned, offset, requestId);
+        offset += BaseConvertor.write4Bytes(toBeSigned, offset, sessionCounter);
+        sig.update(toBeSigned);
 		sig.update(getEncodedMessageBody());
 		return sig.verify(sigBytes);
 	}
