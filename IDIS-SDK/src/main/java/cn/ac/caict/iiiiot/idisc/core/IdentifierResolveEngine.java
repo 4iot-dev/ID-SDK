@@ -55,7 +55,7 @@ public class IdentifierResolveEngine {
 	private boolean haveSiteInfo = false;
 	private int maxUDPDataSize = Common.MAX_UDP_DATA_SIZE;
 	private int tcpTimeout = 60 * 60;
-	private SiteInfo[] siteInfo;
+	private SiteInfo siteInfo;
 	private Random messageIDMaker;
 	private static final int RETRY_TIMES = 3;
 	private Map<String, Object> config = null;
@@ -76,7 +76,7 @@ public class IdentifierResolveEngine {
 
 		SiteInfo si = new SiteInfo();
 		si.servers = new ServerInfo[] { s };
-		siteInfo = new SiteInfo[] { si };
+		siteInfo = si;
 
 	}
 
@@ -89,7 +89,7 @@ public class IdentifierResolveEngine {
 			BaseResponse response = processRequest(request, null);
 			if (response != null && response instanceof SiteResponse) {
 				si = ((SiteResponse) response).getSiteInfo();
-				siteInfo = new SiteInfo[] { si };
+				siteInfo = si;
 				haveSiteInfo = true;
 			} else if(response != null && response instanceof ErrorResponse){
 				ErrorResponse errorResp = (ErrorResponse)response;
@@ -222,27 +222,25 @@ public class IdentifierResolveEngine {
 	}
 
 	public BaseResponse processRequest(BaseRequest req, InetAddress caller) throws IdentifierException {
-		if (req.opCode == 2 && haveSiteInfo && siteInfo!=null && siteInfo.length>0){
-			return new SiteResponse(siteInfo[0]);
+		if (req.opCode == 2 && haveSiteInfo && siteInfo!=null){
+			return new SiteResponse(siteInfo);
 		}
 		return sendResquestToIdisService(req, siteInfo);
 	}
 
-	public BaseResponse sendResquestToIdisService(BaseRequest req, SiteInfo sites[]) throws IdentifierException {
+	public BaseResponse sendResquestToIdisService(BaseRequest req, SiteInfo sites) throws IdentifierException {
 		if (sites == null)
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_FOUND_NO_SERVICE, "未找到站点信息");
 		BaseResponse response = sendResquestToIdisSites(req, sites);
 		return response;
 	}
 
-	public BaseResponse sendResquestToIdisSites(BaseRequest req, SiteInfo[] sites) throws IdentifierException {
+	public BaseResponse sendResquestToIdisSites(BaseRequest req, SiteInfo sites) throws IdentifierException {
 		BaseResponse response = null;
 		for (int p = 0; p < preferredProtocols.length; p++) {
-			for (int i = 0; i < sites.length; i++) {
-				response = sendResquestToIdisSiteViaProtocol(req, sites[i], p);
-				if (response != null)
-					return response;
-			}
+			response = sendResquestToIdisSiteViaProtocol(req, sites, p);
+			if (response != null)
+				return response;
 		}
 		return response;
 	}
@@ -324,8 +322,8 @@ public class IdentifierResolveEngine {
 
 	public BaseResponse sendRequestToIdisCommunicationItems(BaseRequest req, ServerInfo server,
 			IdisCommunicationItems items) throws IdentifierException {
-		if(siteInfo != null && siteInfo.length > 0 && siteInfo[0].servers != null && siteInfo[0].servers.length > 0){
-			req.serverPubKeyBytes = siteInfo[0].servers[0].publicKey;
+		if(siteInfo != null && siteInfo.servers != null && siteInfo.servers.length > 0){
+			req.serverPubKeyBytes = siteInfo.servers[0].publicKey;
 		}
 		InetAddress addr = server.getInetAddress();
 		int port = items.port;
