@@ -256,6 +256,7 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		if(values == null)
 			throw new IdentifierException(ExceptionCommon.INVALID_PARM, "values不能为空");
 		ModifyValueRequest req = new ModifyValueRequest(Util.encodeString(identifier), values, null);
+		setMessageSettings(req, settings);
 		long beforeTime = new Date().getTime();
 		BaseResponse response = resolverEngine.processRequest(req,null);
 		long afterTime = new Date().getTime();
@@ -283,6 +284,7 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		
 		BaseResponse response = null;
 		RemoveValueRequest req = new RemoveValueRequest(Util.encodeString(identifier), indexes, null);
+		setMessageSettings(req, settings);
 		long beforeTime = new Date().getTime();
 		response = resolverEngine.processRequest(req,null);
 		long afterTime = new Date().getTime();
@@ -305,6 +307,7 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		}
 		BaseResponse response = null;
 		SiteRequest req = new SiteRequest();
+		setMessageSettings(req, settings);
 		long beforeTime = new Date().getTime();
 		response = resolverEngine.processRequest(req,null);
 		long afterTime = new Date().getTime();
