@@ -78,42 +78,15 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 	}
 	
 	@Override
+	public BaseResponse login(String identifier, int index, String privakeyFilePath, String password, int rdType,
+			MsgSettings settings) throws IdentifierException {
+		return innerLogin(identifier,index,privakeyFilePath,password,rdType,settings);
+	}
+	
+	@Override
 	public BaseResponse login(String identifier, int index, String privakeyFilePath, String password, int rdType)
 			throws IdentifierException {
-		log.info("login---method---begin");
-		if(identifier == null || index<1 || privakeyFilePath == null){
-			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"identifier=" + identifier + ",identifier不能为空");
-		}
-		if(index < 1)
-			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"index=" + index + ",index必须为正整数");
-		if(rdType != 1 && rdType != 2 && rdType != 3)
-			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"不支持该类型摘要rdType=" + rdType);
-		PrivateKey privKey = Util.getPrivateKeyFromFile(privakeyFilePath, null);
-		if (privKey == null) {
-			IdisLog.getLogger(IDManageServiceChannelImpl.class).info("private key is null,maybe file is not exit,please check it!");
-			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"privakeyFilePath文件可能不存在");
-		}
-		byte[] userIdentifier = Util.encodeString(identifier);
-		AbstractAuthentication authInfo = new PubKeyAuthentication(userIdentifier, index, privKey);
-		BaseResponse response = null;
-		LoginIdisRequest loginReq = new LoginIdisRequest(userIdentifier, index, authInfo);
-		loginReq.rdHashType = (byte) rdType;
-		try {
-			response = resolverEngine.processRequest(loginReq, null);
-			if(response != null && response.responseCode == 1){
-				setUserIdentifier(identifier);
-				setLogin(true);
-				log.info(identifier + ":" + index + "登录成功！");
-			} else {
-				log.error(identifier + ":" + index + "登录失败！");
-			}
-			log.info("login---method---end");
-			return response;
-		} catch (IdentifierException e) {
-			e.printStackTrace();
-			throw new IdentifierException(e.getExceptionCode(),
-					IdentifierException.getCodeDescription(e.getExceptionCode()));
-		}
+		return innerLogin(identifier,index,privakeyFilePath,password,rdType,new MsgSettings());
 	}
 
 	public void logout() throws IdentifierException {
@@ -336,5 +309,44 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		bm.bKeepAlive = settings.isKeepAlive();
 		bm.ignoreRestrictedValues = settings.isPublicOnly();
 		bm.returnRequestDigest = settings.isReturnRequestDigest();
+	}
+	
+	private BaseResponse innerLogin(String identifier, int index, String privakeyFilePath, String password, int rdType,
+			MsgSettings settings) throws IdentifierException{
+		log.info("login---method---begin");
+		if(identifier == null || index<1 || privakeyFilePath == null){
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"identifier=" + identifier + ",identifier不能为空");
+		}
+		if(index < 1)
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"index=" + index + ",index必须为正整数");
+		if(rdType != 1 && rdType != 2 && rdType != 3)
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"不支持该类型摘要rdType=" + rdType);
+		PrivateKey privKey = Util.getPrivateKeyFromFile(privakeyFilePath, null);
+		if (privKey == null) {
+			IdisLog.getLogger(IDManageServiceChannelImpl.class).info("private key is null,maybe file is not exit,please check it!");
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"privakeyFilePath文件可能不存在");
+		}
+		byte[] userIdentifier = Util.encodeString(identifier);
+		AbstractAuthentication authInfo = new PubKeyAuthentication(userIdentifier, index, privKey);
+		BaseResponse response = null;
+		LoginIdisRequest loginReq = new LoginIdisRequest(userIdentifier, index, authInfo);
+		setMessageSettings(loginReq, settings);
+		loginReq.rdHashType = (byte) rdType;
+		try {
+			response = resolverEngine.processRequest(loginReq, null);
+			if(response != null && response.responseCode == 1){
+				setUserIdentifier(identifier);
+				setLogin(true);
+				log.info(identifier + ":" + index + "登录成功！");
+			} else {
+				log.error(identifier + ":" + index + "登录失败！");
+			}
+			log.info("login---method---end");
+			return response;
+		} catch (IdentifierException e) {
+			e.printStackTrace();
+			throw new IdentifierException(e.getExceptionCode(),
+					IdentifierException.getCodeDescription(e.getExceptionCode()));
+		}
 	}
 }

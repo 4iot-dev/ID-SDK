@@ -29,7 +29,6 @@ public class LoginIdisRequest extends BaseRequest {
 		this.requestedIndexes = index;
 		this.authInfo = authInfo;
 		this.returnRequestDigest = true;
-		this.bCertify = true;
 	}
 
 	public String toString() {

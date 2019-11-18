@@ -35,7 +35,20 @@ public interface IIDManageServiceChannel {
 	 * @return 消息响应
 	 * @throws IdentifierException
 	 */
+	@Deprecated
 	public BaseResponse login(String identifier, int index, String privakeyFilePath, String password, int rdType) throws IdentifierException;
+	/**
+	 * 建议2.0.1版本以后采用此方法
+	 * @param identifier
+	 * @param index
+	 * @param privakeyFilePath
+	 * @param password
+	 * @param rdType
+	 * @param settings 登录操作的消息设置,如是否进行消息凭据验证等设置
+	 * @return
+	 * @throws IdentifierException
+	 */
+	public BaseResponse login(String identifier, int index, String privakeyFilePath, String password, int rdType,MsgSettings settings) throws IdentifierException;
 	/**
 	 * @param identifier 标识名称
 	 * @param indexes 待查询标识值索引数组

@@ -309,12 +309,8 @@ public class IdentifierResolveEngine {
 			answer.setSupportedProtocolVersion();
 			answer.sessionId = challengeSessionID;
 			logger.debug("ChallengeAnswerRequest请求信息:" + answer + " requestid:" + answer.requestId);
-			try {
-				response = sendRequestToIdisCommunicationItems(answer, server, itemsWithProtocol);
-				logger.debug("发送ChallengeAnswerRequest请求的响应结果:response=" + response);
-			} catch (IdentifierException e) {
-				logger.error("登录idis向sendRequestToInterface发送请求获取响应数据异常");
-			}
+			response = sendRequestToIdisCommunicationItems(answer, server, itemsWithProtocol);
+			logger.debug("发送ChallengeAnswerRequest请求的响应结果:response=" + response);
 			logger.info("登录idis系统质询---end");
 		}
 		return response;

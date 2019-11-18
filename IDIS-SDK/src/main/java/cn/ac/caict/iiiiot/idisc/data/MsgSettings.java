@@ -20,14 +20,14 @@ package cn.ac.caict.iiiiot.idisc.data;
 public class MsgSettings {
 	private boolean truestyQuery = false;//查询时是否进行可信解析
 	private boolean authoritative = false;//暂不使用
-	private boolean certify = false;//是否认证
+	private boolean certify = false;//是否认证消息凭据
 	private boolean encrypt = false;//暂不使用
 	private boolean recursive = false;//暂不使用
 	private boolean cacheCertify = false;//暂不使用
 	private boolean continuous = false;//暂不使用
 	private boolean keepAlive = false;//暂不使用
 	private boolean publicOnly = false;//暂不使用
-	private boolean returnRequestDigest = false;//暂不使用
+	private boolean returnRequestDigest = false;//是否返回请求摘要
 	// getter & setter
 	public boolean isTruestyQuery() {
 		return truestyQuery;
@@ -37,6 +37,9 @@ public class MsgSettings {
 	}
 	public void setCertify(boolean certify){
 		this.certify = certify;
+	}
+	public void setReturnRequestDigest(boolean returnRequestDigest) {
+		this.returnRequestDigest = returnRequestDigest;
 	}
 	public boolean isAuthoritative() {
 		return authoritative;
