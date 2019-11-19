@@ -28,7 +28,6 @@ public class LoginIdisRequest extends BaseRequest {
 		super(identifier, MessageCommon.OC_LOGIN_IDIS, authInfo);
 		this.requestedIndexes = index;
 		this.authInfo = authInfo;
-		this.returnRequestDigest = true;
 	}
 
 	public String toString() {
