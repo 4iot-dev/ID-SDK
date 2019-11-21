@@ -82,8 +82,6 @@ public class IdentifierResolveEngine {
 
 	public void updateSiteInfo() {
 		SiteRequest request = new SiteRequest();
-		// 保证获取站点信息安全
-		request.bCertify = true;
 		SiteInfo si = new SiteInfo();
 		try {
 			BaseResponse response = processRequest(request, null);
