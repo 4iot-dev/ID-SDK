@@ -46,6 +46,7 @@ import cn.ac.caict.iiiiot.idisc.utils.Util;
 public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 	private IdentifierResolveEngine resolverEngine = null;
 	private Log log = IdisLog.getLogger(IDManageServiceChannelImpl.class);
+	private String printServInfo = "";
 	private boolean login = false;
 	private String userIdentifier;
 
@@ -63,6 +64,8 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 
 	public void setResolverEngine(IdentifierResolveEngine resolverEngine) {
 		this.resolverEngine = resolverEngine;
+		if(resolverEngine != null)
+			printServInfo += resolverEngine.getSiteInfo().servers[0];
 	}
 
 	public boolean isLogin() {
@@ -154,9 +157,9 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		long time = afterTime - beforeTime;
 		log.debug("创建标识耗时(毫秒):" + time);
 		if (response != null && (response.responseCode == MessageCommon.RC_SUCCESS)){
-			log.info("标识创建成功!");
+			log.info(identifier + "标识创建成功!" + printServInfo);
 		}else{
-			log.error("标识创建失败!");				
+			log.error(identifier + "标识创建失败!" + printServInfo);				
 		}
 		log.info("createIdentifierRequest---method---end");
 		return response;
@@ -181,9 +184,9 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		long time = afterTime - beforeTime;
 		log.debug("删除标识耗时(毫秒):" + time);
 		if (response != null && (response.responseCode == MessageCommon.RC_SUCCESS)){
-			log.info("删除标识成功！");
+			log.info(identifier +"删除标识成功！" + printServInfo);
 		}else {
-			log.error("删除标识失败！");
+			log.error(identifier +"删除标识失败！" + printServInfo);
 		}
 		log.info("deleteIdentifierRequest---method---end");
 		return response;
@@ -209,9 +212,9 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		long time = afterTime - beforeTime;
 		log.debug("添加标识值耗时(毫秒):" + time);
 		if (response != null && (response.responseCode == MessageCommon.RC_SUCCESS)){
-			log.info("添加标识值成功!");
+			log.info(identifier + "的标识值添加成功!" + printServInfo);
 		}else{
-			log.error("添加标识值失败!");
+			log.error(identifier + "的标识值添加失败!"+ printServInfo);
 		}
 		log.info("addIdentifierValueRequest---method---end");
 		return response;
@@ -236,9 +239,9 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		long time = afterTime - beforeTime;
 		log.debug("修改标识值耗时(毫秒):" + time);
 		if (response != null && (response.responseCode == MessageCommon.RC_SUCCESS)){
-			log.info("标识值修改成功！");
+			log.info(identifier + "的标识值修改成功！" + printServInfo);
 		}else{
-			log.error("标识值修改失败！");
+			log.error(identifier + "的标识值修改失败！" + printServInfo);
 		}
 		log.info("modifyIdentifierRequest---method---end");
 		return response;
@@ -264,9 +267,9 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		long time = afterTime - beforeTime;
 		log.debug("移除标识值耗时(毫秒):" + time);
 		if (response != null && (response.responseCode == MessageCommon.RC_SUCCESS)){
-			log.info("移除标识值成功!");
+			log.info(identifier + "的移除标识值成功!"+ printServInfo);
 		}else{
-			log.error("移除标识值失败!");
+			log.error(identifier + "的移除标识值失败!"+ printServInfo);
 		}
 		log.info("removeIdentifierValueRequest---method---end");
 		return response;

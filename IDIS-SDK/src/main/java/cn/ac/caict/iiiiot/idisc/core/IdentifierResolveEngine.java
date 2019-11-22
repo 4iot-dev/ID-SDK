@@ -60,6 +60,10 @@ public class IdentifierResolveEngine {
 	private static final int RETRY_TIMES = 3;
 	private Map<String, Object> config = null;
 	private Log logger = IdisLog.getLogger(IdentifierResolveEngine.class);
+	
+	public SiteInfo getSiteInfo(){
+		return siteInfo;
+	}
 
 	private void initSiteInfo(String ip, int port, String protocol) {
 		byte iPro = IdisCommunicationItems.TS_IDF_TCP;
