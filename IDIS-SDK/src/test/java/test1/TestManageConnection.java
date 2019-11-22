@@ -232,9 +232,6 @@ public class TestManageConnection {
 	private static IdentifierValue makeSignatureValue(IIDManageServiceChannel channel) throws Exception {
 		IdentifierValue iv = new IdentifierValue();
 		int index = 400;
-		//String pubPath = "D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pub.pem";
-		//PublicKey pubKey = Util.getPublicKeyFromFile(SIGNATURE_PUBKEY_PATH);
-		//String prvPath = "D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pri.bin";
 		PrivateKey prvKey = Util.getPrivateKeyFromFile(SIGNATURE_PRVKEY_PATH, null);
 
 		IdentifierValue[] values = new IdentifierValue[1];
@@ -243,17 +240,13 @@ public class TestManageConnection {
 		if (response instanceof ResolutionResponse) {
 			values = ((ResolutionResponse) response).getAllIDValues();
 		}
-
-		SignatureInfo signInfo = new SignatureInfo(prvKey, null, values, "300:88.996", "88.996.438",
-				System.currentTimeMillis(), System.currentTimeMillis(), System.currentTimeMillis(), "SM3");
+		SignatureInfo signInfo = SignatureInfo.newSignatureInstance(prvKey, values,"300:88.996", "88.996.438", "2020-11-11 11:11:11", "2019-11-22 14:01:00", "2019-11-22 14:00:00", "SM3");
 		IdentifierValueUtil.makeIdentifierValueOfSignature(iv, index, signInfo);
 		return iv;
 	}
 
 	private static IdentifierValue makeCertValue(IIDManageServiceChannel channel) throws Exception {
-		//String pubPath = "D:/工作/客户端-无登录/hsclient_new_lhs_resolver/bin/rsa_pub.pem";
 		PublicKey pubKey = Util.getPublicKeyFromFile(CERTIFICATION_PUBKEY_PATH);
-		//String prvPath = "D:/工作/工作文档集/86的公私钥/86的公私钥/发证书使用的公私钥/rsa_private_pkcs8.bin";
 		PrivateKey prvKey = Util.getPrivateKeyFromFile(CERTIFICATION_PRVKEY_PATH, null);
 
 		List<Permission> perms = new ArrayList<>();
@@ -262,11 +255,7 @@ public class TestManageConnection {
 		IdentifierValue iv = new IdentifierValue();
 		int index = 401;
 
-		long oneYearInSeconds = 365L * 24L * 60L * 60L;
-		long expiration = System.currentTimeMillis() / 1000L + (oneYearInSeconds * 2);
-
-		SignatureInfo signInfo = new SignatureInfo(prvKey, pubKey, perms, "100:88", "300:88.996", expiration,
-				System.currentTimeMillis(), System.currentTimeMillis() - 600);
+		SignatureInfo signInfo = SignatureInfo.newCertificationInstance(prvKey, pubKey, perms, "100:88", "300:88.996", "2020-11-11 11:11:11", "2019-11-22 14:01:00", "2019-11-22 14:00:00");
 		IdentifierValueUtil.makeIdentifierValueOfCertification(iv, index, signInfo);
 		return iv;
 	}

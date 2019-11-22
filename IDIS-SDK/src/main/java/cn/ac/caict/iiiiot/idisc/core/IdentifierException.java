@@ -105,6 +105,8 @@ public class IdentifierException extends Exception {
 			return "INVALID_PARAMETER";
 		case ExceptionCommon.IDENTIFIER_ENGINE_ERROR:
 			return "IDENTIFIER_ENGINE_ERROR";
+		case ExceptionCommon.TIME_PARSE_ERROR:
+			return "TIME_PARSE_ERROR";
 		default:
 			return "UNKNOWN_ERROR(" + excpCode + ")";
 		}

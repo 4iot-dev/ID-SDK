@@ -34,6 +34,8 @@ public class ExceptionCommon {
 	public static final int IDENTIFIER_ENGINE_ERROR = -8;
 	// JWT的header解析异常
 	public static final int JWT_PARSE_ERROR = -9;
+	// 时间解析错误
+	public static final int TIME_PARSE_ERROR = -10;
 	// 无效value
 	public static final int EXCEPTIONCODE_INVALID_VALUE = 0; 
 	// 内部错误

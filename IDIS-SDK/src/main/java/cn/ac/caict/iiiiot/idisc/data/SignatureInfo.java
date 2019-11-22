@@ -7,17 +7,24 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.logging.Log;
 
 import cn.ac.caict.iiiiot.idisc.convertor.BaseConvertor;
 import cn.ac.caict.iiiiot.idisc.convertor.MsgBytesConvertor;
+import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
+import cn.ac.caict.iiiiot.idisc.log.IdisLog;
 import cn.ac.caict.iiiiot.idisc.security.Claims;
 import cn.ac.caict.iiiiot.idisc.security.IdentifierValuesDigest;
 import cn.ac.caict.iiiiot.idisc.security.IdentifierValuesDigests;
 import cn.ac.caict.iiiiot.idisc.security.Permission;
 import cn.ac.caict.iiiiot.idisc.security.gm.SM3Tool;
 import cn.ac.caict.iiiiot.idisc.utils.Common;
+import cn.ac.caict.iiiiot.idisc.utils.DateUtils;
+import cn.ac.caict.iiiiot.idisc.utils.ExceptionCommon;
 import cn.ac.caict.iiiiot.idisc.utils.Util;
 
 /**
@@ -25,11 +32,14 @@ import cn.ac.caict.iiiiot.idisc.utils.Util;
  *	2.签名具体操作流程 
  *	sub: 该JWT所面向的用户
  *	iss: 该JWT的签发者
- *	iat(issued at): 在什么时候签发的token
- *	exp(expires): token什么时候过期
- *	nbf(not before)：token在此时间之前不能被接收处理
+ *	iat(issued at): 在什么时候签发的token,即签发时间
+ *	exp(expires): token什么时候过期，即过期时长，比如几个月，几年，转换为秒
+ *	nbf(not before)：token在此时间之前不能被接收处理，即生效时间
  */
 public class SignatureInfo {
+	private static Log logger = IdisLog.getLogger(SignatureInfo.class);
+	private static String INDEX_ID_PATTERN = "\\d+:(.*)";
+	private static String SHA256_PATTERN = "\\s*[S,s][H,h][A,a][\\s,-]?256\\s*";
 	public List<Permission> perms;
 	public String digestAlg;
 	public ValueReference signer;
@@ -42,27 +52,64 @@ public class SignatureInfo {
     public Long nbf;
     public Long iat;
     
-    public SignatureInfo(PrivateKey prvKey, PublicKey pubKey,IdentifierValue[] values,String iss, String sub,Long exp,Long nbf,Long iat,String digestAlg){
+    public SignatureInfo(PrivateKey prvKey, IdentifierValue[] values,String iss, String sub,Long exp,Long nbf,Long iat,String digestAlg) throws IdentifierException{
     	this.iss = iss;
     	this.prvKey = prvKey;
-    	this.pubKey = pubKey;
     	this.values = values;
-    	this.sub = sub;
     	this.exp = exp;
     	this.nbf = nbf;
     	this.iat = iat;
-    	this.digestAlg = digestAlg;
+    	Pattern r_alg = Pattern.compile(SHA256_PATTERN);
+		Matcher m_alg = r_alg.matcher(sub);
+    	if (m_alg.matches()){
+    		this.digestAlg = "SHA-256";
+    	} else if("SM3".equalsIgnoreCase(sub)){
+    		this.digestAlg = "SM3";
+    	} else {
+    		throw new IdentifierException(ExceptionCommon.INVALID_PARM, "仅支持SHA256和SM3摘要算法");
+    	}
+    	if (isValidFormat(sub) && sub.indexOf(":")<sub.length()-1){
+    		this.sub = sub.substring(sub.indexOf(":")+1);
+    	} else {
+    		this.sub = sub;
+    	}
     }
     
-    public SignatureInfo(PrivateKey prvKey, PublicKey pubKey,List<Permission> perms, String iss, String sub,Long exp,Long nbf,Long iat){
-    	this.iss = iss;
+    public SignatureInfo(PrivateKey prvKey, PublicKey pubKey,List<Permission> perms, String iss, String sub,Long exp,Long nbf,Long iat) throws IdentifierException{
+		if (isValidFormat(iss))
+			this.iss = iss;
+		else
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM, "iss格式应为index:identifier");
+		if (isValidFormat(sub))
+			this.sub = sub;
+		else
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM, "sub格式应为index:identifier");
     	this.pubKey = pubKey;
     	this.prvKey = prvKey;
     	this.perms = perms;
-    	this.sub = sub;
     	this.exp = exp;
     	this.nbf = nbf;
     	this.iat = iat;
+    }
+    
+    public static SignatureInfo newSignatureInstance(PrivateKey prvKey, IdentifierValue[] values,String iss, String sub,String expirationTime,String notBefore,String issedAfterTime,String digestAlg) throws IdentifierException{
+    	Long exp_end = DateUtils.parseString2Secs(expirationTime);
+    	logger.info("签名过期时间" + expirationTime + "的秒数表示：" + exp_end);
+    	Long iat = DateUtils.parseString2Secs(issedAfterTime);
+    	logger.info("签名时间" + issedAfterTime + "的秒数表示：" + iat);
+    	Long nbf = DateUtils.parseString2Secs(notBefore);
+    	logger.info("签名生效时间" + notBefore + "的秒数表示：" + iat);
+    	return new SignatureInfo(prvKey,values,iss,sub,exp_end-nbf,nbf,iat,digestAlg);
+    }
+    
+    public static SignatureInfo newCertificationInstance(PrivateKey prvKey, PublicKey pubKey,List<Permission> perms, String iss, String sub,String expirationTime,String notBefore,String issedAfterTime) throws IdentifierException{
+    	Long exp_end = DateUtils.parseString2Secs(expirationTime);
+    	logger.info("证书过期时间：" + expirationTime + "的秒数表示：" + exp_end);
+    	Long iat = DateUtils.parseString2Secs(issedAfterTime);
+    	logger.info("颁发时间" + issedAfterTime + "的秒数表示：" + iat);
+    	Long nbf = DateUtils.parseString2Secs(notBefore);
+    	logger.info("证书生效时间" + notBefore + "的秒数表示：" + iat);
+    	return new SignatureInfo(prvKey, pubKey, perms, iss, sub, exp_end-nbf, nbf, iat);
     }
     
     public Claims getClaims() throws NoSuchAlgorithmException{
@@ -136,5 +183,11 @@ public class SignatureInfo {
 			System.out.println("Failed:handle value do digest wiht SM3!");
 		}
     	return result;
+    }
+    
+    private boolean isValidFormat(String src){
+    	Pattern r = Pattern.compile(INDEX_ID_PATTERN);
+		Matcher m = r.matcher(src);
+		return m.matches();
     }
 }
