@@ -3,6 +3,7 @@ package test1;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +27,9 @@ import cn.ac.caict.iiiiot.idisc.service.impl.ChannelManageServiceImpl;
 import cn.ac.caict.iiiiot.idisc.utils.IdentifierValueUtil;
 import cn.ac.caict.iiiiot.idisc.utils.Util;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class TestManageConnection {
 	public static final int CHANNEL_CLOSED = 0;
 	public static final int CHANNEL_LOGIN = 1;
@@ -37,26 +41,43 @@ public class TestManageConnection {
 	public static final String CERTIFICATION_PUBKEY_PATH = "D:/sm2key/sm2_public - 副本.pem";
 	public static final String CERTIFICATION_PRVKEY_PATH = "D:/sm2key/sm2_priv - 副本.pem";
 	
-	public static final String IP = "192.168.150.25";
-	public static final int PORT = 2641;
+	public static final String IP = "192.168.150.29";
+	public static final int PORT = 2640;
 	public static final String PROTOCOL = "TCP";
-	public static final String OP_ID = "88.996.438";
+	public static final String OP_ID = "88.8000.1";
 	
 
 	public static void main(String[] args) throws Exception {
 		//entry_1_Test();
-		entry_2_Test();
+		//entry_2_Test();
+		//entry_3_Test();
+		entry_4_Test();
+	}
+	
+	private static void entry_4_Test() throws Exception {
+		// TODO Auto-generated method stub
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = sdf.parse("2019-11-21 20:34:54");
+		System.out.println(date.getTime()/1000L);
+	}
+
+	private static void entry_3_Test(){
+		String str = "    SHA-256    ";
+		String pattern = "\\s*[S,s][H,h][A,a][\\s,-]?256\\s*";
+		Pattern r = Pattern.compile(pattern);
+		Matcher m = r.matcher(str);
+		System.out.println(m.matches());
 	}
 
 	private static void entry_2_Test() throws Exception {
 		// 创建通道管理实例
 		IChannelManageService chnnlService = new ChannelManageServiceImpl();
 		IIDManageServiceChannel channel = chnnlService.generateChannel(IP, PORT, PROTOCOL);
-		//testCreate(channel);
-		testAdd(channel);
+		testCreate(channel);
+		//testAdd(channel);
 		//testRemove(channel);
-		testLookup(channel);
-		
+		//testLookup(channel);
+		//testGetSiteInfo(channel);
 	}
 
 	private static void entry_1_Test() throws Exception {
@@ -64,7 +85,7 @@ public class TestManageConnection {
 		IChannelManageService chnnlService = new ChannelManageServiceImpl();
 		try {
 			// 根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
-			IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.25", 2640, "TCP");
+			IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.29", 2643, "TCP");
 			// testLookup(channel);
 			// testGetSiteInfo(channel);
 			if (channel != null && chnnlService.getIDManageServiceChannelState(channel) == CHANNEL_LOGOUT) {
@@ -75,7 +96,7 @@ public class TestManageConnection {
 				 System.out.println("登录成功!");
 				// testDelete(channel);
 				// testCreate(channel);
-				testAdd(channel);
+				//testAdd(channel);
 				// testEdit(channel);
 				// testRemove(channel);
 				}
@@ -87,12 +108,11 @@ public class TestManageConnection {
 	}
 
 	private static BaseResponse testLogin(IIDManageServiceChannel channel) throws IdentifierException {
-		return channel.login("88.1000.1/fy", 1, "D:\\工作\\客户端-无登录\\hsclient_new_lhs_resolver\\bin\\rsa_pri.bin", null,
-				1);
+		return channel.login(OP_ID, 100, "C:\\Users\\fengyuan\\Desktop\\liyue\\hrs_pri.pem", null,3);
 	}
 
 	private static BaseResponse testDelete(IIDManageServiceChannel channel) throws IdentifierException {
-		return channel.deleteIdentifier("88.1000.2/cupA", new MsgSettings());
+		return channel.deleteIdentifier(OP_ID, new MsgSettings());
 	}
 
 	private static BaseResponse testCreate(IIDManageServiceChannel channel) throws IdentifierException {
@@ -103,11 +123,11 @@ public class TestManageConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		IdentifierValue value2 = makeVListValue();
+		IdentifierValue value2 = makeVListValue();*/
 
-		IdentifierValue value3 = new IdentifierValue(500, "HS_SERV", "88.1234");*/
+		IdentifierValue value3 = new IdentifierValue(500, "HS_SERV", "88.8000");
 
-		return channel.createIdentifier(OP_ID, null, new MsgSettings());
+		return channel.createIdentifier(OP_ID, new IdentifierValue[]{ value3 }, new MsgSettings());
 	}
 
 	private static BaseResponse testAdd(IIDManageServiceChannel channel) throws Exception {
@@ -143,6 +163,7 @@ public class TestManageConnection {
 
 	private static BaseResponse testGetSiteInfo(IIDManageServiceChannel channel) throws IdentifierException {
 		MsgSettings settings = new MsgSettings();
+		settings.setCertify(true);
 		BaseResponse response = channel.getServerSiteInfo(settings);
 		if (response instanceof SiteResponse) {
 			SiteInfo si = ((SiteResponse) response).getSiteInfo();
@@ -240,7 +261,9 @@ public class TestManageConnection {
 		if (response instanceof ResolutionResponse) {
 			values = ((ResolutionResponse) response).getAllIDValues();
 		}
-		SignatureInfo signInfo = SignatureInfo.newSignatureInstance(prvKey, values,"300:88.996", "88.996.438", "2020-11-11 11:11:11", "2019-11-22 14:01:00", "2019-11-22 14:00:00", "SM3");
+
+		SignatureInfo signInfo = SignatureInfo.newSignatureInstance(prvKey, values, "300:88.996", "88.996.438",
+				"2020-12-12 23:59:59", "2019-11-25 00:00:00", "2019-11-24 15:44:00", "SM3");
 		IdentifierValueUtil.makeIdentifierValueOfSignature(iv, index, signInfo);
 		return iv;
 	}
@@ -255,7 +278,8 @@ public class TestManageConnection {
 		IdentifierValue iv = new IdentifierValue();
 		int index = 401;
 
-		SignatureInfo signInfo = SignatureInfo.newCertificationInstance(prvKey, pubKey, perms, "100:88", "300:88.996", "2020-11-11 11:11:11", "2019-11-22 14:01:00", "2019-11-22 14:00:00");
+		SignatureInfo signInfo = SignatureInfo.newCertificationInstance(prvKey, pubKey, perms, "100:88", "300:88.996", "2020-12-12 23:59:59",
+				"2019-11-25 00:00:00", "2019-11-24 15:44:00");
 		IdentifierValueUtil.makeIdentifierValueOfCertification(iv, index, signInfo);
 		return iv;
 	}
