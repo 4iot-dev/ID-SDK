@@ -387,7 +387,7 @@ try {
 ```
 ***5.1 兼容的标识类型***
 >|类型名称|数据结构|描述|
->| :-------- | :--------|    
+>| :-------- | :--------| :--------|    
 >|HS_SITE   |SiteInfo (图-Siteinfo)   |站点信息    |
 >|HS_SITE.PREFIX   |SiteInfo(图-Siteinfo)    |前缀站点信息|
 >|HS_VLIST   |ValueReference(图-VList)    |前缀站点信息|
@@ -396,6 +396,7 @@ try {
 >|HS_PUBKEY   |    String(公钥文件路径)         |公钥 |
 >|HS_ADMIN  |    AdminInfo(图-AdminInfo)     |管理员|
 >|HS_SERV  |     String (标识)     |服务引用|
+
 ***5.2 兼容标识类型的标识值构建示例***
 	 为了方便用户创建各类型标识，SDK提供了IdentifierValueUtil工具，对于一些类型简单的标识值，可以直接将字符串数据写入IdentifierValue的结构当中，也可以调用IdentifierValueUtil工具的makeIdentifierValueOfGeneralType方法；对于复杂类型标识值的创建，下文将介绍数据结构及如何利用IdentifierValueUtil工具去创建标识值的示例。
 1.  如何创建一个HS_SITE/HS_SITE.PREFIX类型的标识值？
@@ -492,7 +493,7 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 	```
 5.  如何创建HS_PUBKEY类型的标识值？
 
-	1) 公钥文件，支持DSA和RSA算法的公钥，创建标识值时提供公钥文件的路径
+	1） 公钥文件，支持DSA和RSA算法的公钥，创建标识值时提供公钥文件的路径
 
 	2）创建HS_PUBKEY类型标识值示例
 	```java
@@ -501,7 +502,8 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 	IdentifierValueUtil.makeIdentifierValueOfPublicKey(iv, "c:/temp/keys/pubkey.pem", index);
 	```
 6.  如何创建HS_ADMIN类型的标识值？
-HS_ADMIN值用于标识解析服务在完成任何管理请求之前对标识管理员进行身份验证。
+	HS_ADMIN值用于标识解析服务在完成任何管理请求之前对标识管理员进行身份验证。
+	
 	1）AdminInfo结构
 	![Alt text](./res/AdminInfo.png)
 	     图-AdminInfo
