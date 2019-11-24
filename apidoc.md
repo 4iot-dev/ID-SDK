@@ -385,18 +385,18 @@ try {
 	e.printStackTrace();
 }
 ```
-***5.1*** 兼容的标识类型
- |类型名称|数据结构|描述|
-| :-------- | :--------|    
-|HS_SITE   |SiteInfo (图-Siteinfo)   |站点信息    |
-|HS_SITE.PREFIX   |SiteInfo(图-Siteinfo)    |前缀站点信息|
-|HS_VLIST   |ValueReference(图-VList)    |前缀站点信息|
-|HS_CERT   |SignatureInfo(图-SignatureInfo)   |证书 |
-|HS_SIGNATURE   |  SignatureInfo(图-SignatureInfo)   |签名 |
-|HS_PUBKEY   |    String(公钥文件路径)         |公钥 |
-|HS_ADMIN  |    AdminInfo(图-AdminInfo)     |管理员|
-|HS_SERV  |     String (标识)     |服务引用|
-***5.2*** 兼容标识类型的标识值构建示例
+***5.1 兼容的标识类型***
+>|类型名称|数据结构|描述|
+>| :-------- | :--------|    
+>|HS_SITE   |SiteInfo (图-Siteinfo)   |站点信息    |
+>|HS_SITE.PREFIX   |SiteInfo(图-Siteinfo)    |前缀站点信息|
+>|HS_VLIST   |ValueReference(图-VList)    |前缀站点信息|
+>|HS_CERT   |SignatureInfo(图-SignatureInfo)   |证书 |
+>|HS_SIGNATURE   |  SignatureInfo(图-SignatureInfo)   |签名 |
+>|HS_PUBKEY   |    String(公钥文件路径)         |公钥 |
+>|HS_ADMIN  |    AdminInfo(图-AdminInfo)     |管理员|
+>|HS_SERV  |     String (标识)     |服务引用|
+***5.2 兼容标识类型的标识值构建示例***
 	 为了方便用户创建各类型标识，SDK提供了IdentifierValueUtil工具，对于一些类型简单的标识值，可以直接将字符串数据写入IdentifierValue的结构当中，也可以调用IdentifierValueUtil工具的makeIdentifierValueOfGeneralType方法；对于复杂类型标识值的创建，下文将介绍数据结构及如何利用IdentifierValueUtil工具去创建标识值的示例。
 1.  如何创建一个HS_SITE/HS_SITE.PREFIX类型的标识值？
 HS_SITE 和 HS_SITE.PREFIX是预定义的数据类型。它们的数据结构相同，通过（ip地址:端口号）来定义服务站点。
@@ -460,15 +460,15 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 	
 	2）创建HS_CERT类型标识值示例
 
-	```java
-PublicKey pubKey = Util.getPublicKeyFromFile("c:/temp/keys/pubkey.pem");
-PrivateKey prvKey = Util.getPrivateKeyFromFile("c:/temp/keys/privatekey.pem", null);
-List<Permission> perms = new ArrayList<>();
-perms.add(new Permission(null, "everything"));
-IdentifierValue iv = new IdentifierValue();
-int index = 401;
-SignatureInfo signInfo = SignatureInfo.newCertificationInstance(prvKey, pubKey, perms, "100:88", "300:88.996", "2020-12-12 23:59:59","2019-11-25 00:00:00", "2019-11-24 15:44:00");
-IdentifierValueUtil.makeIdentifierValueOfCertification(iv, index, signInfo);
+	``` java
+	PublicKey pubKey = Util.getPublicKeyFromFile("c:/temp/keys/pubkey.pem");
+	PrivateKey prvKey = Util.getPrivateKeyFromFile("c:/temp/keys/privatekey.pem", null);
+	List<Permission> perms = new ArrayList<>();
+	perms.add(new Permission(null, "everything"));
+	IdentifierValue iv = new IdentifierValue();
+	int index = 401;
+	SignatureInfo signInfo = SignatureInfo.newCertificationInstance(prvKey, pubKey, perms, "100:88", "300:88.996", "2020-12-12 23:59:59","2019-11-25 00:00:00", "2019-11-24 15:44:00");
+	IdentifierValueUtil.makeIdentifierValueOfCertification(iv, index, signInfo);
 	```
 	
 4.  如何创建HS_SIGNATURE类型的标识值？
@@ -478,17 +478,17 @@ IdentifierValueUtil.makeIdentifierValueOfCertification(iv, index, signInfo);
 
 	2）创建HS_SIGNATURE类型标识值示例
 	
-	```java
-IdentifierValue iv = new IdentifierValue();
-int index = 400;
-PrivateKey prvKey = Util.getPrivateKeyFromFile(SIGNATURE_PRVKEY_PATH, null);
-IdentifierValue[] values = new IdentifierValue[1];
-BaseResponse response = channel.lookupIdentifier(OP_ID, null, null, null);
-if (response instanceof ResolutionResponse) {
+	``` java
+	IdentifierValue iv = new IdentifierValue();
+	int index = 400;
+	PrivateKey prvKey = Util.getPrivateKeyFromFile(SIGNATURE_PRVKEY_PATH, null);
+	IdentifierValue[] values = new IdentifierValue[1];
+	BaseResponse response = channel.lookupIdentifier(OP_ID, null, null, null);
+	if (response instanceof ResolutionResponse) {
 	      values = ((ResolutionResponse) response).getAllIDValues();
-}
-SignatureInfo signInfo = SignatureInfo.newSignatureInstance(prvKey, values, "300:88.996", "88.996.438","2020-12-12 23:59:59", "2019-11-25 00:00:00", "2019-11-24 15:44:00", "SM3");
-IdentifierValueUtil.makeIdentifierValueOfSignature(iv, index, signInfo);
+	}
+	SignatureInfo signInfo = SignatureInfo.newSignatureInstance(prvKey, values, "300:88.996", "88.996.438","2020-12-12 23:59:59", "2019-11-25 00:00:00", "2019-11-24 15:44:00", "SM3");
+	IdentifierValueUtil.makeIdentifierValueOfSignature(iv, index, signInfo);
 	```
 5.  如何创建HS_PUBKEY类型的标识值？
 
