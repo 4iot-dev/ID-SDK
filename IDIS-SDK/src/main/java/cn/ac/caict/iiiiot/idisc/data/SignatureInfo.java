@@ -52,7 +52,7 @@ public class SignatureInfo {
     public Long nbf;
     public Long iat;
     
-    public SignatureInfo(PrivateKey prvKey, IdentifierValue[] values,String iss, String sub,Long exp,Long nbf,Long iat,String digestAlg) throws IdentifierException{
+    private SignatureInfo(PrivateKey prvKey, IdentifierValue[] values,String iss, String sub,Long exp,Long nbf,Long iat,String digestAlg) throws IdentifierException{
     	this.iss = iss;
     	this.prvKey = prvKey;
     	this.values = values;
@@ -75,7 +75,7 @@ public class SignatureInfo {
     	}
     }
     
-    public SignatureInfo(PrivateKey prvKey, PublicKey pubKey,List<Permission> perms, String iss, String sub,Long exp,Long nbf,Long iat) throws IdentifierException{
+    private SignatureInfo(PrivateKey prvKey, PublicKey pubKey,List<Permission> perms, String iss, String sub,Long exp,Long nbf,Long iat) throws IdentifierException{
 		if (isValidFormat(iss))
 			this.iss = iss;
 		else
