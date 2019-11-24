@@ -408,7 +408,7 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 
 	1）SiteInfo
 	![Alt text](./res/SiteInfo.png)
-	图-Siteinfo
+	       图-Siteinfo
 	
 	2）java示例 
 	``` java
@@ -439,11 +439,12 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 	```
 	
 2.  如何创建HS_VLIST类型的标识值？
- 标识值引用列表
+	
+	标识值引用列表
  
 	1）ValueReference数组
 	![Alt text](./res/ValueReference.png)
-	     图-VList
+	  图-VList
 	
 	2）创建HS_VLIST类型标识值示例
 	``` java
@@ -459,6 +460,7 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 
 	1）SignatureInfo结构
 	![Alt text](./res/SignatureInfo.png)
+	
 	     图-SignatureInfo
 	说明：
 	支持的RSA、SM2密钥对
@@ -507,10 +509,12 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 	IdentifierValueUtil.makeIdentifierValueOfPublicKey(iv, "c:/temp/keys/pubkey.pem", index);
 	```
 6.  如何创建HS_ADMIN类型的标识值？
+
 	HS_ADMIN值用于标识解析服务在完成任何管理请求之前对标识管理员进行身份验证。
 	
 	1）AdminInfo结构
 	![Alt text](./res/AdminInfo.png)
+	
 	     图-AdminInfo
 	
 	2）创建HS_ADMIN类型标识值示例
