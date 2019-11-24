@@ -187,7 +187,7 @@ try {
 >|字段|类型|默认值|描述|
 >| :-------- | :--------| :--------| :--------|
 >|truestyQuery |boolean |false |查询时是否进行可信解析                            |
->|certify |boolean |false |是否需要认证                            |
+>|certify |boolean |false |是否做消息凭据认证                            |
 
 在进行数据通信过程中，标识值数据是通过IdentifierValue结构来设置的，说明如下：
 >|字段|类型|默认值|描述|
@@ -385,6 +385,135 @@ try {
 	e.printStackTrace();
 }
 ```
+***5.1*** 兼容的标识类型
+ |类型名称|数据结构|描述|
+| :-------- | :--------|    
+|HS_SITE   |SiteInfo (图-Siteinfo)   |站点信息    |
+|HS_SITE.PREFIX   |SiteInfo(图-Siteinfo)    |前缀站点信息|
+|HS_VLIST   |ValueReference(图-VList)    |前缀站点信息|
+|HS_CERT   |SignatureInfo(图-SignatureInfo)   |证书 |
+|HS_SIGNATURE   |  SignatureInfo(图-SignatureInfo)   |签名 |
+|HS_PUBKEY   |    String(公钥文件路径)         |公钥 |
+|HS_ADMIN  |    AdminInfo(图-AdminInfo)     |管理员|
+|HS_SERV  |     String (标识)     |服务引用|
+***5.2*** 兼容标识类型的标识值构建示例
+	 为了方便用户创建各类型标识，SDK提供了IdentifierValueUtil工具，对于一些类型简单的标识值，可以直接将字符串数据写入IdentifierValue的结构当中，也可以调用IdentifierValueUtil工具的makeIdentifierValueOfGeneralType方法；对于复杂类型标识值的创建，下文将介绍数据结构及如何利用IdentifierValueUtil工具去创建标识值的示例。
+1.  如何创建一个HS_SITE/HS_SITE.PREFIX类型的标识值？
+HS_SITE 和 HS_SITE.PREFIX是预定义的数据类型。它们的数据结构相同，通过（ip地址:端口号）来定义服务站点。
+每个标识解析服务可有多个服务站点，每个服务站点可以由多个服务器计算机组成。针对任何标识解析服务的服务请求可以分布到不同的服务站点，并在任何服务站点内进入不同的服务器计算机。这样的体系结构确保每个标识解析服务都有能力管理大量的标识和标识请求。这种结构可以避免单点故障。
+HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识解析服务器。同时客户端还可以使用服务信息（HS_SITE中的pubkey）对服务器的任何服务响应进行身份验证。
+
+	1）SiteInfo
+	![Alt text](./res/SiteInfo.png)
+	图-Siteinfo
+	2）java示例 
+	``` java
+	IdentifierValue iv = new IdentifierValue();
+	int index = 20;
+	// items[]
+	IdisCommunicationItems[] items = new IdisCommunicationItems[2];
+	items[0] = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,
+			IdisCommunicationItems.TS_IDF_TCP, 1304);
+	items[1] = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,
+			IdisCommunicationItems.TS_IDF_UDP, 1304);
+	// server
+	ServerInfo ser1 = new ServerInfo();
+	ser1.communicationItems = items;
+	ser1.ipBytes = Util.convertIPStr2Bytes("192.168.150.13");
+	ser1.publicKey = Util.getBytesFromFile("C:/temp/serv/pubkey.pem");
+	ser1.serverId = 1;
+	// servers
+	ServerInfo[] servArr = new ServerInfo[] { ser1 };
+	// siteinfo
+	SiteInfo si = new SiteInfo();
+	si.servers = servArr;
+	si.attributes = null;
+	// 创建HS_SITE类型标识值
+	IdentifierValueUtil.makeIdentifierValueOfSiteInfo(iv, si, index);
+	// 创建HS_SITE.PREFIX类型标识值
+	//IdentifierValueUtil.makeIdentifierValueOfSiteInfoPrefix(iv, si, index);
+	```
+	
+2.  如何创建HS_VLIST类型的标识值？
+ 标识值引用列表
+	1）ValueReference数组
+	![Alt text](./res/ValueReference.png)
+	     图-VList
+	2）创建HS_VLIST类型标识值示例
+	``` java
+	IdentifierValue iv = new IdentifierValue();
+	int index = 30;
+	ValueReference[] vr = new ValueReference[2];
+	vr[0] = new ValueReference("88.1000.2/mm", 1);
+	vr[1] = new ValueReference("88.1000.2/cup", 2);
+	IdentifierValueUtil.makeIdentifierValueOfVList(iv, vr, index);
+	```
+	
+3. 如何创建HS_CERT类型的标识值？
+
+	1）SignatureInfo结构
+	![Alt text](./res/SignatureInfo.png)
+	     图-SignatureInfo
+	说明：
+	支持的RSA、SM2密钥对
+	摘要算法支持SHA-256,SM3
+	
+	2）创建HS_CERT类型标识值示例
+
+	```java
+PublicKey pubKey = Util.getPublicKeyFromFile("c:/temp/keys/pubkey.pem");
+PrivateKey prvKey = Util.getPrivateKeyFromFile("c:/temp/keys/privatekey.pem", null);
+List<Permission> perms = new ArrayList<>();
+perms.add(new Permission(null, "everything"));
+IdentifierValue iv = new IdentifierValue();
+int index = 401;
+SignatureInfo signInfo = SignatureInfo.newCertificationInstance(prvKey, pubKey, perms, "100:88", "300:88.996", "2020-12-12 23:59:59","2019-11-25 00:00:00", "2019-11-24 15:44:00");
+IdentifierValueUtil.makeIdentifierValueOfCertification(iv, index, signInfo);
+	```
+	
+4.  如何创建HS_SIGNATURE类型的标识值？
+
+	1）SignatureInfo结构
+	参照3-1 SignatureInfo结构
+
+	2）创建HS_SIGNATURE类型标识值示例
+	
+	```java
+IdentifierValue iv = new IdentifierValue();
+int index = 400;
+PrivateKey prvKey = Util.getPrivateKeyFromFile(SIGNATURE_PRVKEY_PATH, null);
+IdentifierValue[] values = new IdentifierValue[1];
+BaseResponse response = channel.lookupIdentifier(OP_ID, null, null, null);
+if (response instanceof ResolutionResponse) {
+	      values = ((ResolutionResponse) response).getAllIDValues();
+}
+SignatureInfo signInfo = SignatureInfo.newSignatureInstance(prvKey, values, "300:88.996", "88.996.438","2020-12-12 23:59:59", "2019-11-25 00:00:00", "2019-11-24 15:44:00", "SM3");
+IdentifierValueUtil.makeIdentifierValueOfSignature(iv, index, signInfo);
+	```
+5.  如何创建HS_PUBKEY类型的标识值？
+
+	1) 公钥文件，支持DSA和RSA算法的公钥，创建标识值时提供公钥文件的路径
+
+	2）创建HS_PUBKEY类型标识值示例
+	```java
+	IdentifierValue iv = new IdentifierValue();
+	int index = 300;
+	IdentifierValueUtil.makeIdentifierValueOfPublicKey(iv, "c:/temp/keys/pubkey.pem", index);
+	```
+6.  如何创建HS_ADMIN类型的标识值？
+HS_ADMIN值用于标识解析服务在完成任何管理请求之前对标识管理员进行身份验证。
+	1）AdminInfo结构
+	![Alt text](./res/AdminInfo.png)
+	     图-AdminInfo
+	2）创建HS_ADMIN类型标识值示例
+	```java
+		IdentifierValue value = new IdentifierValue();
+		AdminInfo admin = new AdminInfo();
+		admin.admId = Util.encodeString("88.1000.2/cupA");
+		admin.admIdIndex = 302;
+		admin.initPermissions(true, true, true, true, true, true, true, true, true, true, true, true);
+		IdentifierValueUtil.makeIdentifierValueOfAdminInfo(value, admin, 10);
+	```
 **6\. modifyIdentifierValues**
 ###### 接口功能
 > 修改目标标识下的若干标识值。该接口需要捕获异常(异常码描述参照附表2)。
@@ -542,7 +671,7 @@ try {
 
 ---
 ###### 异常码
-> |异常码 |标识符|提示消息|
+> |异常码     |标识符|提示消息|
 >| :-------- | :--------| :--------| 
 >|-1   |EXCEPTIONCODE_UNSUPPORTENCODING    |SDK_INNER_UNSUPPORTENCODING_EXCEPTION                          |
 >|-2   |EXCEPTIONCODE_DISCONN_FAILED    |DISCONNECT_FAILED                          |
@@ -551,13 +680,15 @@ try {
 >|-6   |EXCEPTIONCODE_ILLEGAL_PORT    |ILLEGAL_PORT                          |
 >|-7   |INVALID_PARM    |INVALID_PARAMETER                         |
 >|-8   |IDENTIFIER_ENGINE_ERROR    |IDENTIFIER_ENGINE_ERROR                          |
+>|-9   |JWT_PARSE_ERROR|JWT_PARSE_ERROR                      |
+>|-10   |TIME_PARSE_ERROR    |TIME_PARSE_ERROR                  |
 >|0   |EXCEPTIONCODE_INVALID_VALUE    |INVALID_VALUE                          |
 >|1   |EXCEPTIONCODE_INTERNAL_ERROR    |INTERNAL_ERROR                          |
->|2   |EXCEPTIONCODE_FOUND_NO_SERVICE  |ISERVICE_NOT_FOUND                          |
->|3   |EXCEPTIONCODE_NO_ACCEPTABLE_IDISCOMMUNICATIONITEMS    |NO_ACCEPTABLE_INTERFACES                          |
->|4   |EXCEPTIONCODE_UNKNOWN_PROTOCOL    |UNKNOWN_PROTOCOL                          |
->|5   |EXCEPTIONCODE_IDENTIFIER_ALREADY_EXISTS    |IDENTIFIER_ALREADY_EXISTS                          |
->|6   |EXCEPTIONCODE_MESSAGE_FORMAT_ERROR    |MESSAGE_FORMAT_ERROR                          |
+>|2   |EXCEPTIONCODE_FOUND_NO_SERVICE  |ISERVICE_NOT_FOUND                 |
+>|3   |EXCEPTIONCODE_NO_ACCEPTABLE_IDISCOMMUNICATIONITEMS    |NO_ACCEPTABLE_INTERFACES   |
+>|4   |EXCEPTIONCODE_UNKNOWN_PROTOCOL    |UNKNOWN_PROTOCOL           |
+>|5   |EXCEPTIONCODE_IDENTIFIER_ALREADY_EXISTS    |IDENTIFIER_ALREADY_EXISTS     |
+>|6   |EXCEPTIONCODE_MESSAGE_FORMAT_ERROR|MESSAGE_FORMAT_ERROR |
 >|7   |EXCEPTIONCODE_CANNOT_CONNECT_TO_IDIS_SERVER    |CANNOT_CONNECT_TO_SERVER                          |
 >|8   |EXCEPTIONCODE_UNABLE_TO_AUTHENTICATE    |UNABLE_TO_AUTHENTICATE                          |
 >|9   |EXCEPTIONCODE_IDENTIFIER_DOES_NOT_EXIST    |IDENTIFIER_DOES_NOT_EXIST|
