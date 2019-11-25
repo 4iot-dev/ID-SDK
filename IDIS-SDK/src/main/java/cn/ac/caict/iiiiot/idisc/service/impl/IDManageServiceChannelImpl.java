@@ -334,6 +334,7 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		BaseResponse response = null;
 		LoginIdisRequest loginReq = new LoginIdisRequest(userIdentifier, index, authInfo);
 		setMessageSettings(loginReq, settings);
+		loginReq.returnRequestDigest = true;//该位不能改
 		loginReq.rdHashType = (byte) rdType;
 		try {
 			response = resolverEngine.processRequest(loginReq, null);

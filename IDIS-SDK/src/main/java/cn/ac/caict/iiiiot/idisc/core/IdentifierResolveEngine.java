@@ -310,6 +310,8 @@ public class IdentifierResolveEngine {
 			answer.minorProtocolVersion = challResponse.minorProtocolVersion;
 			answer.setSupportedProtocolVersion();
 			answer.sessionId = challengeSessionID;
+			//opcode=200时不再进行消息凭据验证，因为2001登录请求过程中已有验证
+			answer.bCertify = false;
 			logger.debug("ChallengeAnswerRequest请求信息:" + answer + " requestid:" + answer.requestId);
 			response = sendRequestToIdisCommunicationItems(answer, server, itemsWithProtocol);
 			logger.debug("发送ChallengeAnswerRequest请求的响应结果:response=" + response);
