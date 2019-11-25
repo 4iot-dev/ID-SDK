@@ -60,10 +60,10 @@ public class SignatureInfo {
     	this.nbf = nbf;
     	this.iat = iat;
     	Pattern r_alg = Pattern.compile(SHA256_PATTERN);
-		Matcher m_alg = r_alg.matcher(sub);
+		Matcher m_alg = r_alg.matcher(digestAlg);
     	if (m_alg.matches()){
     		this.digestAlg = "SHA-256";
-    	} else if("SM3".equalsIgnoreCase(sub)){
+    	} else if("SM3".equalsIgnoreCase(digestAlg)){
     		this.digestAlg = "SM3";
     	} else {
     		throw new IdentifierException(ExceptionCommon.INVALID_PARM, "仅支持SHA256和SM3摘要算法");
@@ -99,7 +99,7 @@ public class SignatureInfo {
     	logger.info("签名时间" + issedAfterTime + "的秒数表示：" + iat);
     	Long nbf = DateUtils.parseString2Secs(notBefore);
     	logger.info("签名生效时间" + notBefore + "的秒数表示：" + iat);
-    	return new SignatureInfo(prvKey,values,iss,sub,exp_end-nbf,nbf,iat,digestAlg);
+    	return new SignatureInfo(prvKey,values,iss,sub,exp_end,nbf,iat,digestAlg);
     }
     
     public static SignatureInfo newCertificationInstance(PrivateKey prvKey, PublicKey pubKey,List<Permission> perms, String iss, String sub,String expirationTime,String notBefore,String issedAfterTime) throws IdentifierException{
@@ -109,7 +109,7 @@ public class SignatureInfo {
     	logger.info("颁发时间" + issedAfterTime + "的秒数表示：" + iat);
     	Long nbf = DateUtils.parseString2Secs(notBefore);
     	logger.info("证书生效时间" + notBefore + "的秒数表示：" + iat);
-    	return new SignatureInfo(prvKey, pubKey, perms, iss, sub, exp_end-nbf, nbf, iat);
+    	return new SignatureInfo(prvKey, pubKey, perms, iss, sub, exp_end, nbf, iat);
     }
     
     public Claims getClaims() throws NoSuchAlgorithmException{
