@@ -32,7 +32,7 @@ public class ManageIdentifierDemo {
 					demo_createIdentifier(channel);
 					// 创建标识后查询
 					demo_lookupIdentifier(channel);
-					
+					// 添加各种类型标识值 其中自定义类型可以参照IdentifierValueDemo.java中创建方法
 					demo_addIdentifierValues(channel);
 					// 添加标识值后查询
 					demo_lookupIdentifier(channel);
