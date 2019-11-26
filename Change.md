@@ -1,6 +1,22 @@
 # IDIS-SDK changes
 
 * * *  
+**Changes in 2.0.1**  
+
+适用IDIS版本：企业版本V1.3.1-2 
+
+[add] 获取站点信息接口
+
+[add] 支持预定义标识值类型创建，包括HS_VLIST、HS_ADMIN、HS_PUBKEY、HS_SIGNATURE、HS_CERT、HS_SITE、HS_SITE.PREFIX
+
+[add] 制作证书，即创建HS_CERT类型标识值支持国密SM2算法、DSA算法和RSA算法
+
+[add] 提升与服务端通信安全性
+
+[opt] 使用UDP协议创建channel时优化掉长连接；其他日志优化。
+
+  2019-11-25
+* * *  
 **Changes in 2.0.0**  
 
 适用IDIS版本：企业版本V1.3.1-0  
