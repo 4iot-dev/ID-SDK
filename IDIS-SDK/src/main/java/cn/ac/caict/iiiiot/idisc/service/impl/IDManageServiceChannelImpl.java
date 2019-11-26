@@ -46,7 +46,7 @@ import cn.ac.caict.iiiiot.idisc.utils.Util;
 public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 	private IdentifierResolveEngine resolverEngine = null;
 	private Log log = IdisLog.getLogger(IDManageServiceChannelImpl.class);
-	private String printServInfo = "";
+	private String printServInfo = "--";
 	private boolean login = false;
 	private String userIdentifier;
 
@@ -64,8 +64,6 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 
 	public void setResolverEngine(IdentifierResolveEngine resolverEngine) {
 		this.resolverEngine = resolverEngine;
-		if(resolverEngine != null)
-			printServInfo += resolverEngine.getSiteInfo().servers[0];
 	}
 
 	public boolean isLogin() {
@@ -78,6 +76,8 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 
 	public IDManageServiceChannelImpl(IdentifierResolveEngine resolverEngine) {
 		this.resolverEngine = resolverEngine;
+		if(resolverEngine != null)
+			printServInfo += resolverEngine.getSiteInfo().servers[0];
 	}
 	
 	@Override
