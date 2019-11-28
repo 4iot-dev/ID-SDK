@@ -11,6 +11,7 @@ import java.io.StringReader;
 import java.math.BigInteger;
 import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.AlgorithmParameters;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -576,8 +577,11 @@ public abstract class Util {
 
 	/**
 	 * 字节数组连接
-	 * @param first 第一组字节
-	 * @param second 第二组字节
+	 * 
+	 * @param first
+	 *            第一组字节
+	 * @param second
+	 *            第二组字节
 	 * @return 第一组和第二组连接后的结果字节数组
 	 */
 	public static byte[] concat(byte[] first, byte[] second) {
@@ -644,7 +648,8 @@ public abstract class Util {
 			offset += Common.FOUR_SIZE + p.length;
 			byte[] g = BaseConvertor.readByteArray(pkBuf, offset);
 			offset += Common.FOUR_SIZE + g.length;
-			DHPublicKeySpec keySpec = new DHPublicKeySpec(new BigInteger(1, y), new BigInteger(1, p),new BigInteger(1, g));
+			DHPublicKeySpec keySpec = new DHPublicKeySpec(new BigInteger(1, y), new BigInteger(1, p),
+					new BigInteger(1, g));
 			try {
 				KeyFactory dhKeyFactory = KeyFactory.getInstance("DiffieHellman");
 				return dhKeyFactory.generatePublic(keySpec);
@@ -872,7 +877,7 @@ public abstract class Util {
 		}
 		return getPublicKeyFromBytes(buf, 0);
 	}
-	
+
 	private static PublicKey getPublicKeyKeyFromPemFile(File pubKeyFile) {
 		InputStream in;
 		try {
@@ -938,7 +943,7 @@ public abstract class Util {
 			} catch (InvalidKeySpecException e) {
 				try {
 					return SecureUtil.generatePublicKey("SM2", bytes);
-				} catch(Exception ex) {
+				} catch (Exception ex) {
 					throw new Exception("RSA和DSA、SM2格式的公钥生成器都无法生成公钥", e);
 				}
 			}
@@ -1090,12 +1095,12 @@ public abstract class Util {
 		} catch (InvalidKeySpecException e) {
 			try {
 				return SecureUtil.generatePrivateKey("SM2", bytes);
-			} catch(Exception ex) {
+			} catch (Exception ex) {
 				throw new Exception("DSA和RSA、SM2都无法解析", e);
 			}
 		}
 	}
-	
+
 	public static String getSigAlgFromSignKeyType(byte[] hashAlg, String sigKeyType) throws IdentifierException {
 		if (Util.equalsBytes(hashAlg, Common.HASH_ALG_SHA1)
 				|| Util.equalsBytes(hashAlg, Common.HASH_ALG_SHA1_ALTERNATE))
@@ -1149,18 +1154,28 @@ public abstract class Util {
 		return buf;
 	}
 
-	public static final byte[] convertIPStr2Bytes(String ip) {
+	public static final byte[] convertIPStr2Bytes(String ip) throws IdentifierException {
 		byte[] ipBytes;
 		if (Util.isIPV4(ip)) {
 			String[] st = ip.split("\\.");
 			ipBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, (byte) Integer.parseInt(st[0]),
 					(byte) Integer.parseInt(st[1]), (byte) Integer.parseInt(st[2]), (byte) Integer.parseInt(st[3]) };
 		} else {
-			ipBytes = Util.encodeString(ip);
+			InetAddress addr;
+			try {
+				addr = InetAddress.getByName(ip);
+			} catch (UnknownHostException e) {
+				throw new IdentifierException(ExceptionCommon.UNKNOWN_HOSTNAME_ERROR);
+			}
+			byte addr1[] = addr.getAddress();
+			ipBytes = new byte[Common.IP_ADDRESS_SIZE_SIXTEEN];
+			for (int i = 0; i < Common.IP_ADDRESS_SIZE_SIXTEEN; i++)
+				ipBytes[i] = (byte) 0;
+			System.arraycopy(addr1, 0, ipBytes, ipBytes.length - addr1.length, addr1.length);
 		}
 		return ipBytes;
 	}
-	
+
 	public static byte[] reverseOrderArray(byte[] arr) {
 		// 定义一个反序后的数组
 		byte[] desArr = new byte[arr.length];
@@ -1172,7 +1187,7 @@ public abstract class Util {
 		// 返回倒序后的数组
 		return desArr;
 	}
-	
+
 	public static byte[] toBytes(String str) {
 		if (str == null || str.trim().equals("")) {
 			return new byte[0];
@@ -1186,7 +1201,7 @@ public abstract class Util {
 
 		return bytes;
 	}
-	
+
 	public static byte[] getBytesWithout00(byte[] origin) {
 		byte[] result = origin;
 		if (origin[0] == 0) {
@@ -1195,14 +1210,14 @@ public abstract class Util {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 字节数组拼接
 	 * 
 	 * @param params
 	 * @return
 	 */
-	public static byte[] join(byte[]...params) {
+	public static byte[] join(byte[]... params) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		byte[] res = null;
 		try {

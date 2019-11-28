@@ -65,7 +65,7 @@ public class IdentifierResolveEngine {
 		return siteInfo;
 	}
 
-	private void initSiteInfo(String ip, int port, String protocol) {
+	private void initSiteInfo(String ip, int port, String protocol) throws IdentifierException {
 		byte iPro = IdisCommunicationItems.TS_IDF_TCP;
 		if (protocol == null || protocol.equalsIgnoreCase("tcp"))
 			iPro = IdisCommunicationItems.TS_IDF_TCP;

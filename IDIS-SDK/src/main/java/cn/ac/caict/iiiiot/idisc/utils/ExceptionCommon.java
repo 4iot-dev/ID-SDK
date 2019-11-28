@@ -36,6 +36,8 @@ public class ExceptionCommon {
 	public static final int JWT_PARSE_ERROR = -9;
 	// 时间解析错误
 	public static final int TIME_PARSE_ERROR = -10;
+	// 未知主机名错误
+	public static final int UNKNOWN_HOSTNAME_ERROR = -11;
 	// 无效value
 	public static final int EXCEPTIONCODE_INVALID_VALUE = 0; 
 	// 内部错误

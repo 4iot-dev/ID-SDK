@@ -107,6 +107,8 @@ public class IdentifierException extends Exception {
 			return "IDENTIFIER_ENGINE_ERROR";
 		case ExceptionCommon.TIME_PARSE_ERROR:
 			return "TIME_PARSE_ERROR";
+		case ExceptionCommon.UNKNOWN_HOSTNAME_ERROR:
+			return "UNKNOWN_HOSTNAME_ERROR";
 		default:
 			return "UNKNOWN_ERROR(" + excpCode + ")";
 		}

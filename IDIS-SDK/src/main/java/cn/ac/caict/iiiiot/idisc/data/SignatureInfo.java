@@ -167,20 +167,20 @@ public class SignatureInfo {
     	if(value == null)
     		return null;
     	IdentifierValuesDigest result = new IdentifierValuesDigest();
-    	byte[] encodedHandleValue = MsgBytesConvertor.convertIdentifierValueToByte(value);
+    	byte[] encodedIV = MsgBytesConvertor.convertIdentifierValueToByte(value);
     	
     	try {
-    		byte[] forDig = new byte[encodedHandleValue.length - VALUE_DIGEST_OFFSET];
-    		System.arraycopy(encodedHandleValue, VALUE_DIGEST_OFFSET, forDig, 0, encodedHandleValue.length - VALUE_DIGEST_OFFSET);
-    		System.out.println("[digestWithSM3]index=" + value.getIndex() + "的HandleValue的16进制数据：" + Util.bytesToHexString(forDig));
+    		byte[] forDig = new byte[encodedIV.length - VALUE_DIGEST_OFFSET];
+    		System.arraycopy(encodedIV, VALUE_DIGEST_OFFSET, forDig, 0, encodedIV.length - VALUE_DIGEST_OFFSET);
+    		System.out.println("[digestWithSM3]index=" + value.getIndex() + "的IdentifierValue的16进制数据：" + Util.bytesToHexString(forDig));
 			byte[] digest = sm3.hash(forDig);
-			System.out.println("[digestWithSM3]index=" + value.getIndex() + "的HandleValue做sm3摘要后的16进制数据：" + Util.bytesToHexString(digest));
+			System.out.println("[digestWithSM3]index=" + value.getIndex() + "的IdentifierValue做sm3摘要后的16进制数据：" + Util.bytesToHexString(digest));
 	        result.digest = Base64.encodeBase64String(digest);
-	        System.out.println("[digestWithSM3]index=" + value.getIndex() + "的HandleValue做sm3摘要后再做base64编码：" + result.digest);
+	        System.out.println("[digestWithSM3]index=" + value.getIndex() + "的IdentifierValue做sm3摘要后再做base64编码：" + result.digest);
 	        result.index = value.getIndex();
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("Failed:handle value do digest wiht SM3!");
+			System.out.println("Failed:IdentifierValue do digest with SM3!");
 		}
     	return result;
     }
