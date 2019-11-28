@@ -13,7 +13,7 @@ IDIS-SDK:IDIS系统开发包
 >|2.0.0  |企业版1.3.1 |
 
 #### 快速使用
-1. jar包获取：下载开源项目IDIS-SDK，导出jar包，并从该项目中获取依赖jar包，log4j-1.2.17.jar、gson-2.3.1.jar、commons-codec-1.12.jar、commons-logging-1.2.jar。
+1. jar包获取：下载开源项目IDIS-SDK，导出jar包，并从该项目中获取依赖jar包，log4j-1.2.17.jar、gson-2.3.1.jar、commons-codec-1.12.jar、commons-logging-1.2.jar、bcprov-jdk15on-1.62.jar、hutool-all-4.6.3.jar。
 2. 环境要求：jdk1.8或以上。
 3. 开发示例：
 建立java项目，导入IDIS-SDK的jar包以及其依赖的jar包，根据我们提供的联系方式（参见[README.md](./README.md)）获取到IDIS服务信息以及登录信息以后，通过以下三个步骤可以快速进行开发：  
@@ -80,7 +80,7 @@ public class TestManageConnection {
 		}
 	}
 	private static BaseResponse testLogin(IIDManageServiceChannel channel) throws IdentifierException{
-		return channel.login("88.1000.1/ADMIN", 301, "C:\\keys\\rsa_pri.pem", null,1);
+		return channel.login("88.1000.1/ADMIN", 301, "C:\\keys\\rsa_pri.pem", null,1,new MsgSettings());
 	}
 	private static BaseResponse testDelete(IIDManageServiceChannel channel) throws IdentifierException{
 		return channel.deleteIdentifier("88.1000.2/mm", new MsgSettings());

@@ -16,9 +16,9 @@
 
 1. 若您希望通过连接IDIS服务使用、了解IDIS-SDK开源项目，请与我们联系，我们将提供详细的环境资料，以便于您进行快速开发或调试。联系邮箱：fengyuan@caict.ac.cn
 
-2. IDIS-SDK运行依赖gson-2.3.1.jar、commons-codec-1.12.jar、commons-logging-1.2.jar、log4j-1.2.17.jar。  
+2. IDIS-SDK运行依赖gson-2.3.1.jar、commons-codec-1.12.jar、commons-logging-1.2.jar、log4j-1.2.17.jar、bcprov-jdk15on-1.62.jar、hutool-all-4.6.3.jar。  
    添加依赖包步骤如下：
-    在Eclipse项目中导入JAR包将IDIS-SDK-2.0.0.jar以及其依赖的gson-2.3.1.jar，commons-codec-1.12.jar，commons-logging-1.2.jar，log4j-1.2.17.jar拷贝到您的项目中。
+    在Eclipse项目中导入JAR包将IDIS-SDK-2.0.0.jar以及其依赖的gson-2.3.1.jar，commons-codec-1.12.jar，commons-logging-1.2.jar，log4j-1.2.17.jar，bcprov-jdk15on-1.62.jar，hutool-all-4.6.3.jar拷贝到您的项目中。
     在Eclipse中选择您的工程，右击选择 Properties > Java Build Path > Add JARs。
 
 3. IDIS-SDK需要JDK1.8以上的版本。

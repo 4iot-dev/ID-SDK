@@ -71,7 +71,7 @@ public class IdentifierValueDemo {
 		String SIGNATURE_PRVKEY_PATH = "D:/rsakeys/rsa_pri.pem";
 		PrivateKey prvKey = Util.getPrivateKeyFromFile(SIGNATURE_PRVKEY_PATH, null);
 		SignatureInfo signInfo = SignatureInfo.newSignatureInstance(prvKey, values, "300:88.996", "88.996.438",
-				"2020-12-12 23:59:59", "2019-11-25 00:00:00", "2019-11-24 15:44:00", "SM3");
+				"2020-12-12 23:59:59", "2019-11-25 00:00:00", "2019-11-24 15:44:00", "SHA-256");
 		IdentifierValueUtil.makeIdentifierValueOfSignature(value, index, signInfo);
 		return value;
 	}

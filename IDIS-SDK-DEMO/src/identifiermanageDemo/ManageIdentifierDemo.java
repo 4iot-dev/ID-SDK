@@ -3,6 +3,7 @@ package identifiermanageDemo;
 import cn.ac.caict.iiiiot.idisc.core.BaseResponse;
 import cn.ac.caict.iiiiot.idisc.core.ErrorResponse;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
+import cn.ac.caict.iiiiot.idisc.core.SiteResponse;
 import cn.ac.caict.iiiiot.idisc.data.IdentifierValue;
 import cn.ac.caict.iiiiot.idisc.data.MsgSettings;
 import cn.ac.caict.iiiiot.idisc.service.IChannelManageService;
@@ -48,6 +49,9 @@ public class ManageIdentifierDemo {
 					demo_deleteIdentifier(channel);
 					// 删除标识后查询
 					demo_lookupIdentifier(channel);
+					
+					// 获取站点信息
+					demo_getSiteInfo(channel);
 				}
 			}
 			//关闭channel
@@ -55,6 +59,25 @@ public class ManageIdentifierDemo {
 		} catch (IdentifierException e) {
 			e.printStackTrace();
 			System.out.println("创建通道失败！");
+		}
+	}
+	
+	private static void demo_getSiteInfo(IIDManageServiceChannel channel){
+		if(channel != null){
+			try {
+				BaseResponse response = channel.getServerSiteInfo(new MsgSettings());
+				if(response != null && response.responseCode == 1){
+					SiteResponse siteResp = (SiteResponse)response;
+					System.out.println("站点信息获取成功：" + siteResp.getSiteInfo());
+				} else if(response instanceof ErrorResponse){
+					System.out.println(((ErrorResponse)response).toString());
+				} else {
+					System.out.println("错误的响应：" + response);
+				}
+			} catch (IdentifierException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -201,7 +224,8 @@ public class ManageIdentifierDemo {
 			// 生成摘要的Hash类型
 			int hashType = 1;
 			try {
-				BaseResponse loginResp = channel.login(userId,index,privatekeyPath,password,hashType);
+				//BaseResponse loginResp = channel.login(userId,index,privatekeyPath,password,hashType);
+				BaseResponse loginResp = channel.login(userId,index,privatekeyPath,password,hashType,new MsgSettings());
 				if(loginResp != null && loginResp.responseCode == 1){
 					System.out.println("登录成功！");
 				} else if(loginResp instanceof ErrorResponse){

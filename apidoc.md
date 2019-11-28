@@ -215,6 +215,7 @@ try {
 >|privakeyFilePath |true    |String |私钥文件路径，支持pem文件格式私钥                          |
 >|password |false |String |如果私钥有密码，将密码赋值给password,如果私钥没有密码则password为null                         |
 >|rdType |true    |int |生成摘要hash算法，MD5算法：rdType=1，SH1算法：rdType=2，SH256算法：rdType=3                         |
+>|settings |false    |MsgSettings |消息设置                        |
 ###### 返回值
 > |类型|说明                              |
 >| :-------- | :--------|
@@ -385,22 +386,19 @@ try {
 	e.printStackTrace();
 }
 ```
-***5.1 兼容的标识类型***
->|类型名称|数据结构|描述|
->| :-------- | :--------| :--------|    
->|HS_SITE   |SiteInfo (图-Siteinfo)   |站点信息    |
->|HS_SITE.PREFIX   |SiteInfo(图-Siteinfo)    |前缀站点信息|
->|HS_VLIST   |ValueReference(图-VList)    |前缀站点信息|
->|HS_CERT   |SignatureInfo(图-SignatureInfo)   |证书 |
->|HS_SIGNATURE   |  SignatureInfo(图-SignatureInfo)   |签名 |
->|HS_PUBKEY   |    String(公钥文件路径)         |公钥 |
->|HS_ADMIN  |    AdminInfo(图-AdminInfo)     |管理员|
->|HS_SERV  |     String (标识)     |服务引用|
-
-***5.2 兼容标识类型的标识值构建示例***
-
-	为了方便用户创建各类型标识，SDK提供了IdentifierValueUtil工具，对于一些类型简单的标识值，可以直接将字符串数据写入IdentifierValue的结构当中，也可以调用IdentifierValueUtil工具的makeIdentifierValueOfGeneralType方法；对于复杂类型标识值的创建，下文将介绍数据结构及如何利用IdentifierValueUtil工具去创建标识值的示例。
-
+***5.1*** 兼容的标识类型
+ |类型名称|数据结构|描述|
+| :-------- | :--------|    
+|HS_SITE   |SiteInfo (图-Siteinfo)   |站点信息    |
+|HS_SITE.PREFIX   |SiteInfo(图-Siteinfo)    |前缀站点信息|
+|HS_VLIST   |ValueReference(图-VList)    |前缀站点信息|
+|HS_CERT   |SignatureInfo(图-SignatureInfo)   |证书 |
+|HS_SIGNATURE   |  SignatureInfo(图-SignatureInfo)   |签名 |
+|HS_PUBKEY   |    String(公钥文件路径)         |公钥 |
+|HS_ADMIN  |    AdminInfo(图-AdminInfo)     |管理员|
+|HS_SERV  |     String (标识)     |服务引用|
+***5.2*** 兼容标识类型的标识值构建示例
+	 为了方便用户创建各类型标识，SDK提供了IdentifierValueUtil工具，对于一些类型简单的标识值，可以直接将字符串数据写入IdentifierValue的结构当中，也可以调用IdentifierValueUtil工具的makeIdentifierValueOfGeneralType方法；对于复杂类型标识值的创建，下文将介绍数据结构及如何利用IdentifierValueUtil工具去创建标识值的示例。
 1.  如何创建一个HS_SITE/HS_SITE.PREFIX类型的标识值？
 HS_SITE 和 HS_SITE.PREFIX是预定义的数据类型。它们的数据结构相同，通过（ip地址:端口号）来定义服务站点。
 每个标识解析服务可有多个服务站点，每个服务站点可以由多个服务器计算机组成。针对任何标识解析服务的服务请求可以分布到不同的服务站点，并在任何服务站点内进入不同的服务器计算机。这样的体系结构确保每个标识解析服务都有能力管理大量的标识和标识请求。这种结构可以避免单点故障。
@@ -408,8 +406,7 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 
 	1）SiteInfo
 	![Alt text](./res/SiteInfo.png)
-	       图-Siteinfo
-	
+	图-Siteinfo
 	2）java示例 
 	``` java
 	IdentifierValue iv = new IdentifierValue();
@@ -439,13 +436,10 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 	```
 	
 2.  如何创建HS_VLIST类型的标识值？
-	
-	标识值引用列表
- 
+ 标识值引用列表
 	1）ValueReference数组
 	![Alt text](./res/ValueReference.png)
-	  图-VList
-	
+	     图-VList
 	2）创建HS_VLIST类型标识值示例
 	``` java
 	IdentifierValue iv = new IdentifierValue();
@@ -460,7 +454,6 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 
 	1）SignatureInfo结构
 	![Alt text](./res/SignatureInfo.png)
-	
 	     图-SignatureInfo
 	说明：
 	支持的RSA、SM2密钥对
@@ -468,15 +461,15 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 	
 	2）创建HS_CERT类型标识值示例
 
-	``` java
-	PublicKey pubKey = Util.getPublicKeyFromFile("c:/temp/keys/pubkey.pem");
-	PrivateKey prvKey = Util.getPrivateKeyFromFile("c:/temp/keys/privatekey.pem", null);
-	List<Permission> perms = new ArrayList<>();
-	perms.add(new Permission(null, "everything"));
-	IdentifierValue iv = new IdentifierValue();
-	int index = 401;
-	SignatureInfo signInfo = SignatureInfo.newCertificationInstance(prvKey, pubKey, perms, "100:88", "300:88.996", "2020-12-12 23:59:59","2019-11-25 00:00:00", "2019-11-24 15:44:00");
-	IdentifierValueUtil.makeIdentifierValueOfCertification(iv, index, signInfo);
+	```java
+PublicKey pubKey = Util.getPublicKeyFromFile("c:/temp/keys/pubkey.pem");
+PrivateKey prvKey = Util.getPrivateKeyFromFile("c:/temp/keys/privatekey.pem", null);
+List<Permission> perms = new ArrayList<>();
+perms.add(new Permission(null, "everything"));
+IdentifierValue iv = new IdentifierValue();
+int index = 401;
+SignatureInfo signInfo = SignatureInfo.newCertificationInstance(prvKey, pubKey, perms, "100:88", "300:88.996", "2020-12-12 23:59:59","2019-11-25 00:00:00", "2019-11-24 15:44:00");
+IdentifierValueUtil.makeIdentifierValueOfCertification(iv, index, signInfo);
 	```
 	
 4.  如何创建HS_SIGNATURE类型的标识值？
@@ -486,21 +479,21 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 
 	2）创建HS_SIGNATURE类型标识值示例
 	
-	``` java
-	IdentifierValue iv = new IdentifierValue();
-	int index = 400;
-	PrivateKey prvKey = Util.getPrivateKeyFromFile(SIGNATURE_PRVKEY_PATH, null);
-	IdentifierValue[] values = new IdentifierValue[1];
-	BaseResponse response = channel.lookupIdentifier(OP_ID, null, null, null);
-	if (response instanceof ResolutionResponse) {
+	```java
+IdentifierValue iv = new IdentifierValue();
+int index = 400;
+PrivateKey prvKey = Util.getPrivateKeyFromFile(SIGNATURE_PRVKEY_PATH, null);
+IdentifierValue[] values = new IdentifierValue[1];
+BaseResponse response = channel.lookupIdentifier(OP_ID, null, null, null);
+if (response instanceof ResolutionResponse) {
 	      values = ((ResolutionResponse) response).getAllIDValues();
-	}
-	SignatureInfo signInfo = SignatureInfo.newSignatureInstance(prvKey, values, "300:88.996", "88.996.438","2020-12-12 23:59:59", "2019-11-25 00:00:00", "2019-11-24 15:44:00", "SM3");
-	IdentifierValueUtil.makeIdentifierValueOfSignature(iv, index, signInfo);
+}
+SignatureInfo signInfo = SignatureInfo.newSignatureInstance(prvKey, values, "300:88.996", "88.996.438","2020-12-12 23:59:59", "2019-11-25 00:00:00", "2019-11-24 15:44:00", "SM3");
+IdentifierValueUtil.makeIdentifierValueOfSignature(iv, index, signInfo);
 	```
 5.  如何创建HS_PUBKEY类型的标识值？
 
-	1） 公钥文件，支持DSA和RSA算法的公钥，创建标识值时提供公钥文件的路径
+	1) 公钥文件，支持DSA和RSA算法的公钥，创建标识值时提供公钥文件的路径
 
 	2）创建HS_PUBKEY类型标识值示例
 	```java
@@ -509,14 +502,10 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 	IdentifierValueUtil.makeIdentifierValueOfPublicKey(iv, "c:/temp/keys/pubkey.pem", index);
 	```
 6.  如何创建HS_ADMIN类型的标识值？
-
-	HS_ADMIN值用于标识解析服务在完成任何管理请求之前对标识管理员进行身份验证。
-	
+HS_ADMIN值用于标识解析服务在完成任何管理请求之前对标识管理员进行身份验证。
 	1）AdminInfo结构
 	![Alt text](./res/AdminInfo.png)
-	
 	     图-AdminInfo
-	
 	2）创建HS_ADMIN类型标识值示例
 	```java
 		IdentifierValue value = new IdentifierValue();
