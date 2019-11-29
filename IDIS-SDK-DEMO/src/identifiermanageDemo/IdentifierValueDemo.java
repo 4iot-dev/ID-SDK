@@ -18,7 +18,12 @@ import cn.ac.caict.iiiiot.idisc.security.Permission;
 import cn.ac.caict.iiiiot.idisc.service.IIDManageServiceChannel;
 import cn.ac.caict.iiiiot.idisc.utils.IdentifierValueUtil;
 import cn.ac.caict.iiiiot.idisc.utils.Util;
-
+/**
+ * 说明：该demo主要演示预定义标识值的创建，即IdentifierValueUtil工具类的使用方法。
+ * 当用户在进行标识需要为Identifier添加预定义类型标识值时，参考如下示例创建相应的标识值。
+ * 
+ * 注：创建标识值结束后通过addIdentifierValues接口添加至目标标识。
+ */
 public class IdentifierValueDemo {
 
 	// type:HS_ADMIN
@@ -34,14 +39,14 @@ public class IdentifierValueDemo {
 
 	// type:HS_SITE
 	public static IdentifierValue demo_makeValueOfSITE() throws IOException, IdentifierException {
-		boolean bPrefix = false;
-		return makeSites(bPrefix);
+		boolean bSitePrefix = false;
+		return makeSites(bSitePrefix);
 	}
 
 	// type:HS_SITE.PREFIX
 	public static IdentifierValue demo_makeValueOfSITEPREFIX() throws IdentifierException, IOException {
-		boolean bPrefix = true;
-		return makeSites(bPrefix);
+		boolean bSitePrefix = true;
+		return makeSites(bSitePrefix);
 	}
 
 	// tyep:HS_CERT
