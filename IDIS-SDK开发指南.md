@@ -1,8 +1,8 @@
 ## IDIS-SDK开发指南
 
 #### 基本概念介绍：
-IDIS:智能分布式标识系统
-IDIS-SDK:IDIS系统开发包
+IDIS:智能分布式标识系统。  
+IDIS-SDK:IDIS系统开发包。  
 管理操作：创建标识、删除标识、添加标识值、修改标识值、移除标识值。  
 非管理操作：主要是查询操作。  
 通道：IDIS-SDK与IDIS系统之间的连接。  
@@ -10,7 +10,8 @@ IDIS-SDK:IDIS系统开发包
 #### IDIS-SDK与IDIS版本对应关系说明
 > |IDIS-SDK版本|IDIS版本                              |
 > | :-------- | :--------|
->|2.0.0  |企业版1.3.1 |
+>|2.0.0  |企业版1.3.1-1 |
+>|2.0.1  |企业版1.3.1-2 |
 
 #### 快速使用
 1. jar包获取：下载开源项目IDIS-SDK，导出jar包，并从该项目中获取依赖jar包，log4j-1.2.17.jar、gson-2.3.1.jar、commons-codec-1.12.jar、commons-logging-1.2.jar、bcprov-jdk15on-1.62.jar、hutool-all-4.6.3.jar。
