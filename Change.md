@@ -1,4 +1,4 @@
-# IDIS-SDK changes
+# ID-SDK changes
 
 * * *  
 **Changes in 2.0.1**  

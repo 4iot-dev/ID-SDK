@@ -6,12 +6,12 @@
 
 **1\. generateChannel**
 ###### 接口功能
-> 创建与IDIS服务的连接通道实例（线程安全），需要捕获异常(异常码描述参照附表2)
+> 创建与标识服务服务的连接通道实例（线程安全），需要捕获异常(异常码描述参照附表2)
 ###### 输入参数
 >|参数|必选|类型|说明|
 >| :-------- | :--------| :--------| :--------|
->|ip    |true    |String|目标IDIS服务的IP地址                          |
->|port    |true    |int   |目标IDIS服务端口|
+>|ip    |true    |String|目标服务的IP地址                          |
+>|port    |true    |int   |目标服务端口|
 >|protocol |true |String |数据传输采用的协议，TCP/UDP|
 ###### 返回值
 > |类型|说明                              |
@@ -22,7 +22,7 @@
 ``` java
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
-//创建与IDIS系统连接的通道
+//创建与标识系统连接的通道
 try {
 	IIDManageServiceChannel channel = chnnlService .generateChannel("192.168.150.13", 1304, "TCP");
 	if (channel != null && chnnlService .getIDManageServiceChannelState(channel) == 2){
@@ -56,7 +56,7 @@ try {
 ``` java
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
-//创建与IDIS系统连接的通道
+//创建与标识系统连接的通道
 try {
 	IIDManageServiceChannel channel = chnnlService .generateChannelByConfig();
 	if (channel != null){
@@ -165,7 +165,7 @@ try {
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
 try {
-	//根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
+	//根据标识服务提供的ip和端口，创建与标识服务的连接通道对象
 	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
 	if (channel != null) {
 		BaseResponse loginResp = channel.login("88.1000.1/ADMIN", 301, "c:\\keys\\rsa_pri.pem", null,1);
@@ -206,7 +206,7 @@ try {
 
 **1\. login**
 ###### 接口功能
-> 与IDIS服务的连接通道建立后，若IDIS服务开启分布式身份认证，在进行标识管理操作前必须首先登录。该操作需要捕获异常(异常码描述参照附表2)。
+> 与标识服务的连接通道建立后，若标识服务开启分布式身份认证，在进行标识管理操作前必须首先登录。该操作需要捕获异常(异常码描述参照附表2)。
 ###### 输入参数
 > |参数|必选|类型|说明|
 >| :-------- | :--------| :--------| :--------|     
@@ -225,7 +225,7 @@ try {
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
 try {
-	//根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
+	//根据标识服务提供的ip和端口，创建与标识服务的连接通道对象
 	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
 	if (channel != null) {
 		BaseResponse loginResp = channel.login("88.1000.1/ADMIN", 301, "c:\\keys\\rsa_pri.pem", null,1);
@@ -259,7 +259,7 @@ try {
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
 try {
-	//根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
+	//根据标识系统提供的ip和端口，创建与标识系统的连接通道对象
 	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
 	//若要对标识进行管理操作，则需要首先登录
 	if (channel != null) {
@@ -292,7 +292,7 @@ try {
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
 try {
-	//根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
+	//根据标识系统提供的ip和端口，创建与标识系统的连接通道对象
 	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
 	//若要对标识进行管理操作，则需要首先登录
 	if (channel != null && chnnlService.getIDManageServiceChannelState(channel) == 2) {
@@ -327,7 +327,7 @@ try {
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
 try {
-	//根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
+	//根据标识系统提供的ip和端口，创建与标识系统的连接通道对象
 	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
 	//若要对标识进行管理操作，则需要首先登录
 	if (channel != null && chnnlService.getIDManageServiceChannelState(channel) == CHANNEL_LOGOUT) {
@@ -365,7 +365,7 @@ try {
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
 try {
-	//根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
+	//根据标识系统提供的ip和端口，创建与标识系统的连接通道对象
 	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
 	//若要对标识进行管理操作，则需要首先登录
 	if (channel != null && chnnlService.getIDManageServiceChannelState(channel) == CHANNEL_LOGOUT) {
@@ -533,7 +533,7 @@ HS_ADMIN值用于标识解析服务在完成任何管理请求之前对标识管
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
 try {
-	//根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
+	//根据标识系统提供的ip和端口，创建与标识系统的连接通道对象
 	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
 	if (channel != null && chnnlService.getIDManageServiceChannelState(channel) == CHANNEL_LOGOUT) {
 		BaseResponse loginResp = channel.login("88.1000.1/ADMIN", 301, "c:\\keys\\rsa_pri.pem", null,1);
@@ -571,7 +571,7 @@ try {
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
 try {
-	//根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
+	//根据标识系统提供的ip和端口，创建与标识系统的连接通道对象
 	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
 	if (channel != null && chnnlService.getIDManageServiceChannelState(channel) == 2) {
 		BaseResponse loginResp = channel.login("88.1000.1/ADMIN", 301, "c:\\keys\\rsa_pri.pem", null,1);
@@ -603,7 +603,7 @@ try {
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
 try {
-	//根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
+	//根据标识系统提供的ip和端口，创建与标识系统的连接通道对象
 	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
 	if(channel != null){
 		boolean bLogin = channel.isLogin();
@@ -628,7 +628,7 @@ try {
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
 try {
-	//根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
+	//根据标识系统提供的ip和端口，创建与标识系统的连接通道对象
 	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
 	MsgSettings settings = new MsgSettings();
 		BaseResponse response = channel.getServerSiteInfo(settings);
