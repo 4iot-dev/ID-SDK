@@ -61,7 +61,7 @@ public class IdentifierException extends Exception {
 			return "INTERNAL_ERROR";
 		case ExceptionCommon.EXCEPTIONCODE_FOUND_NO_SERVICE:
 			return "SERVICE_NOT_FOUND";
-		case ExceptionCommon.EXCEPTIONCODE_NO_ACCEPTABLE_IDISCOMMUNICATIONITEMS:
+		case ExceptionCommon.EXCEPTIONCODE_NO_ACCEPTABLE_IDCOMMUNICATIONITEMS:
 			return "NO_ACCEPTABLE_INTERFACES";
 		case ExceptionCommon.EXCEPTIONCODE_UNKNOWN_PROTOCOL:
 			return "UNKNOWN_PROTOCOL";
@@ -69,7 +69,7 @@ public class IdentifierException extends Exception {
 			return "IDENTIFIER_ALREADY_EXISTS";
 		case ExceptionCommon.EXCEPTIONCODE_MESSAGE_FORMAT_ERROR:
 			return "MESSAGE_FORMAT_ERROR";
-		case ExceptionCommon.EXCEPTIONCODE_CANNOT_CONNECT_TO_IDIS_SERVER:
+		case ExceptionCommon.EXCEPTIONCODE_CANNOT_CONNECT_TO_ID_SYS_SERVER:
 			return "CANNOT_CONNECT_TO_SERVER";
 		case ExceptionCommon.EXCEPTIONCODE_UNABLE_TO_AUTHENTICATE:
 			return "UNABLE_TO_AUTHENTICATE";
@@ -83,7 +83,7 @@ public class IdentifierException extends Exception {
 			return "MISSING_OR_INVALID_SIGNATURE";
 		case ExceptionCommon.EXCEPTIONCODE_MISSING_CRYPTO_PROVIDER:
 			return "MISSING_CRYPTO_PROVIDER";
-		case ExceptionCommon.EXCEPTIONCODE_IDIS_SERVER_ERROR:
+		case ExceptionCommon.EXCEPTIONCODE_ID_SYS_SERVER_ERROR:
 			return "SERVER_ERROR";
 		case ExceptionCommon.EXCEPTIONCODE_GOT_EXPIRED_MESSAGE:
 			return "GOT_EXPIRED_MESSAGE";

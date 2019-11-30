@@ -19,7 +19,7 @@ package cn.ac.caict.iiiiot.idisc.convertor;
  */
 import cn.ac.caict.iiiiot.idisc.core.Attribute;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
-import cn.ac.caict.iiiiot.idisc.core.IdisCommunicationItems;
+import cn.ac.caict.iiiiot.idisc.core.IDCommunicationItems;
 import cn.ac.caict.iiiiot.idisc.core.ServerInfo;
 import cn.ac.caict.iiiiot.idisc.core.SiteInfo;
 import cn.ac.caict.iiiiot.idisc.data.AdminInfo;
@@ -107,9 +107,9 @@ public class BytesObjConvertor extends BaseConvertor {
 				if (itemNum == 0) {
 					siteInfo.servers[j].communicationItems = null;
 				} else {
-					siteInfo.servers[j].communicationItems = new IdisCommunicationItems[itemNum];
+					siteInfo.servers[j].communicationItems = new IDCommunicationItems[itemNum];
 					for (int k = 0; k < itemNum; k++) {
-						IdisCommunicationItems items = new IdisCommunicationItems();
+						IDCommunicationItems items = new IDCommunicationItems();
 						siteInfo.servers[j].communicationItems[k] = items;
 						items.type = data[offset];
 						offset += 1;

@@ -23,13 +23,13 @@ import cn.ac.caict.iiiiot.idisc.data.IdentifierValue;
 import cn.ac.caict.iiiiot.idisc.utils.MessageCommon;
 import cn.ac.caict.iiiiot.idisc.utils.Util;
 
-public class LoginIdisResponse extends BaseResponse {
+public class LoginIDSystemResponse extends BaseResponse {
 
 	public byte[] identifier;
 	public byte[][] values;
 
-	public LoginIdisResponse(byte[] identifier, byte[][] values) {
-		super(MessageCommon.OC_LOGIN_IDIS, MessageCommon.RC_SUCCESS);
+	public LoginIDSystemResponse(byte[] identifier, byte[][] values) {
+		super(MessageCommon.OC_LOGIN_ID_SYSTEM, MessageCommon.RC_SUCCESS);
 		this.identifier = identifier;
 		this.values = values;
 	}

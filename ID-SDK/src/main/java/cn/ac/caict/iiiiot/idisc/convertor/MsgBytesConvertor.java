@@ -23,7 +23,7 @@ import cn.ac.caict.iiiiot.idisc.core.ChallengeAnswerRequest;
 import cn.ac.caict.iiiiot.idisc.core.CreateIdentifierRequest;
 import cn.ac.caict.iiiiot.idisc.core.DeleteIdentifierRequest;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
-import cn.ac.caict.iiiiot.idisc.core.LoginIdisRequest;
+import cn.ac.caict.iiiiot.idisc.core.LoginIDSystemRequest;
 import cn.ac.caict.iiiiot.idisc.core.LoginRequest;
 import cn.ac.caict.iiiiot.idisc.core.ModifyValueRequest;
 import cn.ac.caict.iiiiot.idisc.core.MsgEnvelope;
@@ -42,8 +42,8 @@ public abstract class MsgBytesConvertor extends BaseConvertor {
 			msg_buf = convertResolutionReqToBytes((ResolutionRequest) msg);
 		else if (msg.opCode == MessageCommon.OC_LOGIN)
 			msg_buf = convertLoginReqToBytes((LoginRequest) msg);
-		else if (msg.opCode == MessageCommon.OC_LOGIN_IDIS)
-			msg_buf = convertLoginIdisReqToBytes((LoginIdisRequest) msg);
+		else if (msg.opCode == MessageCommon.OC_LOGIN_ID_SYSTEM)
+			msg_buf = convertLoginIDSystemReqToBytes((LoginIDSystemRequest) msg);
 		else if (msg.opCode == MessageCommon.OC_CREATE_IDENTIFIER)
 			msg_buf = convertCreateIdentifierReqToBytes((CreateIdentifierRequest) msg);
 		else if (msg.opCode == MessageCommon.OC_DELETE_IDENTIFIER)
@@ -247,7 +247,7 @@ public abstract class MsgBytesConvertor extends BaseConvertor {
 		return msg;
 	}
 
-	private static byte[] convertLoginIdisReqToBytes(LoginIdisRequest req) {
+	private static byte[] convertLoginIDSystemReqToBytes(LoginIDSystemRequest req) {
 		// TODO Auto-generated method stub
 		int bodyLen = req.identifier.length + Common.FOUR_SIZE * 2;
 		byte[] msg = new byte[bodyLen + Common.MESSAGE_HEADER_SIZE];

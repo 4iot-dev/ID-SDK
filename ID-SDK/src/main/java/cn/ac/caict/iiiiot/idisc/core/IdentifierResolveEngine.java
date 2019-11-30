@@ -42,7 +42,7 @@ import org.apache.commons.logging.Log;
 import com.google.gson.Gson;
 import cn.ac.caict.iiiiot.idisc.convertor.BytesMsgConvertor;
 import cn.ac.caict.iiiiot.idisc.convertor.MsgBytesConvertor;
-import cn.ac.caict.iiiiot.idisc.log.IdisLog;
+import cn.ac.caict.iiiiot.idisc.log.IDLog;
 import cn.ac.caict.iiiiot.idisc.utils.Common;
 import cn.ac.caict.iiiiot.idisc.utils.ExceptionCommon;
 import cn.ac.caict.iiiiot.idisc.utils.MessageCommon;
@@ -59,24 +59,24 @@ public class IdentifierResolveEngine {
 	private Random messageIDMaker;
 	private static final int RETRY_TIMES = 3;
 	private Map<String, Object> config = null;
-	private Log logger = IdisLog.getLogger(IdentifierResolveEngine.class);
+	private Log logger = IDLog.getLogger(IdentifierResolveEngine.class);
 	
 	public SiteInfo getSiteInfo(){
 		return siteInfo;
 	}
 
 	private void initSiteInfo(String ip, int port, String protocol) throws IdentifierException {
-		byte iPro = IdisCommunicationItems.TS_IDF_TCP;
+		byte iPro = IDCommunicationItems.TS_IDF_TCP;
 		if (protocol == null || protocol.equalsIgnoreCase("tcp"))
-			iPro = IdisCommunicationItems.TS_IDF_TCP;
+			iPro = IDCommunicationItems.TS_IDF_TCP;
 		else if (protocol.equalsIgnoreCase("udp"))
-			iPro = IdisCommunicationItems.TS_IDF_UDP;
+			iPro = IDCommunicationItems.TS_IDF_UDP;
 		byte[] b = Util.convertIPStr2Bytes(ip);
 
-		IdisCommunicationItems i = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY, iPro, port);
+		IDCommunicationItems i = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY, iPro, port);
 		ServerInfo s = new ServerInfo();
 		s.setIpBytes(b);
-		s.communicationItems = new IdisCommunicationItems[] { i };
+		s.communicationItems = new IDCommunicationItems[] { i };
 
 		SiteInfo si = new SiteInfo();
 		si.servers = new ServerInfo[] { s };
@@ -103,7 +103,7 @@ public class IdentifierResolveEngine {
 		}
 	}
 
-	int preferredProtocols[] = { IdisCommunicationItems.TS_IDF_TCP, IdisCommunicationItems.TS_IDF_UDP };
+	int preferredProtocols[] = { IDCommunicationItems.TS_IDF_TCP, IDCommunicationItems.TS_IDF_UDP };
 
 	private void loadConfig() throws IOException {
 		logger.info("begin----loadConfig()---");
@@ -116,7 +116,7 @@ public class IdentifierResolveEngine {
 		} else {
 			is = IdentifierResolveEngine.class.getResourceAsStream("/cn/caict/idisc/conf/config.json");
 			if (is == null) {
-				logger.error("读取idis-sdk.jar的配置文件失败");
+				logger.error("读取ID-SDK的配置文件失败");
 			}
 		}
 		if (is == null) {
@@ -227,52 +227,52 @@ public class IdentifierResolveEngine {
 		if (req.opCode == 2 && haveSiteInfo && siteInfo!=null){
 			return new SiteResponse(siteInfo);
 		}
-		return sendResquestToIdisService(req, siteInfo);
+		return sendResquestToIDService(req, siteInfo);
 	}
 
-	public BaseResponse sendResquestToIdisService(BaseRequest req, SiteInfo sites) throws IdentifierException {
+	public BaseResponse sendResquestToIDService(BaseRequest req, SiteInfo sites) throws IdentifierException {
 		if (sites == null)
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_FOUND_NO_SERVICE, "未找到站点信息");
-		BaseResponse response = sendResquestToIdisSites(req, sites);
+		BaseResponse response = sendResquestToIDSites(req, sites);
 		return response;
 	}
 
-	public BaseResponse sendResquestToIdisSites(BaseRequest req, SiteInfo sites) throws IdentifierException {
+	public BaseResponse sendResquestToIDSites(BaseRequest req, SiteInfo sites) throws IdentifierException {
 		BaseResponse response = null;
 		for (int p = 0; p < preferredProtocols.length; p++) {
-			response = sendResquestToIdisSiteViaProtocol(req, sites, p);
+			response = sendResquestToIDSiteViaProtocol(req, sites, p);
 			if (response != null)
 				return response;
 		}
 		return response;
 	}
 
-	public BaseResponse sendResquestToIdisSiteViaProtocol(BaseRequest req, SiteInfo siteInfo, int protocol)
+	public BaseResponse sendResquestToIDSiteViaProtocol(BaseRequest req, SiteInfo siteInfo, int protocol)
 			throws IdentifierException {
 		// 1.获取一个服务器server信息 2.调用服务器方法
 		ServerInfo[] servInfos = siteInfo.servers;
 		if (servInfos.length < 1) {
-			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_IDIS_SERVER_ERROR, "server number is 0");
+			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_ID_SYS_SERVER_ERROR, "server number is 0");
 		}
 		int theProtocol = siteInfo.servers[0].communicationItems[0].protocol;
 		if (protocol != theProtocol) {
-			logger.debug("期望使用" + (theProtocol == IdisCommunicationItems.TS_IDF_UDP ? "UDP" : "TCP") + "类型处理");
+			logger.debug("期望使用" + (theProtocol == IDCommunicationItems.TS_IDF_UDP ? "UDP" : "TCP") + "类型处理");
 			return null;
 		}
 
 		BaseResponse response = null;
 
 		for (int i = 0; i < siteInfo.servers.length; i++) {
-			response = sendResquestToIdisServerInfo(req, servInfos[i], protocol);
+			response = sendResquestToIDServerInfo(req, servInfos[i], protocol);
 			if (response != null)
 				return response;
 		}
 		return response;
 	}
 
-	public BaseResponse sendResquestToIdisServerInfo(BaseRequest req, ServerInfo server, int protocol)
+	public BaseResponse sendResquestToIDServerInfo(BaseRequest req, ServerInfo server, int protocol)
 			throws IdentifierException {
-		IdisCommunicationItems itemsWithProtocol = server.findIdisCommunicationItemsByProtocol(protocol, req);
+		IDCommunicationItems itemsWithProtocol = server.findIDCommunicationItemsByProtocol(protocol, req);
 		if (itemsWithProtocol == null) {
 			String strPro = "";
 			if (protocol == 0) {
@@ -285,12 +285,12 @@ public class IdentifierResolveEngine {
 			}
 			return null;
 		}
-		BaseResponse response = sendRequestToIdisCommunicationItems(req, server, itemsWithProtocol);
+		BaseResponse response = sendRequestToIDCommunicationItems(req, server, itemsWithProtocol);
 
 		if (response != null && response.getClass() == ChallengeResponse.class
-				&& response.opCode == MessageCommon.OC_LOGIN_IDIS
+				&& response.opCode == MessageCommon.OC_LOGIN_ID_SYSTEM
 				&& response.responseCode == MessageCommon.RC_AUTHENTICATION_NEEDED) {
-			logger.info("登录idis系统发起质询---begin");
+			logger.info("登录标识系统发起质询---begin");
 			if (req.authInfo == null) {
 				logger.error("response为挑战响应，身份认证信息不能为空。req.authInfo=" + req.authInfo);
 				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_UNABLE_TO_AUTHENTICATE,
@@ -313,15 +313,15 @@ public class IdentifierResolveEngine {
 			//opcode=200时不再进行消息凭据验证，因为2001登录请求过程中已有验证
 			answer.bCertify = false;
 			logger.debug("ChallengeAnswerRequest请求信息:" + answer + " requestid:" + answer.requestId);
-			response = sendRequestToIdisCommunicationItems(answer, server, itemsWithProtocol);
+			response = sendRequestToIDCommunicationItems(answer, server, itemsWithProtocol);
 			logger.debug("发送ChallengeAnswerRequest请求的响应结果:response=" + response);
-			logger.info("登录idis系统质询---end");
+			logger.info("登录标识系统质询---end");
 		}
 		return response;
 	}
 
-	public BaseResponse sendRequestToIdisCommunicationItems(BaseRequest req, ServerInfo server,
-			IdisCommunicationItems items) throws IdentifierException {
+	public BaseResponse sendRequestToIDCommunicationItems(BaseRequest req, ServerInfo server,
+			IDCommunicationItems items) throws IdentifierException {
 		if(siteInfo != null && siteInfo.servers != null && siteInfo.servers.length > 0){
 			req.serverPubKeyBytes = siteInfo.servers[0].publicKey;
 		}
@@ -329,10 +329,10 @@ public class IdentifierResolveEngine {
 		int port = items.port;
 		BaseResponse response = null;
 		switch (items.protocol) {
-		case IdisCommunicationItems.TS_IDF_TCP:
+		case IDCommunicationItems.TS_IDF_TCP:
 			response = sendRequestWithTCP(req, addr, port);
 			break;
-		case IdisCommunicationItems.TS_IDF_UDP:
+		case IDCommunicationItems.TS_IDF_UDP:
 			response = sendRequestWithUDP(req, addr, port);
 			break;
 		default:
@@ -342,7 +342,7 @@ public class IdentifierResolveEngine {
 
 		if (response != null) {
 			if (response.responseCode == MessageCommon.RC_ERROR) {
-				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_IDIS_SERVER_ERROR,
+				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_ID_SYS_SERVER_ERROR,
 						Util.decodeString(((ErrorResponse) response).message));
 			} else if (response.expiration < System.currentTimeMillis() / 1000) {
 				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_GOT_EXPIRED_MESSAGE);
@@ -571,7 +571,7 @@ public class IdentifierResolveEngine {
 		try {
 			longConnOut.write(sendMsg);
 		} catch (IOException e) {
-			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_CANNOT_CONNECT_TO_IDIS_SERVER,
+			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_CANNOT_CONNECT_TO_ID_SYS_SERVER,
 					" 向 " + Util.rfcIpPortRepresentation(addr, port) + "发送TCP请求");
 		}
 		logger.info("消息发送完成！开始接收响应数据...");
@@ -607,7 +607,7 @@ public class IdentifierResolveEngine {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_CANNOT_CONNECT_TO_IDIS_SERVER,
+				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_CANNOT_CONNECT_TO_ID_SYS_SERVER,
 						"Error talking to " + Util.rfcIpRepresentation(addr), e);
 			} finally {
 				req.socketRef.set(null);

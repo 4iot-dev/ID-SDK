@@ -31,11 +31,11 @@ public class ServerInfo {
 	public int serverId;
 	public byte[] ipBytes;
 	public byte[] publicKey;
-	public IdisCommunicationItems[] communicationItems;
+	public IDCommunicationItems[] communicationItems;
 
 	private String addressStr = null;
 
-	public IdisCommunicationItems findIdisCommunicationItemsByProtocol(int desiredProtocol, BaseRequest req) {
+	public IDCommunicationItems findIDCommunicationItemsByProtocol(int desiredProtocol, BaseRequest req) {
 		for (int i = 0; i < this.communicationItems.length; i++) {
 			if (this.communicationItems[i].protocol == desiredProtocol
 					&& this.communicationItems[i].canDoRequest(req)) {
@@ -108,10 +108,10 @@ public class ServerInfo {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(serverId).append(' ').append(getAddressStr()).append(' ');
-		IdisCommunicationItems ifcs[] = communicationItems;
+		IDCommunicationItems ifcs[] = communicationItems;
 		boolean hasItems = false;
 		for (int i = 0; ifcs != null && i < ifcs.length; i++) {
-			IdisCommunicationItems ifc = ifcs[i];
+			IDCommunicationItems ifc = ifcs[i];
 			if (ifc == null)
 				continue;
 			if (!hasItems) {
@@ -120,7 +120,7 @@ public class ServerInfo {
 			} else {
 				sb.append(",");
 			}
-			sb.append(IdisCommunicationItems.getProtocolName(ifc.protocol)).append('-').append(ifc.port).append('-').append(IdisCommunicationItems.getTypeName(ifc.type));
+			sb.append(IDCommunicationItems.getProtocolName(ifc.protocol)).append('-').append(ifc.port).append('-').append(IDCommunicationItems.getTypeName(ifc.type));
 		}
 		if (hasItems)
 			sb.append("]");
@@ -145,17 +145,17 @@ public class ServerInfo {
 			System.arraycopy(buf, 0, serCopy.ipBytes, 0, buf.length);
 		}
 		
-		IdisCommunicationItems tmpIA[] = communicationItems;
+		IDCommunicationItems tmpIA[] = communicationItems;
 		if(tmpIA == null)
 			serCopy.communicationItems = null;
 		else if(tmpIA != null && tmpIA.length >=0)
-			serCopy.communicationItems = new IdisCommunicationItems[tmpIA.length];
+			serCopy.communicationItems = new IDCommunicationItems[tmpIA.length];
 		for (int i = 0; i < tmpIA.length; i++) {
-			IdisCommunicationItems tmpItem = tmpIA[i];
+			IDCommunicationItems tmpItem = tmpIA[i];
 			if(tmpItem == null)
 				serCopy.communicationItems[i] = null;
 			else
-				serCopy.communicationItems[i] = tmpItem.cloneIdisCommunicationItems();
+				serCopy.communicationItems[i] = tmpItem.cloneIDCommunicationItems();
 		}
 		return serCopy;
 	}

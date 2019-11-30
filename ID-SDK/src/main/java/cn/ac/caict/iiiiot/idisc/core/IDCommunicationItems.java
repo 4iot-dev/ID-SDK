@@ -20,7 +20,7 @@ package cn.ac.caict.iiiiot.idisc.core;
 import cn.ac.caict.iiiiot.idisc.utils.Common;
 import cn.ac.caict.iiiiot.idisc.utils.MessageCommon;
 
-public class IdisCommunicationItems {
+public class IDCommunicationItems {
 	public static final byte ST_OUT_OF_SERVICE = 0;
 	public static final byte ST_ADMIN = 1;
 	public static final byte ST_QUERY = 2;
@@ -35,21 +35,21 @@ public class IdisCommunicationItems {
 	public int port; // 服务端口
 	public byte protocol; // 传输协议
 
-	public IdisCommunicationItems(byte type, byte protocol, int port) {
+	public IDCommunicationItems(byte type, byte protocol, int port) {
 		this.type = type;
 		this.port = port;
 		this.protocol = protocol;
 	}
 
-	public IdisCommunicationItems cloneIdisCommunicationItems() {
-		IdisCommunicationItems icis = new IdisCommunicationItems();
+	public IDCommunicationItems cloneIDCommunicationItems() {
+		IDCommunicationItems icis = new IDCommunicationItems();
 		icis.type = type;
 		icis.port = port;
 		icis.protocol = protocol;
 		return icis;
 	}
 
-	public IdisCommunicationItems() {
+	public IDCommunicationItems() {
 	}
 
 	public String toString() {
@@ -121,7 +121,7 @@ public class IdisCommunicationItems {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		IdisCommunicationItems other = (IdisCommunicationItems) obj;
+		IDCommunicationItems other = (IDCommunicationItems) obj;
 		if (type != other.type)
 			return false;
 		if (port != other.port)

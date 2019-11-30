@@ -42,18 +42,18 @@ public class ExceptionCommon {
 	public static final int EXCEPTIONCODE_INVALID_VALUE = 0; 
 	// 内部错误
 	public static final int EXCEPTIONCODE_INTERNAL_ERROR = 1; 
-	// idis返回的错误，服务未找到
+	// 标识服务系统返回的错误，服务未找到
 	public static final int EXCEPTIONCODE_FOUND_NO_SERVICE = 2; 
-	// idis服务不接受该连接项
-	public static final int EXCEPTIONCODE_NO_ACCEPTABLE_IDISCOMMUNICATIONITEMS = 3; 
+	// 标识服务系统不接受该连接项
+	public static final int EXCEPTIONCODE_NO_ACCEPTABLE_IDCOMMUNICATIONITEMS = 3; 
 	// 未知协议
 	public static final int EXCEPTIONCODE_UNKNOWN_PROTOCOL = 4; 
 	// 标识已存在
 	public static final int EXCEPTIONCODE_IDENTIFIER_ALREADY_EXISTS = 5;
 	// 消息格式错误
 	public static final int EXCEPTIONCODE_MESSAGE_FORMAT_ERROR = 6; 
-	// 无法连接idis服务
-	public static final int EXCEPTIONCODE_CANNOT_CONNECT_TO_IDIS_SERVER = 7; 
+	// 无法连接标识服务系统
+	public static final int EXCEPTIONCODE_CANNOT_CONNECT_TO_ID_SYS_SERVER = 7; 
 	// 不能认证
 	public static final int EXCEPTIONCODE_UNABLE_TO_AUTHENTICATE = 8; 
 	// 标识不存在
@@ -64,8 +64,8 @@ public class ExceptionCommon {
 	public static final int EXCEPTIONCODE_MISSING_OR_INVALID_SIGNATURE = 13; 
 	// 没有找到密码算法
 	public static final int EXCEPTIONCODE_MISSING_CRYPTO_PROVIDER = 14; 
-	// idis服务错误
-	public static final int EXCEPTIONCODE_IDIS_SERVER_ERROR = 15; 
+	// 标识服务系统错误
+	public static final int EXCEPTIONCODE_ID_SYS_SERVER_ERROR = 15; 
 	// 未知算法
 	public static final int EXCEPTIONCODE_UNKNOWN_ALGORITHM_ID = 16; 
 	// 获取到过期消息

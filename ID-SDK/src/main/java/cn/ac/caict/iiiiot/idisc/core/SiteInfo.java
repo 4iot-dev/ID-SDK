@@ -171,14 +171,14 @@ public class SiteInfo {
 
 		servers[0].ipBytes = addrStandardBytes;
 		if (disableUDP) {
-			servers[0].communicationItems = new IdisCommunicationItems[] {
-					new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,
-							IdisCommunicationItems.TS_IDF_TCP, port)};
+			servers[0].communicationItems = new IDCommunicationItems[] {
+					new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+							IDCommunicationItems.TS_IDF_TCP, port)};
 		} else {
-			servers[0].communicationItems = new IdisCommunicationItems[] {
-					new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,
-							IdisCommunicationItems.TS_IDF_TCP, port),
-					new IdisCommunicationItems(IdisCommunicationItems.ST_QUERY, IdisCommunicationItems.TS_IDF_UDP,
+			servers[0].communicationItems = new IDCommunicationItems[] {
+					new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+							IDCommunicationItems.TS_IDF_TCP, port),
+					new IDCommunicationItems(IDCommunicationItems.ST_QUERY, IDCommunicationItems.TS_IDF_UDP,
 							port)};
 		}
 	}

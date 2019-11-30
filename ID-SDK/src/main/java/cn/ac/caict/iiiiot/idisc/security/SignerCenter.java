@@ -22,14 +22,14 @@ import java.security.PrivateKey;
 import org.apache.commons.logging.Log;
 
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
-import cn.ac.caict.iiiiot.idisc.log.IdisLog;
+import cn.ac.caict.iiiiot.idisc.log.IDLog;
 import cn.ac.caict.iiiiot.idisc.utils.JsonWorker;
 
 public class SignerCenter {
 	
 	private static SignerCenter signer = new SignerCenter();
 	
-	private Log logger = IdisLog.getLogger(SignerCenter.class);
+	private Log logger = IDLog.getLogger(SignerCenter.class);
     
     public static SignerCenter getInstance() {
         return signer;

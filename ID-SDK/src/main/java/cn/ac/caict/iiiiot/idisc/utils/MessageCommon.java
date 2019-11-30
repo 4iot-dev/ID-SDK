@@ -53,7 +53,7 @@ public abstract class MessageCommon {
 	// 密码登录
 	public static final int OC_LOGIN = 2000;
 	// 公私钥登录
-	public static final int OC_LOGIN_IDIS = 2001;
+	public static final int OC_LOGIN_ID_SYSTEM = 2001;
 	// ********消息响应码*****************************
 	public static final int RC_RESERVED = 0;
 	// 成功

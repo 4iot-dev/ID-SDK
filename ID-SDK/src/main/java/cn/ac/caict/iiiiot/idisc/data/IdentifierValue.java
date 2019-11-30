@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import cn.ac.caict.iiiiot.idisc.convertor.BytesObjConvertor;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
 import cn.ac.caict.iiiiot.idisc.core.SiteInfo;
-import cn.ac.caict.iiiiot.idisc.log.IdisLog;
+import cn.ac.caict.iiiiot.idisc.log.IDLog;
 import cn.ac.caict.iiiiot.idisc.security.Claims;
 import cn.ac.caict.iiiiot.idisc.security.SignatureStructImpl;
 import cn.ac.caict.iiiiot.idisc.utils.Common;
@@ -66,7 +66,7 @@ public class IdentifierValue {
 	public static final byte TTL_TYPE_RELATIVE = 0;
 	public static final byte TTL_TYPE_ABSOLUTE = 1;
 	public static final int MAX_RECOGNIZED_TTL = 86400 * 2;// 单位秒
-	private Log logger = IdisLog.getLogger(IdentifierValue.class);
+	private Log logger = IDLog.getLogger(IdentifierValue.class);
 	// 构造函数
 	public IdentifierValue() {
 	}

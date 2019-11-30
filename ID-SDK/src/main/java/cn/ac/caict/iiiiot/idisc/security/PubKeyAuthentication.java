@@ -25,13 +25,13 @@ import cn.ac.caict.iiiiot.idisc.convertor.BaseConvertor;
 import cn.ac.caict.iiiiot.idisc.core.BaseRequest;
 import cn.ac.caict.iiiiot.idisc.core.ChallengeResponse;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
-import cn.ac.caict.iiiiot.idisc.log.IdisLog;
+import cn.ac.caict.iiiiot.idisc.log.IDLog;
 import cn.ac.caict.iiiiot.idisc.utils.Common;
 import cn.ac.caict.iiiiot.idisc.utils.ExceptionCommon;
 import cn.ac.caict.iiiiot.idisc.utils.Util;
 
 public class PubKeyAuthentication extends AbstractAuthentication {
-	private Log logger = IdisLog.getLogger(PubKeyAuthentication.class);
+	private Log logger = IDLog.getLogger(PubKeyAuthentication.class);
 	private PrivateKey privateKey;
 	private byte[] userIdIdentifier;
 	private int userIdIndex;

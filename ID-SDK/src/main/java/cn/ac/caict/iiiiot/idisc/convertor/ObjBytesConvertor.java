@@ -18,7 +18,7 @@ package cn.ac.caict.iiiiot.idisc.convertor;
  * https://www.citln.cn/
  */
 import cn.ac.caict.iiiiot.idisc.core.Attribute;
-import cn.ac.caict.iiiiot.idisc.core.IdisCommunicationItems;
+import cn.ac.caict.iiiiot.idisc.core.IDCommunicationItems;
 import cn.ac.caict.iiiiot.idisc.core.ServerInfo;
 import cn.ac.caict.iiiiot.idisc.core.SiteInfo;
 import cn.ac.caict.iiiiot.idisc.data.AdminInfo;
@@ -102,7 +102,7 @@ public class ObjBytesConvertor extends BaseConvertor {
 					offset += write4Bytes(result_bytes, offset, 0);
 				} else {
 					offset += write4Bytes(result_bytes, offset, server.communicationItems.length);
-					for (IdisCommunicationItems item : server.communicationItems) {
+					for (IDCommunicationItems item : server.communicationItems) {
 						result_bytes[offset++] = item.type;
 						result_bytes[offset++] = item.protocol;
 						offset += write4Bytes(result_bytes, offset, item.port);

@@ -49,7 +49,7 @@ public abstract class BaseMessage implements Cloneable {
 	public boolean bEncrypt = false;
 	/**
 	 * bCertify为证明位，bCertify被置位的请求表示要求服务器对其应答进行签名。bCertify被置位的response表示消息已被签名。
-	 * 如果请求时bCertify被置位，服务器必须对应答数据签名。如果服务器不能应答中提供有效的签名，idis-sdk应该丢弃应答并视此 请求失败。
+	 * 如果请求时bCertify被置位，服务器必须对应答数据签名。如果服务器不能应答中提供有效的签名，ID-SDK应该丢弃应答并视此请求失败。
 	 */
 	public boolean bCertify = false;
 	/**
@@ -73,7 +73,7 @@ public abstract class BaseMessage implements Cloneable {
 	 */
 	public boolean ignoreRestrictedValues = true;
 	/**
-	 * bRecursive为递归请求位，如果为true,要求服务器以客户端的身份转发此请求到其他的idis服务上。
+	 * bRecursive为递归请求位，如果为true,要求服务器以客户端的身份转发此请求到其他的标识服务上。
 	 */
 	public boolean bRecursive = true;
 	/**

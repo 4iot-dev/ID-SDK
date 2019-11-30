@@ -28,14 +28,14 @@ import cn.ac.caict.iiiiot.idisc.core.CreateIdentifierRequest;
 import cn.ac.caict.iiiiot.idisc.core.DeleteIdentifierRequest;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierResolveEngine;
-import cn.ac.caict.iiiiot.idisc.core.LoginIdisRequest;
+import cn.ac.caict.iiiiot.idisc.core.LoginIDSystemRequest;
 import cn.ac.caict.iiiiot.idisc.core.ModifyValueRequest;
 import cn.ac.caict.iiiiot.idisc.core.RemoveValueRequest;
 import cn.ac.caict.iiiiot.idisc.core.ResolutionRequest;
 import cn.ac.caict.iiiiot.idisc.core.SiteRequest;
 import cn.ac.caict.iiiiot.idisc.data.IdentifierValue;
 import cn.ac.caict.iiiiot.idisc.data.MsgSettings;
-import cn.ac.caict.iiiiot.idisc.log.IdisLog;
+import cn.ac.caict.iiiiot.idisc.log.IDLog;
 import cn.ac.caict.iiiiot.idisc.security.AbstractAuthentication;
 import cn.ac.caict.iiiiot.idisc.security.PubKeyAuthentication;
 import cn.ac.caict.iiiiot.idisc.service.IIDManageServiceChannel;
@@ -45,7 +45,7 @@ import cn.ac.caict.iiiiot.idisc.utils.Util;
 
 public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 	private IdentifierResolveEngine resolverEngine = null;
-	private Log log = IdisLog.getLogger(IDManageServiceChannelImpl.class);
+	private Log log = IDLog.getLogger(IDManageServiceChannelImpl.class);
 	private String printServInfo = "--";
 	private boolean login = false;
 	private String userIdentifier;
@@ -326,13 +326,13 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"不支持该类型摘要rdType=" + rdType);
 		PrivateKey privKey = Util.getPrivateKeyFromFile(privakeyFilePath, null);
 		if (privKey == null) {
-			IdisLog.getLogger(IDManageServiceChannelImpl.class).info("private key is null,maybe file is not exit,please check it!");
+			IDLog.getLogger(IDManageServiceChannelImpl.class).info("private key is null,maybe file is not exit,please check it!");
 			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"privakeyFilePath文件可能不存在");
 		}
 		byte[] userIdentifier = Util.encodeString(identifier);
 		AbstractAuthentication authInfo = new PubKeyAuthentication(userIdentifier, index, privKey);
 		BaseResponse response = null;
-		LoginIdisRequest loginReq = new LoginIdisRequest(userIdentifier, index, authInfo);
+		LoginIDSystemRequest loginReq = new LoginIDSystemRequest(userIdentifier, index, authInfo);
 		setMessageSettings(loginReq, settings);
 		loginReq.returnRequestDigest = true;//该位不能改
 		loginReq.rdHashType = (byte) rdType;

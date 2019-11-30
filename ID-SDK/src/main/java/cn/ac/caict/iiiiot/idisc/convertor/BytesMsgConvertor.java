@@ -25,8 +25,8 @@ import cn.ac.caict.iiiiot.idisc.core.CreateIdentifierResponse;
 import cn.ac.caict.iiiiot.idisc.core.ErrorResponse;
 import cn.ac.caict.iiiiot.idisc.core.GenericResponse;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
-import cn.ac.caict.iiiiot.idisc.core.IdisCommunicationItems;
-import cn.ac.caict.iiiiot.idisc.core.LoginIdisResponse;
+import cn.ac.caict.iiiiot.idisc.core.IDCommunicationItems;
+import cn.ac.caict.iiiiot.idisc.core.LoginIDSystemResponse;
 import cn.ac.caict.iiiiot.idisc.core.MsgEnvelope;
 import cn.ac.caict.iiiiot.idisc.core.MsgHeader;
 import cn.ac.caict.iiiiot.idisc.core.ResolutionResponse;
@@ -83,8 +83,8 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 				message = convertBytesToResolutionResponse(msg, bodyOffset, envelope);
 			else if(msgHeader.opCode == MessageCommon.OC_LOGIN)
 				message = convertBytesToResolutionResponse(msg, bodyOffset, envelope);
-			else if(msgHeader.opCode == MessageCommon.OC_LOGIN_IDIS)
-				message = convertBytesToLoginIdisResponse(msg, bodyOffset, envelope);
+			else if(msgHeader.opCode == MessageCommon.OC_LOGIN_ID_SYSTEM)
+				message = convertBytesToLoginIDSystemResponse(msg, bodyOffset, envelope);
 			else if(msgHeader.opCode == MessageCommon.OC_CREATE_IDENTIFIER)
 				message = convertBytesToCreateIdentifierResponse(msg, bodyOffset, envelope, bodyLenAfterRD);
 			else if(msgHeader.opCode == MessageCommon.OC_DELETE_IDENTIFIER || msgHeader.opCode == MessageCommon.OC_ADD_VALUE ||
@@ -263,11 +263,11 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
             if(numberItems < 0 || numberItems > Common.MAX_ARRAY_SIZE)
     			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MESSAGE_FORMAT_ERROR, "消息尺寸越界");
             
-            IdisCommunicationItems[] items = new IdisCommunicationItems[numberItems];
+            IDCommunicationItems[] items = new IDCommunicationItems[numberItems];
             si.servers[j].communicationItems = items;
             
             for(int k = 0; k < items.length; k++) {
-            	items[k] = new IdisCommunicationItems();
+            	items[k] = new IDCommunicationItems();
             	items[k].type = bodyData[offset];
             	offset += 1;
             	items[k].protocol = bodyData[offset];
@@ -419,8 +419,8 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 		return new ChallengeResponse(opCode, nonce);
 	}
 	
-	private static LoginIdisResponse convertBytesToLoginIdisResponse(byte[] msg, int offset, MsgEnvelope env){
-		return new LoginIdisResponse(null, null);
+	private static LoginIDSystemResponse convertBytesToLoginIDSystemResponse(byte[] msg, int offset, MsgEnvelope env){
+		return new LoginIDSystemResponse(null, null);
 	}
 	
 	private static GenericResponse convertBytesToGenericResponse(byte[] msg, int offset, MsgEnvelope env) {

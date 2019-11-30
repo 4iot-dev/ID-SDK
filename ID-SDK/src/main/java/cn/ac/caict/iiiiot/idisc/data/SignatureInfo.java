@@ -16,7 +16,7 @@ import org.apache.commons.logging.Log;
 import cn.ac.caict.iiiiot.idisc.convertor.BaseConvertor;
 import cn.ac.caict.iiiiot.idisc.convertor.MsgBytesConvertor;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
-import cn.ac.caict.iiiiot.idisc.log.IdisLog;
+import cn.ac.caict.iiiiot.idisc.log.IDLog;
 import cn.ac.caict.iiiiot.idisc.security.Claims;
 import cn.ac.caict.iiiiot.idisc.security.IdentifierValuesDigest;
 import cn.ac.caict.iiiiot.idisc.security.IdentifierValuesDigests;
@@ -37,7 +37,7 @@ import cn.ac.caict.iiiiot.idisc.utils.Util;
  *	nbf(not before)：token在此时间之前不能被接收处理，即生效时间
  */
 public class SignatureInfo {
-	private static Log logger = IdisLog.getLogger(SignatureInfo.class);
+	private static Log logger = IDLog.getLogger(SignatureInfo.class);
 	private static String INDEX_ID_PATTERN = "\\d+:(.*)";
 	private static String SHA256_PATTERN = "\\s*[S,s][H,h][A,a][\\s,-]?256\\s*";
 	public List<Permission> perms;

@@ -20,12 +20,12 @@ package cn.ac.caict.iiiiot.idisc.core;
 import cn.ac.caict.iiiiot.idisc.security.AbstractAuthentication;
 import cn.ac.caict.iiiiot.idisc.utils.MessageCommon;
 
-public class LoginIdisRequest extends BaseRequest {
+public class LoginIDSystemRequest extends BaseRequest {
 	public int requestedIndexes = -1;
 	public final boolean isAdminRequest = false;
 
-	public LoginIdisRequest(byte[] identifier, int index,AbstractAuthentication authInfo) {
-		super(identifier, MessageCommon.OC_LOGIN_IDIS, authInfo);
+	public LoginIDSystemRequest(byte[] identifier, int index,AbstractAuthentication authInfo) {
+		super(identifier, MessageCommon.OC_LOGIN_ID_SYSTEM, authInfo);
 		this.requestedIndexes = index;
 		this.authInfo = authInfo;
 	}

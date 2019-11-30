@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierResolveEngine;
-import cn.ac.caict.iiiiot.idisc.log.IdisLog;
+import cn.ac.caict.iiiiot.idisc.log.IDLog;
 import cn.ac.caict.iiiiot.idisc.service.IChannelManageService;
 import cn.ac.caict.iiiiot.idisc.service.IIDManageServiceChannel;
 
@@ -32,7 +32,7 @@ public class ChannelManageServiceImpl implements IChannelManageService {
 	private static final int LOGIN = 1;
 	private static final int LOGOUT = 2;
 	private int channelCount = 0;
-	private Log log = IdisLog.getLogger(IDManageServiceChannelImpl.class);
+	private Log log = IDLog.getLogger(IDManageServiceChannelImpl.class);
 	
 	public void setChannelCount(int channelCount) {
 		this.channelCount = channelCount;

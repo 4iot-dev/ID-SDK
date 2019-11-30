@@ -10,7 +10,7 @@ import java.util.List;
 
 import cn.ac.caict.iiiiot.idisc.core.BaseResponse;
 import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
-import cn.ac.caict.iiiiot.idisc.core.IdisCommunicationItems;
+import cn.ac.caict.iiiiot.idisc.core.IDCommunicationItems;
 import cn.ac.caict.iiiiot.idisc.core.ResolutionResponse;
 import cn.ac.caict.iiiiot.idisc.core.ServerInfo;
 import cn.ac.caict.iiiiot.idisc.core.SiteInfo;
@@ -84,7 +84,7 @@ public class TestManageConnection {
 		// 创建通道管理实例
 		IChannelManageService chnnlService = new ChannelManageServiceImpl();
 		try {
-			// 根据IDIS系统提供的ip和端口，创建与IDIS的连接通道对象
+			// 根据标识服务系统提供的ip和端口，创建与标识服务系统的连接通道对象
 			IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.29", 2643, "TCP");
 			// testLookup(channel);
 			// testGetSiteInfo(channel);
@@ -186,11 +186,11 @@ public class TestManageConnection {
 		IdentifierValue iv = new IdentifierValue();
 		int index = 20;
 		// items[]
-		IdisCommunicationItems[] items = new IdisCommunicationItems[2];
-		items[0] = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,
-				IdisCommunicationItems.TS_IDF_TCP, 1304);
-		items[1] = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,
-				IdisCommunicationItems.TS_IDF_UDP, 1304);
+		IDCommunicationItems[] items = new IDCommunicationItems[2];
+		items[0] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+				IDCommunicationItems.TS_IDF_TCP, 1304);
+		items[1] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+				IDCommunicationItems.TS_IDF_UDP, 1304);
 		// server
 		ServerInfo ser1 = new ServerInfo();
 		ser1.communicationItems = items;
@@ -212,11 +212,11 @@ public class TestManageConnection {
 		IdentifierValue iv = new IdentifierValue();
 		int index = 25;
 		// items[]
-		IdisCommunicationItems[] items = new IdisCommunicationItems[2];
-		items[0] = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,
-				IdisCommunicationItems.TS_IDF_TCP, 2641);
-		items[1] = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,
-				IdisCommunicationItems.TS_IDF_UDP, 2641);
+		IDCommunicationItems[] items = new IDCommunicationItems[2];
+		items[0] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+				IDCommunicationItems.TS_IDF_TCP, 2641);
+		items[1] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+				IDCommunicationItems.TS_IDF_UDP, 2641);
 		// server
 		ServerInfo ser1 = new ServerInfo();
 		ser1.communicationItems = items;
