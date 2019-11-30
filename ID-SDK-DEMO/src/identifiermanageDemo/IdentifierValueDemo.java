@@ -6,18 +6,18 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
-import cn.ac.caict.iiiiot.idisc.core.IdisCommunicationItems;
-import cn.ac.caict.iiiiot.idisc.core.ServerInfo;
-import cn.ac.caict.iiiiot.idisc.core.SiteInfo;
-import cn.ac.caict.iiiiot.idisc.data.AdminInfo;
-import cn.ac.caict.iiiiot.idisc.data.IdentifierValue;
-import cn.ac.caict.iiiiot.idisc.data.SignatureInfo;
-import cn.ac.caict.iiiiot.idisc.data.ValueReference;
-import cn.ac.caict.iiiiot.idisc.security.Permission;
-import cn.ac.caict.iiiiot.idisc.service.IIDManageServiceChannel;
-import cn.ac.caict.iiiiot.idisc.utils.IdentifierValueUtil;
-import cn.ac.caict.iiiiot.idisc.utils.Util;
+import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
+import cn.ac.caict.iiiiot.id.client.core.IDCommunicationItems;
+import cn.ac.caict.iiiiot.id.client.core.ServerInfo;
+import cn.ac.caict.iiiiot.id.client.core.SiteInfo;
+import cn.ac.caict.iiiiot.id.client.data.AdminInfo;
+import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
+import cn.ac.caict.iiiiot.id.client.data.SignatureInfo;
+import cn.ac.caict.iiiiot.id.client.data.ValueReference;
+import cn.ac.caict.iiiiot.id.client.security.Permission;
+import cn.ac.caict.iiiiot.id.client.service.IIDManageServiceChannel;
+import cn.ac.caict.iiiiot.id.client.utils.IdentifierValueUtil;
+import cn.ac.caict.iiiiot.id.client.utils.Util;
 /**
  * 说明：该demo主要演示预定义标识值的创建，即IdentifierValueUtil工具类的使用方法。
  * 当用户在进行标识需要为Identifier添加预定义类型标识值时，参考如下示例创建相应的标识值。
@@ -153,11 +153,11 @@ public class IdentifierValueDemo {
 		IdentifierValue value = new IdentifierValue();
 		int index = 20;
 		// items[]
-		IdisCommunicationItems[] items = new IdisCommunicationItems[2];
-		items[0] = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,
-				IdisCommunicationItems.TS_IDF_TCP, 1304);
-		items[1] = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,
-				IdisCommunicationItems.TS_IDF_UDP, 1304);
+		IDCommunicationItems[] items = new IDCommunicationItems[2];
+		items[0] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+				IDCommunicationItems.TS_IDF_TCP, 1304);
+		items[1] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+				IDCommunicationItems.TS_IDF_UDP, 1304);
 		// server
 		ServerInfo ser1 = new ServerInfo();
 		ser1.communicationItems = items;

@@ -2,10 +2,10 @@ package channelmanageDemo;
 
 import java.io.IOException;
 
-import cn.ac.caict.iiiiot.idisc.core.IdentifierException;
-import cn.ac.caict.iiiiot.idisc.service.IChannelManageService;
-import cn.ac.caict.iiiiot.idisc.service.IIDManageServiceChannel;
-import cn.ac.caict.iiiiot.idisc.service.impl.ChannelManageServiceImpl;
+import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
+import cn.ac.caict.iiiiot.id.client.service.IChannelManageService;
+import cn.ac.caict.iiiiot.id.client.service.IIDManageServiceChannel;
+import cn.ac.caict.iiiiot.id.client.service.impl.ChannelManageServiceImpl;
 
 public class ManageChannelDemo {
 	public static final int CHANNEL_CLOSED = 0;
