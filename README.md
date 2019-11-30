@@ -8,7 +8,7 @@
 
 ## 简介
 
-欢迎使用 ID-SDK 。智能分布式标识系统是由工业互联网与物联网研究所（简称工物所）研发、用于对标识的管理和解析的系统。为方便用户使用该系统，工物所提供了ID-SDK以方便标识系统用户定制开发自有系统、快速接入工业互联网标识节点，如下图。这里向您介绍如何获取ID-SDK并快速使用。如果您在使用ID-SDK的过程中遇到任何问题，欢迎在当前GitHub[提交 Issues](https://github.com/4iot-dev/ID-SDK/issues/new)。
+欢迎使用 ID-SDK 。智能分布式标识系统是由工业互联网与物联网研究所（简称工物所）研发、用于对标识的管理和解析的系统。为方便用户使用该系统，工物所提供了ID-SDK以方便标识系统用户定制开发自有系统、快速接入工业互联网标识体系节点，如下图。这里向您介绍如何获取ID-SDK并快速使用。如果您在使用ID-SDK的过程中遇到任何问题，欢迎在当前GitHub[提交 Issues](https://github.com/4iot-dev/ID-SDK/issues/new)。
 ![Alt text](./res/relations.jpg)
 
 
@@ -50,6 +50,9 @@ ID-SDK-DEMO目录：ID-SDK开发包演示demo
 
 ## 发行说明
 
+SDK首次在开源平台发布的版本是2.0.0，在发布2.0.1版本时，SDK包名称以及源码包结构发生了变化，故2.0.0版本的用户升级到2.0.1版须做出引用调整：  
+1) IDIS-SDK-2.0.0.jar更换为ID-SDK-2.0.1  
+2) 引用SDK中内容时，导入包路径需要调整，如"import cn.ac.caict.iiiiot.idisc.*****;"要改为"import cn.ac.caict.iiiiot.id.client.****;"  
 各版本更新将记录在[Change](./Change.md)中。
 
 ## 许可证
