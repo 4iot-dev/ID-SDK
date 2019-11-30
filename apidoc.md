@@ -168,7 +168,7 @@ try {
 	//根据标识服务提供的ip和端口，创建与标识服务的连接通道对象
 	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
 	if (channel != null) {
-		BaseResponse loginResp = channel.login("88.1000.1/ADMIN", 301, "c:\\keys\\rsa_pri.pem", null,1);
+		BaseResponse loginResp = channel.login("88.1000.1/ADMIN", 301, "c:\\keys\\rsa_pri.pem", null,1,new MsgSettings());
 		if(loginResp != null && loginResp.responseCode == 1){
 			System.out.println("登录成功!");
 			String userId = chnnlService.getChannelUserIdentifier(channel);
@@ -187,7 +187,7 @@ try {
 >|字段|类型|默认值|描述|
 >| :-------- | :--------| :--------| :--------|
 >|truestyQuery |boolean |false |查询时是否进行可信解析                            |
->|certify |boolean |false |是否做消息凭据认证                            |
+>|certify |boolean |false |是否做消息凭据验证                            |
 
 在进行数据通信过程中，标识值数据是通过IdentifierValue结构来设置的，说明如下：
 >|字段|类型|默认值|描述|
@@ -412,11 +412,11 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 	IdentifierValue iv = new IdentifierValue();
 	int index = 20;
 	// items[]
-	IdisCommunicationItems[] items = new IdisCommunicationItems[2];
-	items[0] = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,
-			IdisCommunicationItems.TS_IDF_TCP, 1304);
-	items[1] = new IdisCommunicationItems(IdisCommunicationItems.ST_ADMIN_AND_QUERY,
-			IdisCommunicationItems.TS_IDF_UDP, 1304);
+	IDCommunicationItems[] items = new IDCommunicationItems[2];
+	items[0] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+			IDCommunicationItems.TS_IDF_TCP, 1304);
+	items[1] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+			IDCommunicationItems.TS_IDF_UDP, 1304);
 	// server
 	ServerInfo ser1 = new ServerInfo();
 	ser1.communicationItems = items;
@@ -686,17 +686,17 @@ try {
 >|0   |EXCEPTIONCODE_INVALID_VALUE    |INVALID_VALUE                          |
 >|1   |EXCEPTIONCODE_INTERNAL_ERROR    |INTERNAL_ERROR                          |
 >|2   |EXCEPTIONCODE_FOUND_NO_SERVICE  |ISERVICE_NOT_FOUND                 |
->|3   |EXCEPTIONCODE_NO_ACCEPTABLE_IDISCOMMUNICATIONITEMS    |NO_ACCEPTABLE_INTERFACES   |
+>|3   |EXCEPTIONCODE_NO_ACCEPTABLE_IDCOMMUNICATIONITEMS    |NO_ACCEPTABLE_INTERFACES   |
 >|4   |EXCEPTIONCODE_UNKNOWN_PROTOCOL    |UNKNOWN_PROTOCOL           |
 >|5   |EXCEPTIONCODE_IDENTIFIER_ALREADY_EXISTS    |IDENTIFIER_ALREADY_EXISTS     |
 >|6   |EXCEPTIONCODE_MESSAGE_FORMAT_ERROR|MESSAGE_FORMAT_ERROR |
->|7   |EXCEPTIONCODE_CANNOT_CONNECT_TO_IDIS_SERVER    |CANNOT_CONNECT_TO_SERVER                          |
+>|7   |EXCEPTIONCODE_CANNOT_CONNECT_TO_ID_SYS_SERVER    |CANNOT_CONNECT_TO_SERVER                          |
 >|8   |EXCEPTIONCODE_UNABLE_TO_AUTHENTICATE    |UNABLE_TO_AUTHENTICATE                          |
 >|9   |EXCEPTIONCODE_IDENTIFIER_DOES_NOT_EXIST    |IDENTIFIER_DOES_NOT_EXIST|
 >|10   |EXCEPTIONCODE_SECURITY_ALERT  |SECURITY_ALERT                          |
 >|13   |EXCEPTIONCODE_MISSING_OR_INVALID_SIGNAtrue    |MISSING_OR_INVALID_SIGNAtrue                          |
 >|14   |EXCEPTIONCODE_MISSING_CRYPTO_PROVIDER    |MISSING_CRYPTO_PROVIDER                          |
->|15   |EXCEPTIONCODE_IDIS_SERVER_ERROR    |SERVER_ERROR                          |
+>|15   |EXCEPTIONCODE_ID_SYS_SERVER_ERROR    |SERVER_ERROR                          |
 >|16   |EXCEPTIONCODE_UNKNOWN_ALGORITHM_ID  |UNKNOWN_ALGORITHM_ID                          |
 >|17   |EXCEPTIONCODE_GOT_EXPIRED_MESSAGE    |GOT_EXPIRED_MESSAGE                          |
 >|26   |EXCEPTIONCODE_ENCRYPTION_ERROR    |ENCRYPTION_ERROR                         |
