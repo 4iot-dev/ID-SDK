@@ -25,10 +25,10 @@ import cn.ac.caict.iiiiot.id.client.utils.MessageCommon;
 
 public class ChallengeResponse extends BaseResponse {
 	private static Random random = null;
-	private static final String SYNLOCK = "synLock";
+	private static final Object SYNLOCK = new Object();
 	public byte[] nonce;
 
-	public ChallengeResponse(int opCode, byte nonce[]) {
+	public ChallengeResponse(int opCode, byte[] nonce) {
 		super(opCode, MessageCommon.RC_AUTHENTICATION_NEEDED);
 		this.nonce = nonce;
 	}
@@ -44,11 +44,9 @@ public class ChallengeResponse extends BaseResponse {
 	public static final void initializeRandom() {
 		if (random == null) {
 			synchronized (SYNLOCK) {
-				if (random == null) {
-					random = new SecureRandom();
-					random.setSeed(System.nanoTime()); 
-					random.nextInt();
-				}
+				random = new SecureRandom();
+				random.setSeed(System.nanoTime());
+				random.nextInt();
 			}
 		}
 	}

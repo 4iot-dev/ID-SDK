@@ -419,11 +419,9 @@ public class IdentifierValue {
 		if (v1.length != v2.length)
 			return false;
 		for (int i = 0; i < v1.length; i++) {
-			if (!v1.equals(v2))
+			if (v1[i] != v2[i])
 				return false;
 		}
 		return true;
 	}
-
-
 }

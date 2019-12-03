@@ -233,10 +233,10 @@ public abstract class Util {
 	}
 
 	public static String rfcIpRepresentation(byte[] ipv6Address) {
+		if (ipv6Address == null)
+			return null;
 		int[] ints = intsFromByteIPv6Address(ipv6Address);
 		if (ints == null) {
-			if (ipv6Address == null)
-				return null;
 			if (ipv6Address.length == 4)
 				return (ipv6Address[0] & 0xFF) + "." + (ipv6Address[1] & 0xFF) + "." + (ipv6Address[2] & 0xFF) + "."
 						+ (ipv6Address[3] & 0xFF);
@@ -463,7 +463,9 @@ public abstract class Util {
 		return true;
 	}
 
-	public static final boolean startsWithCaseInsensitive(byte b1[], byte b2[]) {
+	public static final boolean startsWithCaseInsensitive(byte[] b1, byte[] b2) {
+		if (b1 == null || b2 == null)
+			return false;
 		if (b1.length < b2.length)
 			return false;
 		byte byte1, byte2;
@@ -878,81 +880,76 @@ public abstract class Util {
 		return getPublicKeyFromBytes(buf, 0);
 	}
 
-	private static PublicKey getPublicKeyKeyFromPemFile(File pubKeyFile) {
-		InputStream in;
+	private static PublicKey getPublicKeyKeyFromPemFile(File pubKeyFile) throws Exception {
+		InputStream in = null;
+		int fLen = (int) pubKeyFile.length();
+		byte[] strBuffer = new byte[fLen];
 		try {
 			in = new FileInputStream(pubKeyFile);
-			int fLen = (int) pubKeyFile.length();
-			byte[] strBuffer = new byte[fLen];
-			try {
-				in.read(strBuffer, 0, fLen);
-			} catch (IOException e) {
-				e.printStackTrace();
-				try {
-					in.close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				return null;
-			}
-			StringReader reader = new StringReader(new String(strBuffer));
-			BufferedReader bufferedReader = new BufferedReader(reader);
-			String line;
-			StringBuilder contentsBase64 = new StringBuilder();
-			String type = null;
-			try {
-				while ((line = bufferedReader.readLine()) != null) {
-					if (line.trim().isEmpty() || line.isEmpty())
-						continue;
-					if (type == null) {
-						Pattern typePattern = Pattern.compile(STARTPATTERN);
-						Matcher matcher = typePattern.matcher(line);
-						if (matcher.matches())
-							type = matcher.group(1);
-						else
-							type = "";
-						System.out.println("type=" + type);
-						continue;
-					}
-					Pattern endPattern = Pattern.compile(ENDPATTERN);
-					if (endPattern.matcher(line).matches())
-						break;
-					contentsBase64.append(line);
-				}
-				bufferedReader.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-			System.out.println("contentsBase64" + contentsBase64);
-			byte[] bytes = Base64.decodeBase64(contentsBase64.toString());
-			boolean encrypted = "PUBLIC".equals(type);
-			if (!encrypted && !"PUBLIC".equals(type)) {
-				System.out.println("文件起始应该是\"-----BEGIN PUBLIC KEY-----\"");
-				return null;
-			}
-			try {
-				X509EncodedKeySpec keySpec = new X509EncodedKeySpec(bytes);
-				try {
-					return KeyFactory.getInstance("RSA").generatePublic(keySpec);
-				} catch (InvalidKeySpecException e) {
-					return KeyFactory.getInstance("DSA").generatePublic(keySpec);
-				}
-			} catch (NoSuchAlgorithmException e) {
-				throw new AssertionError(e);
-			} catch (InvalidKeySpecException e) {
-				try {
-					return SecureUtil.generatePublicKey("SM2", bytes);
-				} catch (Exception ex) {
-					throw new Exception("RSA和DSA、SM2格式的公钥生成器都无法生成公钥", e);
-				}
-			}
-		} catch (FileNotFoundException e) {
+			in.read(strBuffer, 0, fLen);
+		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
+			return null;
+		} finally {
+			if (in != null)
+				in.close();
 		}
-		return null;
+		StringReader reader = new StringReader(new String(strBuffer));
+		BufferedReader bufferedReader = new BufferedReader(reader);
+		String line;
+		StringBuilder contentsBase64 = new StringBuilder();
+		String type = null;
+		try {
+			while ((line = bufferedReader.readLine()) != null) {
+				if (line.trim().isEmpty() || line.isEmpty())
+					continue;
+				if (type == null) {
+					Pattern typePattern = Pattern.compile(STARTPATTERN);
+					Matcher matcher = typePattern.matcher(line);
+					if (matcher.matches())
+						type = matcher.group(1);
+					else
+						type = "";
+					System.out.println("type=" + type);
+					continue;
+				}
+				Pattern endPattern = Pattern.compile(ENDPATTERN);
+				if (endPattern.matcher(line).matches())
+					break;
+				contentsBase64.append(line);
+			}
+			bufferedReader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			in.close();
+			return null;
+		}
+		System.out.println("contentsBase64" + contentsBase64);
+		byte[] bytes = Base64.decodeBase64(contentsBase64.toString());
+		boolean encrypted = "PUBLIC".equals(type);
+		if (!encrypted && !"PUBLIC".equals(type)) {
+			System.out.println("文件起始应该是\"-----BEGIN PUBLIC KEY-----\"");
+			in.close();
+			return null;
+		}
+		try {
+			X509EncodedKeySpec keySpec = new X509EncodedKeySpec(bytes);
+			try {
+				return KeyFactory.getInstance("RSA").generatePublic(keySpec);
+			} catch (InvalidKeySpecException e) {
+				return KeyFactory.getInstance("DSA").generatePublic(keySpec);
+			}
+		} catch (NoSuchAlgorithmException e) {
+			throw new AssertionError(e);
+		} catch (InvalidKeySpecException e) {
+			try {
+				return SecureUtil.generatePublicKey("SM2", bytes);
+			} catch (Exception ex) {
+				throw new Exception("RSA和DSA、SM2格式的公钥生成器都无法生成公钥", e);
+			}
+		} finally {
+			in.close();
+		}
 	}
 
 	public static PrivateKey getPrivateKeyFromFile(String privakeyFilePath, String password) {
@@ -997,7 +994,7 @@ public abstract class Util {
 	}
 
 	private static PrivateKey getPrivateKeyFromPemFile(File privKeyFile, String password) {
-		InputStream in;
+		InputStream in = null;
 		try {
 			in = new FileInputStream(privKeyFile);
 			int flen = (int) privKeyFile.length();
@@ -1055,6 +1052,15 @@ public abstract class Util {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally{
+			if(in != null){
+				try {
+					in.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
 		return null;
 	}
@@ -1145,12 +1151,20 @@ public abstract class Util {
 		File f = new File(filePath);
 		byte[] buf = new byte[(int) f.length()];
 
-		FileInputStream input = new FileInputStream(f);
-		int n = 0;
-		int offset = 0;
-		while ((n < buf.length) && ((offset = input.read(buf, n, buf.length - n)) >= 0))
-			n += offset;
-		input.close();
+		FileInputStream input = null;
+		try {
+			input = new FileInputStream(f);
+			int n = 0;
+			int offset = 0;
+			while ((n < buf.length) && ((offset = input.read(buf, n, buf.length - n)) >= 0))
+				n += offset;
+		} catch (IOException e) {
+			throw new IOException(e);
+		} finally {
+			if (input != null){
+				input.close();	
+			}
+		}
 		return buf;
 	}
 

@@ -46,7 +46,9 @@ public class ServerInfo {
 	}
 
 	public boolean isIPv4() {
-		if(ipBytes != null && ipBytes.length == 4)
+		if (ipBytes == null)
+			return false;
+		if(ipBytes.length == 4)
 			return true;
 		for (int i = 0; i < Common.IP_ADDRESS_SIZE_SIXTEEN - 4; i++) {
 			if (ipBytes[i] != 0) {
@@ -146,16 +148,17 @@ public class ServerInfo {
 		}
 		
 		IDCommunicationItems tmpIA[] = communicationItems;
-		if(tmpIA == null)
+		if (tmpIA == null)
 			serCopy.communicationItems = null;
-		else if(tmpIA != null && tmpIA.length >=0)
+		else if (tmpIA != null) {
 			serCopy.communicationItems = new IDCommunicationItems[tmpIA.length];
-		for (int i = 0; i < tmpIA.length; i++) {
-			IDCommunicationItems tmpItem = tmpIA[i];
-			if(tmpItem == null)
-				serCopy.communicationItems[i] = null;
-			else
-				serCopy.communicationItems[i] = tmpItem.cloneIDCommunicationItems();
+			for (int i = 0; i < tmpIA.length; i++) {
+				IDCommunicationItems tmpItem = tmpIA[i];
+				if (tmpItem == null)
+					serCopy.communicationItems[i] = null;
+				else
+					serCopy.communicationItems[i] = tmpItem.cloneIDCommunicationItems();
+			}
 		}
 		return serCopy;
 	}

@@ -93,17 +93,9 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 	}
 
 	public void logout() throws IdentifierException {
-		try {
-			resolverEngine.finalize();
-		}catch (Throwable e){
-			log.error(e.getMessage());
-			int errCode = ExceptionCommon.EXCEPTIONCODE_DISCONN_FAILED;
-			throw new IdentifierException(errCode,IdentifierException.getCodeDescription(errCode));
-		} finally {
-			resolverEngine = null;
-			setLogin(false);
-			setUserIdentifier(null);
-		}
+		resolverEngine = null;
+		setLogin(false);
+		setUserIdentifier(null);
 	}
 	
 	@Override

@@ -80,12 +80,13 @@ public class IdentifierValueUtil {
 			byte buf[] = new byte[1024];
 			FileInputStream input = null;
 			try {
-				if (originData instanceof String)
+				if (originData instanceof String) {
 					input = new FileInputStream(new File((String) originData));
-				int len;
-				while ((len = input.read(buf)) >= 0)
-					bout.write(buf, 0, len);
-				data_buf = bout.toByteArray();
+					int len;
+					while ((len = input.read(buf)) >= 0)
+						bout.write(buf, 0, len);
+					data_buf = bout.toByteArray();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			} finally {

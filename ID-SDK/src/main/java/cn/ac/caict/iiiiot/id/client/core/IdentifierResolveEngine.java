@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -112,28 +113,43 @@ public class IdentifierResolveEngine {
 		File fConfig = new File(path, "src/config.json");
 		logger.debug("配置文件路径：" + fConfig.getAbsolutePath());
 		InputStream is = null;
-		if (fConfig.exists()) {
-			is = new BufferedInputStream(new FileInputStream(fConfig));
-		} else {
-			is = IdentifierResolveEngine.class.getResourceAsStream("/cn/ac/caict/iiiiot/id/client/conf/config.json");
-			if (is == null) {
-				logger.error("读取ID-SDK的配置文件失败");
+		BufferedReader br = null;
+		Reader input = null;
+		try {
+			if (fConfig.exists()) {
+				is = new BufferedInputStream(new FileInputStream(fConfig));
+			} else {
+				is = IdentifierResolveEngine.class
+						.getResourceAsStream("/cn/ac/caict/iiiiot/id/client/conf/config.json");
+				if (is == null) {
+					logger.error("读取ID-SDK的配置文件失败");
+				}
 			}
+			if (is == null) {
+				logger.error("资源获取失败");
+				return;
+			}
+			input = new InputStreamReader(is);
+			br = new BufferedReader(input);
+			String s = "";
+			StringBuilder sb = new StringBuilder();
+			while ((s = br.readLine()) != null) {
+				sb.append(s.trim());
+			}
+			Gson gson = new Gson();
+			config = gson.fromJson(sb.toString(), Map.class);
+			logger.debug("配置信息：" + config.toString());
+			logger.info("end----loadConfig()---");
+		} catch (IOException e) {
+			throw new IOException();
+		} finally {
+			if (input != null)
+				input.close();
+			if (br != null)
+				br.close();
+			if (is != null)
+				is.close();
 		}
-		if (is == null) {
-			logger.error("资源获取失败");
-			return;
-		}
-		BufferedReader br = new BufferedReader(new InputStreamReader(is));
-		String s = "";
-		StringBuilder sb = new StringBuilder();
-		while ((s = br.readLine()) != null) {
-			sb.append(s.trim());
-		}
-		Gson gson = new Gson();
-		config = gson.fromJson(sb.toString(), Map.class);
-		logger.debug("配置信息：" + config.toString());
-		logger.info("end----loadConfig()---");
 	}
 
 	private void createConnection(String ip, int port, String protocol) throws IdentifierException {
@@ -153,9 +169,11 @@ public class IdentifierResolveEngine {
 		initSiteInfo(ip, port, protocol);
 		if (!"TCP".equalsIgnoreCase(protocol))
 			return;
+		SocketChannel sockChannel = null;
 		try {
+			sockChannel = SocketChannel.open();
 			// 打开socket通道
-			longConnSocket = SocketChannel.open().socket();
+			longConnSocket = sockChannel.socket();
 			longConnSocket.setSoLinger(false, 0);
 			// 直接指向配置文件中的服务器地址
 			longConnSocket.connect(new InetSocketAddress(ip, port), 0);
@@ -176,9 +194,13 @@ public class IdentifierResolveEngine {
 				longConnSocket.close();
 			} catch (Exception e2) {
 			}
+			try {
+				sockChannel.close();
+			} catch (IOException e3) {
+			}
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_LONGCONNSOCKET_CREATE_FAILED,
 					IdentifierException.getCodeDescription(ExceptionCommon.EXCEPTIONCODE_LONGCONNSOCKET_CREATE_FAILED));
-		}
+		} 
 		updateSiteInfo();
 	}
 
@@ -362,7 +384,7 @@ public class IdentifierResolveEngine {
 
 			for (int t = 1; t <= RETRY_TIMES; t++) {
 				logger.debug("重试次数：" + t + "次。");
-				long timeout = t * 1000;
+				long timeout = t * 1000L;
 				sendDataByUdp(req, addr, port, udpSocket);
 				timeout = +System.currentTimeMillis();
 				BaseResponse response = null;
@@ -525,8 +547,7 @@ public class IdentifierResolveEngine {
 	/**
 	 * 说明：为请求消息创建信封对象（定义信封的各标志位信息）
 	 * 
-	 * @param req
-	 *            即将发送的请求消息
+	 * @param req 即将发送的请求消息
 	 * @return 返回信封对象
 	 * @throws IdentifierException
 	 */
@@ -539,7 +560,9 @@ public class IdentifierResolveEngine {
 		mEnvlp.suggestMinorProtocolVersion = req.suggestMinorProtocolVersion;
 		mEnvlp.sessionId = req.sessionId;
 		if (req.requestId <= 0) {
-			mEnvlp.requestId = Math.abs(messageIDMaker.nextInt());
+			int nInt = messageIDMaker.nextInt();
+			if (nInt != Integer.MIN_VALUE)
+				mEnvlp.requestId = Math.abs(nInt);
 			req.requestId = mEnvlp.requestId;
 		} else {
 			mEnvlp.requestId = req.requestId;

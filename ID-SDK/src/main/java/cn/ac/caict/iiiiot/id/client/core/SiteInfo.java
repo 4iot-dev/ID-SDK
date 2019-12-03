@@ -65,14 +65,23 @@ public class SiteInfo {
 		init(siteVer, siteDesc,addr,disableUDP,port);
 		byte pkbuf[] = new byte[(int) pubKeyFile.length()];
 		
-		FileInputStream pubKeyIn = new FileInputStream(pubKeyFile);
-		int n = 0;
-		int offset = 0;
-		while ((n < pkbuf.length) && ((offset = pubKeyIn.read(pkbuf, n, pkbuf.length - n)) >= 0))
-			n += offset;
-		pubKeyIn.close();
+		FileInputStream pubKeyIn = null;
+		try {
+			pubKeyIn = new FileInputStream(pubKeyFile);
+			int n = 0;
+			int offset = 0;
+			while ((n < pkbuf.length) && ((offset = pubKeyIn.read(pkbuf, n, pkbuf.length - n)) >= 0))
+				n += offset;
+			pubKeyIn.close();
 
-		servers[0].publicKey = pkbuf;
+			servers[0].publicKey = pkbuf;
+		} catch (IOException e) {
+			throw new IOException(e);
+		} finally {
+			if(pubKeyIn != null)
+				pubKeyIn.close();
+		}
+		
 	}
 
 	public SiteInfo(int siteVer, boolean isMultiPrimarySite, boolean isPrimarySite, 
@@ -82,13 +91,14 @@ public class SiteInfo {
 		this(siteVer,isMultiPrimarySite, isPrimarySite, hashOption,
 				siteDesc, listenAddr, port, httpPort, pubKeyFile,
 		     disableUDP);
+		Attribute originAttr = attributes[0];
 		attributes = new Attribute[2];
-		attributes[0] = attributes[0];
-
+		
 		Attribute altAttribute = new Attribute();
 		altAttribute.name = Util.encodeString("alt_attr");
 		altAttribute.value = Util.encodeString(Util.rfcIpRepresentation(altAddr));
-
+		
+		attributes[0] = originAttr;
 		attributes[1] = altAttribute;
 	}
 

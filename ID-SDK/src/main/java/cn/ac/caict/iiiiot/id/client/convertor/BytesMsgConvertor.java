@@ -186,7 +186,7 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 	
 	public static final SiteInfo convertBodyBytestoSiteInfo(byte[] bodyData, int offset) throws IdentifierException{
 		SiteInfo si = new SiteInfo();
-		si.dataFormatVersion = bodyData[offset]<<8 | bodyData[offset + 1];//第2个byte是否需要&0x00ff
+		si.dataFormatVersion = (bodyData[offset])<<8 | bodyData[offset + 1] & 0xff;
 		offset += 2;
 		
 		si.majorProtocolVersion = bodyData[offset];
@@ -194,7 +194,7 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 		si.minorProtocolVersion = bodyData[offset];
 		offset += 1;
 		
-		si.serialNumber = bodyData[offset]<<8 | bodyData[offset + 1];
+		si.serialNumber = (bodyData[offset])<<8 | bodyData[offset + 1] & 0xff;
 		offset += 2;
 		
 		si.isPrimarySite = (SiteInfo.PRIMARY_SITE & bodyData[offset]) > 0;
