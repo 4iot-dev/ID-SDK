@@ -387,7 +387,7 @@ try {
 }
 ```
 ***5.1*** 兼容的标识类型
- |类型名称|数据结构|描述|
+|类型名称|数据结构|描述|
 | :-------- | :--------| :--------|   
 |HS_SITE   |SiteInfo (图-Siteinfo)   |站点信息    |
 |HS_SITE.PREFIX   |SiteInfo(图-Siteinfo)    |前缀站点信息|
@@ -404,40 +404,37 @@ try {
 HS_SITE 和 HS_SITE.PREFIX是预定义的数据类型。它们的数据结构相同，通过（ip地址:端口号）来定义服务站点。
 每个标识解析服务可有多个服务站点，每个服务站点可以由多个服务器计算机组成。针对任何标识解析服务的服务请求可以分布到不同的服务站点，并在任何服务站点内进入不同的服务器计算机。这样的体系结构确保每个标识解析服务都有能力管理大量的标识和标识请求。这种结构可以避免单点故障。
 HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识解析服务器。同时客户端还可以使用服务信息（HS_SITE中的pubkey）对服务器的任何服务响应进行身份验证。
-
-	1）SiteInfo
+	    
+   1）  SiteInfo
 	![Alt text](./res/SiteInfo.png)  
 	图-Siteinfo  
 	
-	2）java示例 
-	``` java
-	IdentifierValue iv = new IdentifierValue();
-	int index = 20;
-	// items[]
-	IDCommunicationItems[] items = new IDCommunicationItems[2];
-	items[0] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
-			IDCommunicationItems.TS_IDF_TCP, 1304);
-	items[1] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
-			IDCommunicationItems.TS_IDF_UDP, 1304);
-	// server
-	ServerInfo ser1 = new ServerInfo();
-	ser1.communicationItems = items;
-	ser1.ipBytes = Util.convertIPStr2Bytes("192.168.150.13");
-	ser1.publicKey = Util.getBytesFromFile("C:/temp/serv/pubkey.pem");
-	ser1.serverId = 1;
-	// servers
-	ServerInfo[] servArr = new ServerInfo[] { ser1 };
-	// siteinfo
-	SiteInfo si = new SiteInfo();
-	si.servers = servArr;
-	si.attributes = null;
-	// 创建HS_SITE类型标识值
-	IdentifierValueUtil.makeIdentifierValueOfSiteInfo(iv, si, index);
-	// 创建HS_SITE.PREFIX类型标识值
-	//IdentifierValueUtil.makeIdentifierValueOfSiteInfoPrefix(iv, si, index);
-	```
+   2） java示例 
 	
-2.  如何创建HS_VLIST类型的标识值？
+		IdentifierValue iv = new IdentifierValue();
+		int index = 20;
+		// items[]
+		IDCommunicationItems[] items = new IDCommunicationItems[2];
+		items[0] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+				IDCommunicationItems.TS_IDF_TCP, 1304);
+		items[1] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+				IDCommunicationItems.TS_IDF_UDP, 1304);
+		// server
+		ServerInfo ser1 = new ServerInfo();
+		ser1.communicationItems = items;
+		ser1.ipBytes = Util.convertIPStr2Bytes("192.168.150.13");
+		ser1.publicKey = Util.getBytesFromFile("C:/temp/serv/pubkey.pem");
+		ser1.serverId = 1;
+		// servers
+		ServerInfo[] servArr = new ServerInfo[] { ser1 };
+		// siteinfo
+		SiteInfo si = new SiteInfo();
+		si.servers = servArr;
+		si.attributes = null;
+		// 创建HS_SITE类型标识值
+		IdentifierValueUtil.makeIdentifierValueOfSiteInfo(iv, si, index);
+		// 创建HS_SITE.PREFIX类型标识值
+		//IdentifierValueUtil.makeIdentifierValueOfSiteInfoPrefix(iv, si, index);2.  如何创建HS_VLIST类型的标识值？
  标识值引用列表
  
 	1）ValueReference数组
