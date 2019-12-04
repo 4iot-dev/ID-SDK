@@ -53,6 +53,7 @@ ID-SDK-DEMO目录：ID-SDK开发包演示demo
 SDK首次在开源平台发布的版本是2.0.0，在发布2.0.1版本时，SDK包名称以及源码包结构发生了变化，故2.0.0版本的用户升级到2.0.1版须做出引用调整：  
 1) IDIS-SDK-2.0.0.jar更换为ID-SDK-2.0.1  
 2) 引用SDK中内容时，导入包路径需要调整，如"import cn.ac.caict.iiiiot.idisc.*****;"要改为"import cn.ac.caict.iiiiot.id.client.****;"  
+
 各版本更新将记录在[Change](./Change.md)中。
 
 ## 许可证
