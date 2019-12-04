@@ -26,8 +26,12 @@ import cn.ac.caict.iiiiot.id.client.utils.Util;
 public class Attribute {
 	public byte[] name;
 	public byte[] value;
+	
+	public Attribute(){}
 
-	public Attribute() {}
+	public Attribute(String name,String value) {
+		this(Util.encodeString(name), Util.encodeString(value));
+	}
 
 	public Attribute(byte[] name, byte[] value) {
 		this.name = name;

@@ -27,8 +27,10 @@ public class ObjBytesConvertor extends BaseConvertor {
 		infoLen += Common.FOUR_SIZE;
 		if (site.attributes != null) {
 			for (Attribute attribute : site.attributes) {
-				infoLen += Common.FOUR_SIZE + attribute.name.length;
-				infoLen += Common.FOUR_SIZE + attribute.value.length;
+				if (attribute != null && attribute.name != null && attribute.value != null) {
+					infoLen += Common.FOUR_SIZE + attribute.name.length;
+					infoLen += Common.FOUR_SIZE + attribute.value.length;
+				}
 			}
 		}
 		// servers个数
