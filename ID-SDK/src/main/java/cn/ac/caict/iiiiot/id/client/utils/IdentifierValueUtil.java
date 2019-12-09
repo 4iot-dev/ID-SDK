@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
 import cn.ac.caict.iiiiot.id.client.convertor.ObjBytesConvertor;
+import cn.ac.caict.iiiiot.id.client.core.Attribute;
 import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
 import cn.ac.caict.iiiiot.id.client.core.SiteInfo;
 import cn.ac.caict.iiiiot.id.client.data.AdminInfo;
@@ -26,6 +27,22 @@ public class IdentifierValueUtil {
 
 	public static void makeIdentifierValueOfSiteInfo(IdentifierValue iv, SiteInfo site, int index)
 			throws IdentifierException {
+		if (site != null) {
+			if (site.attributes != null) {
+				for (int i = 0; i < site.attributes.length; i++) {
+					if (site.attributes[i] != null) {
+						if (site.attributes[i].name == null) {
+							site.attributes[i].name = Util.encodeString("");
+						}
+						if (site.attributes[i].value == null) {
+							site.attributes[i].value = Util.encodeString("");
+						}
+					} else {
+						site.attributes[i] = new Attribute("","");
+					}
+				}
+			}
+		}
 		makeValueByType(Common.HS_SITE, index, iv, site);
 	}
 

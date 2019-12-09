@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import cn.ac.caict.iiiiot.id.client.core.Attribute;
 import cn.ac.caict.iiiiot.id.client.core.BaseResponse;
 import cn.ac.caict.iiiiot.id.client.core.IDCommunicationItems;
 import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
@@ -41,17 +42,18 @@ public class TestManageConnection {
 	public static final String CERTIFICATION_PUBKEY_PATH = "D:/sm2key/sm2_public - 副本.pem";
 	public static final String CERTIFICATION_PRVKEY_PATH = "D:/sm2key/sm2_priv - 副本.pem";
 	
-	public static final String IP = "192.168.150.29";
-	public static final int PORT = 2640;
+	public static final String IP = "192.168.150.13";
+	public static final int PORT = 2642;
 	public static final String PROTOCOL = "TCP";
-	public static final String OP_ID = "88.8000.1";
+	public static final String USER = "88.1234.1234/admin";
+	public static final String OP_ID = "88.1234.1234/fish";
 	
 
 	public static void main(String[] args) throws Exception {
-		//entry_1_Test();
+		entry_1_Test();
 		//entry_2_Test();
 		//entry_3_Test();
-		entry_4_Test();
+		//entry_4_Test();
 	}
 	
 	private static void entry_4_Test() throws Exception {
@@ -85,22 +87,22 @@ public class TestManageConnection {
 		IChannelManageService chnnlService = new ChannelManageServiceImpl();
 		try {
 			// 根据标识服务系统提供的ip和端口，创建与标识服务系统的连接通道对象
-			IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.29", 2643, "TCP");
+			IIDManageServiceChannel channel = chnnlService.generateChannel(IP, PORT, "TCP");
 			// testLookup(channel);
-			// testGetSiteInfo(channel);
+			 testGetSiteInfo(channel);
 			if (channel != null && chnnlService.getIDManageServiceChannelState(channel) == CHANNEL_LOGOUT) {
 				String userId0 = chnnlService.getChannelUserIdentifier(channel);
 				System.out.println("++++++" + userId0);
 				 BaseResponse loginResp = testLogin(channel);
 				 if (loginResp != null && loginResp.responseCode == 1) {
 				 System.out.println("登录成功!");
-				// testDelete(channel);
-				// testCreate(channel);
+				 testDelete(channel);
+				 testCreate(channel);
 				//testAdd(channel);
 				// testEdit(channel);
 				// testRemove(channel);
 				}
-				// testLookup(channel);
+				 testLookup(channel);
 			}
 		} catch (IdentifierException e) {
 			e.printStackTrace();
@@ -108,7 +110,7 @@ public class TestManageConnection {
 	}
 
 	private static BaseResponse testLogin(IIDManageServiceChannel channel) throws IdentifierException {
-		return channel.login(OP_ID, 100, "C:\\Users\\fengyuan\\Desktop\\liyue\\hrs_pri.pem", null,3);
+		return channel.login(USER, 300, "D:/privateKey.pem", null,3);
 	}
 
 	private static BaseResponse testDelete(IIDManageServiceChannel channel) throws IdentifierException {
@@ -116,18 +118,18 @@ public class TestManageConnection {
 	}
 
 	private static BaseResponse testCreate(IIDManageServiceChannel channel) throws IdentifierException {
-		/*IdentifierValue value1 = new IdentifierValue();
+		IdentifierValue value1 = new IdentifierValue();
 		try {
 			value1 = makeSiteInfoValue();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		IdentifierValue value2 = makeVListValue();*/
+		/*IdentifierValue value2 = makeVListValue();
 
-		IdentifierValue value3 = new IdentifierValue(500, "HS_SERV", "88.8000");
+		IdentifierValue value3 = new IdentifierValue(500, "HS_SERV", "88.8000");*/
 
-		return channel.createIdentifier(OP_ID, new IdentifierValue[]{ value3 }, new MsgSettings());
+		return channel.createIdentifier(OP_ID, new IdentifierValue[]{ value1 }, new MsgSettings());
 	}
 
 	private static BaseResponse testAdd(IIDManageServiceChannel channel) throws Exception {
@@ -195,14 +197,15 @@ public class TestManageConnection {
 		ServerInfo ser1 = new ServerInfo();
 		ser1.communicationItems = items;
 		ser1.ipBytes = Util.convertIPStr2Bytes("192.168.150.13");
-		ser1.publicKey = Util.getBytesFromFile("D:/temp/svr_1/admpub.bin");
+		ser1.publicKey = Util.getBytesFromFile("D:/dec3_pub.pem");
 		ser1.serverId = 1;
 		// servers
 		ServerInfo[] servArr = new ServerInfo[] { ser1 };
 		// siteinfo
 		SiteInfo si = new SiteInfo();
 		si.servers = servArr;
-		si.attributes = null;
+		si.attributes = new Attribute[1];
+		si.attributes[0] = new Attribute("级别","企业级");
 
 		IdentifierValueUtil.makeIdentifierValueOfSiteInfo(iv, si, index);
 		return iv;
