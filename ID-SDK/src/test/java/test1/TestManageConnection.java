@@ -119,12 +119,7 @@ public class TestManageConnection {
 
 	private static BaseResponse testCreate(IIDManageServiceChannel channel) throws IdentifierException {
 		IdentifierValue value1 = new IdentifierValue();
-		try {
-			value1 = makeSiteInfoValue();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		value1 = makeSiteInfoValue();
 		/*IdentifierValue value2 = makeVListValue();
 
 		IdentifierValue value3 = new IdentifierValue(500, "HS_SERV", "88.8000");*/
@@ -184,7 +179,7 @@ public class TestManageConnection {
 		return value;
 	}
 
-	private static IdentifierValue makeSiteInfoValue() throws IdentifierException, IOException {
+	private static IdentifierValue makeSiteInfoValue() throws IdentifierException {
 		IdentifierValue iv = new IdentifierValue();
 		int index = 20;
 		// items[]

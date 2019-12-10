@@ -1147,7 +1147,7 @@ public abstract class Util {
 			return false;
 	}
 
-	public static final byte[] getBytesFromFile(String filePath) throws IOException {
+	public static final byte[] getBytesFromFile(String filePath) throws IdentifierException {
 		File f = new File(filePath);
 		byte[] buf = new byte[(int) f.length()];
 
@@ -1159,10 +1159,14 @@ public abstract class Util {
 			while ((n < buf.length) && ((offset = input.read(buf, n, buf.length - n)) >= 0))
 				n += offset;
 		} catch (IOException e) {
-			throw new IOException(e);
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM, e.getMessage());
 		} finally {
 			if (input != null){
-				input.close();	
+				try {
+					input.close();
+				} catch (IOException e) {
+					throw new IdentifierException(ExceptionCommon.SOURCE_IO_ERROR, e.getMessage());
+				}	
 			}
 		}
 		return buf;
