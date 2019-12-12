@@ -850,6 +850,8 @@ public abstract class Util {
 	}
 
 	public static PublicKey getPublicKeyFromFile(String filename) throws Exception {
+		if(filename == null)
+			return null;
 		File pubKeyFile = new File(filename);
 		if (!pubKeyFile.exists()) {
 			System.out.println(filename + "文件不存在!");
@@ -954,6 +956,8 @@ public abstract class Util {
 
 	public static PrivateKey getPrivateKeyFromFile(String privakeyFilePath, String password) {
 		System.out.println("私钥文件路径：" + privakeyFilePath);
+		if(privakeyFilePath == null)
+			return null;
 		try {
 			File privKeyFile = new File(privakeyFilePath);
 			if (!privKeyFile.exists()) {
