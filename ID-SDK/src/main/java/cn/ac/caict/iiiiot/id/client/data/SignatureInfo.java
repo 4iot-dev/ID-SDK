@@ -99,6 +99,14 @@ public class SignatureInfo {
     	logger.info("签名时间" + issedAfterTime + "的秒数表示：" + iat);
     	Long nbf = DateUtils.parseString2Secs(notBefore);
     	logger.info("签名生效时间" + notBefore + "的秒数表示：" + iat);
+    	if(iss == null)
+    		iss = "";
+    	if(sub == null)
+    		sub = "";
+    	if(digestAlg == null)
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM, "digestAlg摘要不能为空！");
+    	if(prvKey == null)
+    		throw new IdentifierException(ExceptionCommon.INVALID_PARM, "私钥不能为空！");
     	return new SignatureInfo(prvKey,values,iss,sub,exp_end,nbf,iat,digestAlg);
     }
     
@@ -109,6 +117,12 @@ public class SignatureInfo {
     	logger.info("颁发时间" + issedAfterTime + "的秒数表示：" + iat);
     	Long nbf = DateUtils.parseString2Secs(notBefore);
     	logger.info("证书生效时间" + notBefore + "的秒数表示：" + iat);
+    	if(iss == null)
+    		iss = "";
+    	if(sub == null)
+    		sub = "";
+    	if(prvKey == null)
+    		throw new IdentifierException(ExceptionCommon.INVALID_PARM, "私钥不能为空！");
     	return new SignatureInfo(prvKey, pubKey, perms, iss, sub, exp_end, nbf, iat);
     }
     
