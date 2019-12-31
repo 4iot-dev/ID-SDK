@@ -1,12 +1,10 @@
-## apidoc
+# apidoc
 
-一\. 通道管理IChannelManageService
+##一\. 通道管理IChannelManageService
 
----
-
-**1\. generateChannel**
+###1\. generateChannel
 ###### 接口功能
-> 创建与标识服务服务的连接通道实例（线程安全），需要捕获异常(异常码描述参照附表2)
+> 创建与标识服务服务的连接通道实例，需要捕获异常(异常码描述参照附表2)
 ###### 输入参数
 >|参数|必选|类型|说明|
 >| :-------- | :--------| :--------| :--------|
@@ -18,7 +16,6 @@
 > | :-------- | :--------|
 >|IIDManageServiceChannel   |返回通道实例，若创建失败则返回异常信息(异常码描述参照附表2) |
 ###### 接口示例
-
 ``` java
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
@@ -34,25 +31,23 @@ try {
 	e.printStackTrace();
 }
 ```
-**2\. generateChannelByConfig**
+###2\. generateChannelByConfig
 ###### 接口功能
-> 创建连接通道实例（线程安全），需要捕获异常(异常码描述参照附表2)。该方法通过配置文件中配置的信息来创建连接通道，config.json配置文件在工程的src/目录下，由工程创建者添加，格式如下：
+> 创建连接通道实例，需要捕获异常(异常码描述参照附表2)。该方法通过配置文件中配置的信息来创建连接通道，config.json配置文件在工程的src/目录下，由工程创建者添加，格式如下：
 > {
->	   "ip":"127.0.0.1",
->	   "port":"1999",
->	   "query":true,
->	   "admin":true,
->	   "protocol":"TCP"
+>&ensp; &ensp; "ip":"127.0.0.1",
+>&ensp; &ensp; "port":"1999",
+>&ensp; &ensp; "query":true,
+>&ensp; &ensp; "admin":true,
+>&ensp; &ensp; "protocol":"TCP"
 > }
 ###### 输入参数
 无。
-
 ###### 返回值
-> |类型|说明                              |
+> |类型|说明|
 > | :-------- | :--------|
 >|IIDManageServiceChannel   |返回已创建的连接通道实例，若创建失败则返回异常信息，需要捕获异常并处理(异常码描述参照附表2)  |
 ###### 接口示例
-
 ``` java
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
@@ -68,7 +63,7 @@ try {
 	e.printStackTrace();
 }
 ```
-**3\. closeChannel**
+###3\. closeChannel
 ###### 接口功能
 > 关闭连接通道，需要捕获异常(异常码描述参照附表2)
 ###### 输入参数
@@ -78,7 +73,6 @@ try {
 ###### 返回值
 无
 ###### 接口示例
-
 ``` java
 //创建通道管理实例
 IChannelManageService chnnlService = new ChannelManageServiceImpl();
@@ -94,15 +88,15 @@ try {
 	e.printStackTrace();
 }
 ```
-**4\. getIDManageServiceChannelState**
+###4\. getIDManageServiceChannelState
 ###### 接口功能
 > 获取连接通道状态
 ###### 输入参数
 > |参数|必选|类型|说明|
 > | :-------- | :--------| :--------| :--------|     
->|channel   |true    |IIDManageServiceChannel|目标通道对象                          |
+>|channel   |true    |IIDManageServiceChannel|目标通道对象  |
 ###### 返回值
-> |类型         |说明                              |
+> |类型  |说明   |
 > | :-------- | :--------|   
 >|int   |0代表关闭状态  1代表登录状态  2代表已连接但未登录状态 |
 ###### 接口示例
@@ -113,7 +107,7 @@ try {
 	IIDManageServiceChannel channel = chnnlService .generateChannel("192.168.150.13", 1304, "TCP");
 	if (channel != null) {
 		//获取连接通道状态
-int state = chnnlService .getIDManageServiceChannelState(channel);
+        int state = chnnlService .getIDManageServiceChannelState(channel);
 		if(state == 0){
 			System.out.println("当前连接通道已关闭");
 		} else if (state == 1){
@@ -126,7 +120,7 @@ int state = chnnlService .getIDManageServiceChannelState(channel);
 	e.printStackTrace();
 }
 ```
-**5\. getIDManageServiceChannelCount**
+###5\. getIDManageServiceChannelCount
 ###### 接口功能
 > 获取当前连接通道个数
 ###### 输入参数
@@ -149,7 +143,7 @@ try {
 	e.printStackTrace();
 }
 ```
-**6\. getChannelUserIdentifier**
+###6\. getChannelUserIdentifier
 ###### 接口功能
 > 获取目标通道登录用户标识名称，若未登录则返回null
 ###### 输入参数
@@ -157,7 +151,7 @@ try {
 > | :-------- | :--------| :--------| :--------|  
 > |channel   |true    |IIDManageServiceChannel |目标通道对象                          |
 ###### 返回值
-> |类型|说明                              |
+> |类型|说明   |
 > | :-------- | :--------|
 > |String   |登录用户标识名称  |
 ###### 接口示例
@@ -179,17 +173,14 @@ try {
 	e.printStackTrace();
 }
 ```
-二\. 标识管理IIDManageServiceChannel
-
----
-标识管理操作是基于请求响应模型实现数据通信的。
-在进行数据通信过程中，消息设置是通过MsgSetting结构来实现的，说明如下：
+##二\. 标识管理IIDManageServiceChannel  
+&ensp; &ensp;标识管理操作是基于请求响应模型实现数据通信的。在进行数据通信过程中，消息设置是通过MsgSetting结构来实现的，说明如下：
 >|字段|类型|默认值|描述|
 >| :-------- | :--------| :--------| :--------|
 >|truestyQuery |boolean |false |查询时是否进行可信解析                            |
 >|certify |boolean |false |是否做消息凭据验证                            |
 
-在进行数据通信过程中，标识值数据是通过IdentifierValue结构来设置的，说明如下：
+&ensp; &ensp;在进行数据通信过程中，标识值数据是通过IdentifierValue结构来设置的，说明如下：
 >|字段|类型|默认值|描述|
 >| :-------- | :--------| :--------| :--------|
 >|index |int |-1 |标识值的索引                            |
@@ -204,9 +195,9 @@ try {
 >|timestamp |int |当前时间 |时间戳 ，从1970年起始计算至当前时间的秒数                         |
 >|references |ValueReference[]  |null |标识值引用的标识值数组，  ValueReference结构指的是包含byte[]类型的标识和标识值的某索引，该索引即是引用的标识值的索引。                        |
 
-**1\. login**
+###1\. login
 ###### 接口功能
-> 与标识服务的连接通道建立后，若标识服务开启分布式身份认证，在进行标识管理操作前必须首先登录。该操作需要捕获异常(异常码描述参照附表2)。
+>&ensp; &ensp; 与标识服务的连接通道建立后，若标识服务开启分布式身份认证，在进行标识管理操作前必须首先登录。该操作需要捕获异常(异常码描述参照附表2)。
 ###### 输入参数
 > |参数|必选|类型|说明|
 >| :-------- | :--------| :--------| :--------|     
@@ -217,7 +208,7 @@ try {
 >|rdType |true    |int |生成摘要hash算法，MD5算法：rdType=1，SH1算法：rdType=2，SH256算法：rdType=3                         |
 >|settings |false    |MsgSettings |消息设置                        |
 ###### 返回值
-> |类型|说明                              |
+> |类型|说明  |
 >| :-------- | :--------|
 >|BaseResponse   |返回码为1登录成功，返回码不为1则登录失败（其他返回码参照附表1）  |
 ###### 接口示例
@@ -239,10 +230,10 @@ try {
 	e.printStackTrace();
 }
 ```
-**2\. lookupIdentifier**
+###2\. lookupIdentifier
 ###### 接口功能
-> 该查询操作可以通道创建后不登录的情况下执行，在通道登录情况下也可执行。当然如果连接通道断开是无法查询的。该接口的功能是查询指定标识下的标识值信息，可以查询指定标识下的全部标识值，也可以进行条件查询，即按索引、类型进行查询。需要捕获异常(异常码描述参照附表2)。
-> 在执行查询标识时，将MsgSetting的truestyQuery字段设置为true时，查询结果是经过国家标识解析体系认证的，是具有权威可信性的。
+> &ensp; &ensp;该查询操作可以通道创建后不登录的情况下执行，在通道登录情况下也可执行。当然如果连接通道断开是无法查询的。该接口的功能是查询指定标识下的标识值信息，可以查询指定标识下的全部标识值，也可以进行条件查询，即按索引、类型进行查询。需要捕获异常(异常码描述参照附表2)。
+> &ensp; &ensp;在执行查询标识时，将MsgSetting的truestyQuery字段设置为true时，查询结果是经过国家标识解析体系认证的，是具有权威可信性的。
 ###### 输入参数
 > |参数|必选|类型|说明|
 >| :-------- | :--------| :--------| :--------|     
@@ -274,9 +265,9 @@ try {
 	e.printStackTrace();
 }
 ```
-**3\. createIdentifier**
+###3\. createIdentifier
 ###### 接口功能
-> 创建标识，可以仅创建标识不带有标识值，也可以在创建带有标识值的标识。该接口需要捕获异常(异常码描述参照附表2)。
+> &ensp; &ensp;创建标识，可以仅创建标识不带有标识值，也可以在创建带有标识值的标识。该接口需要捕获异常(异常码描述参照附表2)。
 ###### 输入参数
 > |参数|必选|类型|说明|
 >| :-------- | :--------| :--------| :--------|  
@@ -284,7 +275,7 @@ try {
 >|values   |false    |IdentifierValue[] |创建标识可以添加标识值，若不添加标识值则该值为null                          |
 >|settings   |false |MsgSettings |消息设置                          |
 ###### 返回值
-> |类型|说明                              |
+> |类型|说明 |
 >| :-------- | :--------|
 >|BaseResponse   |返回码为1创建标识成功，返回码不为1则创建标识失败（其他返回码参照附表1） |
 ###### 接口示例
@@ -311,9 +302,9 @@ try {
 	e.printStackTrace();
 }
 ```
-**4\. deleteIdentifier**
+###4\. deleteIdentifier
 ###### 接口功能
-> 删除指定标识的全部数据，包括标识及其所有标识值。该接口需要捕获异常(异常码描述参照附表2)。
+> &ensp; &ensp;删除指定标识的全部数据，包括标识及其所有标识值。该接口需要捕获异常(异常码描述参照附表2)。
 ###### 输入参数
 > |参数|必选|类型|说明|
 >| :-------- | :--------| :--------| :--------|     
@@ -347,7 +338,7 @@ try {
 	e.printStackTrace();
 }
 ```
-**5\. addIdentifierValues**
+###5\. addIdentifierValues
 ###### 接口功能
 > 向目标标识添加若干标识值。该接口需要捕获异常(异常码描述参照附表2)。
 ###### 输入参数
@@ -386,84 +377,76 @@ try {
 	e.printStackTrace();
 }
 ```
-***5.1*** 兼容的标识类型
-|类型名称|数据结构|描述|
-| :-------- | :--------| :--------|   
-|HS_SITE   |SiteInfo (图-Siteinfo)   |站点信息    |
-|HS_SITE.PREFIX   |SiteInfo(图-Siteinfo)    |前缀站点信息|
-|HS_VLIST   |ValueReference(图-VList)    |前缀站点信息|
-|HS_CERT   |SignatureInfo(图-SignatureInfo)   |证书 |
-|HS_SIGNATURE   |  SignatureInfo(图-SignatureInfo)   |签名 |
-|HS_PUBKEY   |    String(公钥文件路径)         |公钥 |
-|HS_ADMIN  |    AdminInfo(图-AdminInfo)     |管理员|
-|HS_SERV  |     String (标识)     |服务引用|
-***5.2*** 兼容标识类型的标识值构建示例
-	 为了方便用户创建各类型标识，SDK提供了IdentifierValueUtil工具，对于一些类型简单的标识值，可以直接将字符串数据写入IdentifierValue的结构当中，也可以调用IdentifierValueUtil工具的makeIdentifierValueOfGeneralType方法；对于复杂类型标识值的创建，下文将介绍数据结构及如何利用IdentifierValueUtil工具去创建标识值的示例。
-1.  如何创建一个HS_SITE/HS_SITE.PREFIX类型的标识值？  
-
-HS_SITE 和 HS_SITE.PREFIX是预定义的数据类型。它们的数据结构相同，通过（ip地址:端口号）来定义服务站点。
+####5.1 兼容的标识类型
+>|类型名称|数据结构|描述|
+>|:---|:---|:---|
+>|HS_SITE   |SiteInfo (图-Siteinfo)   |站点信息    |
+>|HS_SITE.PREFIX   |SiteInfo(图-Siteinfo)    |前缀站点信息|
+>|HS_VLIST   |ValueReference(图-VList)    |前缀站点信息|
+>|HS_CERT   |SignatureInfo(图-SignatureInfo)   |证书 |
+>|HS_SIGNATURE   |  SignatureInfo(图-SignatureInfo)   |签名 |
+>|HS_PUBKEY   |    String(公钥文件路径)         |公钥 |
+>|HS_ADMIN  |    AdminInfo(图-AdminInfo)     |管理员|
+>|HS_SERV  |     String (标识)     |服务引用|
+####5.2 兼容标识类型的标识值构建示例
+&ensp; &ensp; 为了方便用户创建各类型标识，SDK提供了IdentifierValueUtil工具，对于一些类型简单的标识值，可以直接将字符串数据写入IdentifierValue的结构当中，也可以调用IdentifierValueUtil工具的makeIdentifierValueOfGeneralType方法；对于复杂类型标识值的创建，下文将介绍数据结构及如何利用IdentifierValueUtil工具去创建标识值的示例。
+#####1.  如何创建一个HS_SITE/HS_SITE.PREFIX类型的标识值？  
+&ensp; &ensp;HS_SITE 和 HS_SITE.PREFIX是预定义的数据类型。它们的数据结构相同，通过（ip地址:端口号）来定义服务站点。
 每个标识解析服务可有多个服务站点，每个服务站点可以由多个服务器计算机组成。针对任何标识解析服务的服务请求可以分布到不同的服务站点，并在任何服务站点内进入不同的服务器计算机。这样的体系结构确保每个标识解析服务都有能力管理大量的标识和标识请求。这种结构可以避免单点故障。
-HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识解析服务器。同时客户端还可以使用服务信息（HS_SITE中的pubkey）对服务器的任何服务响应进行身份验证。
-	    
-   1）  SiteInfo
-	![Alt text](./res/SiteInfo.png)  
-	图-Siteinfo  
-	
-   2） java示例 
-	
-		IdentifierValue iv = new IdentifierValue();
-		int index = 20;
-		// items[]
-		IDCommunicationItems[] items = new IDCommunicationItems[2];
-		items[0] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
-				IDCommunicationItems.TS_IDF_TCP, 1304);
-		items[1] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
-				IDCommunicationItems.TS_IDF_UDP, 1304);
-		// server
-		ServerInfo ser1 = new ServerInfo();
-		ser1.communicationItems = items;
-		ser1.ipBytes = Util.convertIPStr2Bytes("192.168.150.13");
-		ser1.publicKey = Util.getBytesFromFile("C:/temp/serv/pubkey.pem");
-		ser1.serverId = 1;
-		// servers
-		ServerInfo[] servArr = new ServerInfo[] { ser1 };
-		// siteinfo
-		SiteInfo si = new SiteInfo();
-		si.servers = servArr;
-		si.attributes = null;
-		// 创建HS_SITE类型标识值
-		IdentifierValueUtil.makeIdentifierValueOfSiteInfo(iv, si, index);
-		// 创建HS_SITE.PREFIX类型标识值
-		//IdentifierValueUtil.makeIdentifierValueOfSiteInfoPrefix(iv, si, index);2.  如何创建HS_VLIST类型的标识值？
+&ensp; &ensp;HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识解析服务器。同时客户端还可以使用服务信息（HS_SITE中的pubkey）对服务器的任何服务响应进行身份验证。   
+######1）SiteInfo
+![Alt text](./res/SiteInfo.png)  
+	图-Siteinfo  	
+######2） java示例
+```java
+IdentifierValue iv = new IdentifierValue();
+int index = 20;
+// items[]
+IDCommunicationItems[] items = new IDCommunicationItems[2];
+items[0] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+IDCommunicationItems.TS_IDF_TCP, 1304);
+items[1] = new IDCommunicationItems(IDCommunicationItems.ST_ADMIN_AND_QUERY,
+IDCommunicationItems.TS_IDF_UDP, 1304);
+// server
+ServerInfo ser1 = new ServerInfo();
+ser1.communicationItems = items;
+ser1.ipBytes = Util.convertIPStr2Bytes("192.168.150.13");
+ser1.publicKey = Util.getBytesFromFile("C:/temp/serv/pubkey.pem");
+ser1.serverId = 1;
+// servers
+ServerInfo[] servArr = new ServerInfo[] { ser1 };
+// siteinfo
+SiteInfo si = new SiteInfo();
+si.servers = servArr;
+si.attributes = null;
+// 创建HS_SITE类型标识值
+IdentifierValueUtil.makeIdentifierValueOfSiteInfo(iv, si, index);
+// 创建HS_SITE.PREFIX类型标识值
+//IdentifierValueUtil.makeIdentifierValueOfSiteInfoPrefix(iv, si, index);  
+```  
+#####2.  如何创建HS_VLIST类型的标识值？
  标识值引用列表
- 
-	1）ValueReference数组
+######1）ValueReference数组
 	![Alt text](./res/ValueReference.png)  
 	     图-VList
-	
-	2）创建HS_VLIST类型标识值示例
-	``` java
-	IdentifierValue iv = new IdentifierValue();
-	int index = 30;
-	ValueReference[] vr = new ValueReference[2];
-	vr[0] = new ValueReference("88.1000.2/mm", 1);
-	vr[1] = new ValueReference("88.1000.2/cup", 2);
-	IdentifierValueUtil.makeIdentifierValueOfVList(iv, vr, index);
-	```
-	
-3. 如何创建HS_CERT类型的标识值？
-
-	1）SignatureInfo结构
-	![Alt text](./res/SignatureInfo.png)
-	     图-SignatureInfo  
-		 
+######2）创建HS_VLIST类型标识值示例
+``` java
+IdentifierValue iv = new IdentifierValue();
+int index = 30;
+ValueReference[] vr = new ValueReference[2];
+vr[0] = new ValueReference("88.1000.2/mm", 1);
+vr[1] = new ValueReference("88.1000.2/cup", 2);
+IdentifierValueUtil.makeIdentifierValueOfVList(iv, vr, index);
+```
+#####3. 如何创建HS_CERT类型的标识值？
+######1）SignatureInfo结构
+![Alt text](./res/SignatureInfo.png)  
+	     图-SignatureInfo  		 
 	说明：
 	支持的RSA、SM2密钥对
-	摘要算法支持SHA-256,SM3
-	
-	2）创建HS_CERT类型标识值示例
-
-	```java
+	摘要算法支持SHA-256,SM3	
+######2）创建HS_CERT类型标识值示例
+```java
 	PublicKey pubKey = Util.getPublicKeyFromFile("c:/temp/keys/pubkey.pem");
 	PrivateKey prvKey = Util.getPrivateKeyFromFile("c:/temp/keys/privatekey.pem", null);
 	List<Permission> perms = new ArrayList<>();
@@ -472,16 +455,12 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 	int index = 401;
 	SignatureInfo signInfo = SignatureInfo.newCertificationInstance(prvKey, pubKey, perms, "100:88", "300:88.996", "2020-12-12 23:59:59","2019-11-25 00:00:00", "2019-11-24 15:44:00");
 	IdentifierValueUtil.makeIdentifierValueOfCertification(iv, index, signInfo);
-	```
-	
-4.  如何创建HS_SIGNATURE类型的标识值？
-
-	1）SignatureInfo结构
-	参照3-1 SignatureInfo结构
-
-	2）创建HS_SIGNATURE类型标识值示例
-	
-	```java
+```
+#####4.  如何创建HS_SIGNATURE类型的标识值？
+######1）SignatureInfo结构
+参照3-1 SignatureInfo结构
+######2）创建HS_SIGNATURE类型标识值示例
+```java
 	IdentifierValue iv = new IdentifierValue();
 	int index = 400;
 	PrivateKey prvKey = Util.getPrivateKeyFromFile(SIGNATURE_PRVKEY_PATH, null);
@@ -492,33 +471,30 @@ HS_SITE 和 HS_SITE.PREFIX提供的站点信息可以用来定位负责的标识
 	}
 	SignatureInfo signInfo = SignatureInfo.newSignatureInstance(prvKey, values, "300:88.996", "88.996.438","2020-12-12 23:59:59", "2019-11-25 00:00:00", "2019-11-24 15:44:00", "SM3");
 	IdentifierValueUtil.makeIdentifierValueOfSignature(iv, index, signInfo);
-	```
-5.  如何创建HS_PUBKEY类型的标识值？
-
-	1) 公钥文件，支持DSA和RSA算法的公钥，创建标识值时提供公钥文件的路径
-
-	2）创建HS_PUBKEY类型标识值示例
-	
-	```java
-	IdentifierValue iv = new IdentifierValue();
-	int index = 300;
-	IdentifierValueUtil.makeIdentifierValueOfPublicKey(iv, "c:/temp/keys/pubkey.pem", index);
-	```
-6.  如何创建HS_ADMIN类型的标识值？
+```
+#####5.  如何创建HS_PUBKEY类型的标识值？
+######1）公钥文件，支持DSA和RSA算法的公钥，创建标识值时提供公钥文件的路径
+######2）创建HS_PUBKEY类型标识值示例
+```java
+IdentifierValue iv = new IdentifierValue();
+int index = 300;
+IdentifierValueUtil.makeIdentifierValueOfPublicKey(iv, "c:/temp/keys/pubkey.pem", index);
+```
+#####6.  如何创建HS_ADMIN类型的标识值？
 HS_ADMIN值用于标识解析服务在完成任何管理请求之前对标识管理员进行身份验证。
-	1）AdminInfo结构
-	![Alt text](./res/AdminInfo.png)
+######1）AdminInfo结构
+	![Alt text](./res/AdminInfo.png)  
 	     图-AdminInfo
-	2）创建HS_ADMIN类型标识值示例
-	```java
-		IdentifierValue value = new IdentifierValue();
-		AdminInfo admin = new AdminInfo();
-		admin.admId = Util.encodeString("88.1000.2/cupA");
-		admin.admIdIndex = 302;
-		admin.initPermissions(true, true, true, true, true, true, true, true, true, true, true, true);
-		IdentifierValueUtil.makeIdentifierValueOfAdminInfo(value, admin, 10);
-	```
-**6\. modifyIdentifierValues**
+######2）创建HS_ADMIN类型标识值示例
+```java
+IdentifierValue value = new IdentifierValue();
+AdminInfo admin = new AdminInfo();
+admin.admId = Util.encodeString("88.1000.2/cupA");
+admin.admIdIndex = 302;
+admin.initPermissions(true, true, true, true, true, true, true, true, true, true, true, true);
+IdentifierValueUtil.makeIdentifierValueOfAdminInfo(value, admin, 10);
+```
+###6\. modifyIdentifierValues
 ###### 接口功能
 > 修改目标标识下的若干标识值。该接口需要捕获异常(异常码描述参照附表2)。
 ###### 输入参数
@@ -556,7 +532,7 @@ try {
 	e.printStackTrace();
 }
 ```
-**7\. removeIdentifierValues**
+###7\. removeIdentifierValues
 ###### 接口功能
 > 移除目标标识下指定索引对应的标识值
 ###### 输入参数
@@ -592,7 +568,7 @@ try {
 	e.printStackTrace();
 }
 ```
-**8\. isLogin**
+###8\. isLogin
 ###### 接口功能
 > 判断当前通道是否已登录
 ###### 输入参数
@@ -615,7 +591,7 @@ try {
 	e.printStackTrace();
 }
 ```
-**9\. getServerSiteInfo**
+###9\. getServerSiteInfo
 ###### 接口功能
 > 获取服务器站点信息
 ###### 输入参数

@@ -1,25 +1,25 @@
-## ID-SDK开发指南
+# ID-SDK开发指南
 
-#### 基本概念介绍：  
-ID-SDK:标识系统开发包。  
-管理操作：创建标识、删除标识、添加标识值、修改标识值、移除标识值。  
-非管理操作：主要是查询操作。  
-通道：ID-SDK与标识系统之间的连接。  
+###基本概念介绍：  
+&ensp; &ensp;ID-SDK:标识系统开发包。  
+&ensp; &ensp;管理操作：创建标识、删除标识、添加标识值、修改标识值、移除标识值。  
+&ensp; &ensp;非管理操作：除管理操作以外的操作，主要是查询操作。  
+&ensp; &ensp;通道：ID-SDK与标识系统之间的连接。  
 
-#### ID-SDK与标识版本对应关系说明
+###ID-SDK与标识版本对应关系说明
 > |ID-SDK版本|标识系统版本                              |
 > | :-------- | :--------|
->|2.0.0  |企业版1.3.1 |
+>|2.0.0  |企业版1.3.0-1 |
 >|2.0.1  |企业版1.3.1-2 |
 
-#### 快速使用
-1. jar包获取：下载开源项目ID-SDK，导出jar包，并从该项目中获取依赖jar包，log4j-1.2.17.jar、gson-2.3.1.jar、commons-codec-1.12.jar、commons-logging-1.2.jar、bcprov-jdk15on-1.62.jar、hutool-all-4.6.3.jar。
-2. 环境要求：jdk1.8或以上。
-3. 开发示例：
-建立java项目，导入ID-SDK的jar包以及其依赖的jar包，根据我们提供的联系方式（参见[README.md](./README.md)）获取到标识服务的环境信息以及登录信息以后，通过以下三个步骤可以快速进行开发：  
-1).  创建通道管理实例IChannelManageService  
-2).  创建与标识服务系统连接的通道实例IIDManageServiceChannel，此处需要提供标识服务的IP地址和端口号，采用“TCP”传输协议  
-3). 通道实例IIDManageServiceChannel创建成功，即可以进行查询操作，若要进行标识管理操作，需要首先执行登录操作，登录成功以后可以进行各项管理操作  
+### 快速使用
+&ensp; &ensp;1\. jar包获取：下载开源项目ID-SDK，导出jar包，并从该项目中获取依赖jar包，log4j-1.2.17.jar、gson-2.3.1.jar、commons-codec-1.12.jar、commons-logging-1.2.jar、bcprov-jdk15on-1.62.jar、hutool-all-4.6.3.jar。
+&ensp; &ensp;2\. 环境要求：jdk1.8或以上。
+&ensp; &ensp;3\. 开发示例：
+&ensp; &ensp;建立java项目，导入ID-SDK的jar包以及其依赖的jar包，根据我们提供的联系方式（参见[README.md](./README.md)）获取到标识服务的环境信息以及登录信息以后，通过以下三个步骤可以快速进行开发：  
+&ensp; &ensp;1)\.  创建通道管理实例IChannelManageService  
+&ensp; &ensp;2)\.  创建与标识服务系统连接的通道实例IIDManageServiceChannel，此处需要提供标识服务的IP地址和端口号，采用“TCP”传输协议  
+&ensp; &ensp;3)\. 通道实例IIDManageServiceChannel创建成功，即可以进行查询操作，若要进行标识管理操作，需要首先执行登录操作，登录成功以后可以进行各项管理操作  
 如图：  
 ![Alt text](./res/pic1.jpg)
 
