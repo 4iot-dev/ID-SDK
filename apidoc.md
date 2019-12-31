@@ -431,10 +431,11 @@ IdentifierValueUtil.makeIdentifierValueOfSiteInfo(iv, si, index);
 
 标识值引用列表  
 
-###### ）ValueReference数组
+###### 1）ValueReference数组  
+<div align=center>
 	![Alt text](./res/ValueReference.png)  
-	     图-VList  
-		 
+<center>图-VList</center>
+</div>		 
 ###### 2）创建HS_VLIST类型标识值示例
 ``` java
 IdentifierValue iv = new IdentifierValue();
