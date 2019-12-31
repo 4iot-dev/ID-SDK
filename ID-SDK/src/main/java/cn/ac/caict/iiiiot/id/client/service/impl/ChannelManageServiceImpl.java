@@ -33,6 +33,21 @@ public class ChannelManageServiceImpl implements IChannelManageService {
 	private static final int LOGOUT = 2;
 	private int channelCount = 0;
 	private Log log = IDLog.getLogger(IDManageServiceChannelImpl.class);
+	private static final String[] BANNER = {
+			"#### ########           ######  ########  ##    ##",
+			" ##  ##     ##         ##    ## ##     ## ##   ##",
+			" ##  ##     ##         ##       ##     ## ##  ##",
+			" ##  ##     ## #######  ######  ##     ## #####",
+			" ##  ##     ##               ## ##     ## ##  ##",
+			" ##  ##     ##         ##    ## ##     ## ##   ##",
+			"#### ########           ######  ########  ##    ##"
+	};
+	
+	static {
+		for (String string : BANNER) {
+			System.out.println(string);
+		}
+	}
 	
 	public void setChannelCount(int channelCount) {
 		this.channelCount = channelCount;
