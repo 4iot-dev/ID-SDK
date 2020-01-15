@@ -636,6 +636,36 @@ try {
 	e.printStackTrace();
 }
 ```
+### 10\. login
+###### 接口功能
+> 该接口仅为支持早期标识系统登录功能，该登录方式为用户名/密码形式。支持分布身份认证版本的标识服务系统不支持该登录方式，须特别注意。
+###### 输入参数
+> |参数|必选|类型|说明|
+>| :-------- | :--------| :--------| :--------|     
+>|username   |true |String |用户名                          |
+>|password   |true |String |密码                         |
+>|settings   |false |MsgSettings |消息设置                          |
+###### 返回值
+> |类型|说明                              |
+>| :-------- | :--------| 
+>|BaseResponse   |返回码为1站点信息获取成功，返回码不为1则获取站点信息失败 (其他返回码参照附表1) |
+###### 接口示例
+``` java
+//创建通道管理实例
+IChannelManageService chnnlService = new ChannelManageServiceImpl();
+try {
+	//根据标识系统提供的ip和端口，创建与标识系统的连接通道对象
+	IIDManageServiceChannel channel = chnnlService.generateChannel("192.168.150.13", 1304, "TCP");
+	MsgSettings settings = new MsgSettings();
+		// 假设用户名为“user”,密码为“pwd123”
+		BaseResponse response = channel.login("user","pwd123",settings);
+		if (response != null && response.responseCode == 1){
+			System.out.println("登录成功！");
+		}	
+} catch (IdentifierException e) {
+	e.printStackTrace();
+}
+```
 附表1
 
 ---
