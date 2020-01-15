@@ -64,7 +64,7 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 			if(msgHeader.opCode == MessageCommon.OC_RESOLUTION)
 				message = convertBytesToResolutionResponse(msg, bodyOffset, envelope);
 			else if(msgHeader.opCode == MessageCommon.OC_LOGIN)
-				message = convertBytesToResolutionResponse(msg, bodyOffset, envelope);
+				message = convertBytesToLoginResponse(msg, bodyOffset, envelope);
 			else if(msgHeader.opCode == MessageCommon.OC_LOGIN_ID_SYSTEM)
 				message = convertBytesToLoginIDSystemResponse(msg, bodyOffset, envelope);
 			else if(msgHeader.opCode == MessageCommon.OC_CREATE_IDENTIFIER)
@@ -331,6 +331,28 @@ public abstract class BytesMsgConvertor extends BaseConvertor{
 			offset += valLen;
 		}
 		return new ResolutionResponse(identifier, values);
+	}
+	
+	private static ResolutionResponse convertBytesToLoginResponse(byte[] msg, int offset, MsgEnvelope env)
+			throws IdentifierException {
+		int identifierLen = read4Bytes(msg, offset);
+		offset += Common.FOUR_SIZE;
+
+		if (identifierLen < 0 || identifierLen > Common.MAX_IDENTIFIER_LENGTH)
+			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MESSAGE_FORMAT_ERROR,"消息格式错误，无效标识长度: " + identifierLen);
+
+		byte[] identifier = new byte[identifierLen];
+		System.arraycopy(msg, offset, identifier, 0, identifierLen);
+		offset += identifierLen;
+
+		int numValues = read4Bytes(msg, offset);
+		offset += Common.FOUR_SIZE;
+
+		if (numValues < 0 || numValues > Common.MAX_IDENTIFIER_VALUES)
+			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MESSAGE_FORMAT_ERROR,
+					"消息格式错误，标识值个数异常:" + numValues);
+		
+		return new ResolutionResponse(identifier, null);
 	}
 	
 	private static BaseResponse convertBytesToCreateIdentifierResponse(byte[] msg, int offset, MsgEnvelope env, int bodyLength)

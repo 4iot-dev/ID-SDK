@@ -32,6 +32,15 @@ public interface IIDManageServiceChannel {
 	 */
 	public BaseResponse login(String identifier, int index, String privakeyFilePath, String password, int rdType,MsgSettings settings) throws IdentifierException;
 	/**
+	 * 
+	 * @param username
+	 * @param password
+	 * @param settings
+	 * @return
+	 * @throws IdentifierException
+	 */
+	public BaseResponse login(String username, String password, MsgSettings settings) throws IdentifierException;
+	/**
 	 * @param identifier 标识名称
 	 * @param indexes 待查询标识值索引数组
 	 * @param types 待查询标识值类型数组

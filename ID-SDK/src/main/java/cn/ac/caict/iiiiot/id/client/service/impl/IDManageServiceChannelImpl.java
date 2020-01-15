@@ -29,6 +29,7 @@ import cn.ac.caict.iiiiot.id.client.core.DeleteIdentifierRequest;
 import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
 import cn.ac.caict.iiiiot.id.client.core.IdentifierResolveEngine;
 import cn.ac.caict.iiiiot.id.client.core.LoginIDSystemRequest;
+import cn.ac.caict.iiiiot.id.client.core.LoginRequest;
 import cn.ac.caict.iiiiot.id.client.core.ModifyValueRequest;
 import cn.ac.caict.iiiiot.id.client.core.RemoveValueRequest;
 import cn.ac.caict.iiiiot.id.client.core.ResolutionRequest;
@@ -344,5 +345,14 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 			throw new IdentifierException(e.getExceptionCode(),
 					IdentifierException.getCodeDescription(e.getExceptionCode()));
 		}
+	}
+
+	@Override
+	public BaseResponse login(String username, String password, MsgSettings settings) throws IdentifierException {
+		byte[][] reqTypes = new byte[][] { Util.encodeString(password) };
+		LoginRequest req = new LoginRequest(Util.encodeString(username), reqTypes, null, null);
+		setMessageSettings(req,settings);
+		BaseResponse response = resolverEngine.processRequest(req, null);
+		return response;
 	}
 }
