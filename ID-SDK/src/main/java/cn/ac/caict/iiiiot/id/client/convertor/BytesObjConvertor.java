@@ -65,6 +65,7 @@ public class BytesObjConvertor extends BaseConvertor {
 		}
 
 		int servNum = read4Bytes(data, offset);
+		offset += Common.FOUR_SIZE;
 		if (servNum < 0 || servNum > Common.MAX_ARRAY_SIZE)
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_MESSAGE_FORMAT_ERROR, "消息尺寸越界");
 		if (servNum == 0) {
