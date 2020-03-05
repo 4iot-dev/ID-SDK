@@ -6,11 +6,11 @@
 &ensp; &ensp;非管理操作：除管理操作以外的操作，主要是查询操作。  
 &ensp; &ensp;通道：ID-SDK与标识系统之间的连接。  
 
-### ID-SDK与标识版本对应关系说明
+### ID-SDK与企业标识系统版本对应关系说明
 > |ID-SDK版本|标识系统版本                              |
 > | :-------- | :--------|
 >|2.0.0  |企业版1.3.0-1 |
->|2.0.1  |企业版1.3.1-2 |
+>|2.0.1-3  |企业版1.3.1-2 |
 
 ### 快速使用
 &ensp; &ensp;1\. jar包获取：下载开源项目ID-SDK，导出jar包，并从该项目中获取依赖jar包，log4j-1.2.17.jar、gson-2.3.1.jar、commons-codec-1.12.jar、commons-logging-1.2.jar、bcprov-jdk15on-1.62.jar、hutool-all-4.6.3.jar。
