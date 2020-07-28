@@ -32,29 +32,29 @@ import java.io.Closeable;
  */
 public interface IDAdapter extends Closeable {
 
-//    /**
-//     * 添加一个标识值
-//     * @param identifier 标识
-//     * @param values 标识值
-//     * @throws IdentifierException
-//     */
-//    public void addHandleValues(String identifier, IdentifierValue[] values) throws IdentifierAdapterException;
-//
-//    /**
-//     * 创建一个标识
-//     * @param identifier 标识
-//     * @param values 标识值
-//     * @throws IdentifierAdapterException
-//     */
-//    public void createIdentifier(String identifier, IdentifierValue[] values) throws IdentifierAdapterException;
-//
-//    /**
-//     * 删除标识值
-//     * @param identifier
-//     * @param values
-//     * @throws IdentifierAdapterException
-//     */
-//    public void deleteIdentifierValues(String identifier, IdentifierValue[] values) throws IdentifierAdapterException;
+    /**
+     * 添加一个标识值
+     * @param identifier 标识
+     * @param values 标识值
+     * @throws IdentifierException
+     */
+    public void addIdentifierValues(String identifier, IdentifierValue[] values) throws IdentifierAdapterException;
+
+    /**
+     * 创建一个标识
+     * @param identifier 标识
+     * @param values 标识值
+     * @throws IdentifierAdapterException
+     */
+    public void createIdentifier(String identifier, IdentifierValue[] values) throws IdentifierAdapterException;
+
+    /**
+     * 删除标识值
+     * @param identifier
+     * @param values
+     * @throws IdentifierAdapterException
+     */
+    public void deleteIdentifierValues(String identifier, IdentifierValue[] values) throws IdentifierAdapterException;
 
     /**
      * 解析,支持递归解析
@@ -77,20 +77,20 @@ public interface IDAdapter extends Closeable {
      */
     public IdentifierValue[] resolve(String identifier, String[] types, int[] indexes) throws IdentifierAdapterException;
 
-//    /**
-//     * 更新标识
-//     * @param identifier
-//     * @param values
-//     * @throws IdentifierAdapterException
-//     */
-//    public void updateIdentifierValues(String identifier, IdentifierValue[] values) throws IdentifierAdapterException;
-//
-//    /**
-//     * 删除标识
-//     * @param identifier
-//     * @throws IdentifierAdapterException
-//     */
-//    public void deleteIdentifier(String identifier) throws IdentifierAdapterException;
+    /**
+     * 更新标识
+     * @param identifier
+     * @param values
+     * @throws IdentifierAdapterException
+     */
+    public void updateIdentifierValues(String identifier, IdentifierValue[] values) throws IdentifierAdapterException;
+
+    /**
+     * 删除标识
+     * @param identifier
+     * @throws IdentifierAdapterException
+     */
+    public void deleteIdentifier(String identifier) throws IdentifierAdapterException;
 
     /**
      * @param timeout Milliseconds of tcp timeout
@@ -99,5 +99,4 @@ public interface IDAdapter extends Closeable {
 
     public int getTcpTimeout();
 
-    //    public IdentifierValue createIdentifierValue(int index, String type, String data) throws IdentifierAdapterException;
 }

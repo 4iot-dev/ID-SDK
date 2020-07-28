@@ -170,10 +170,11 @@ public class IdentifierValueDemo {
 		SiteInfo si = new SiteInfo();
 		si.servers = servArr;
 		si.attributes = null;
-		if (bPrefix)
+		if (bPrefix) {
 			IdentifierValueUtil.makeIdentifierValueOfSiteInfoPrefix(value, si, index);
-		else
+		}else {
 			IdentifierValueUtil.makeIdentifierValueOfSiteInfo(value, si, index);
+		}
 		return value;
 	}
 }

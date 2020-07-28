@@ -6,6 +6,7 @@ import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.data.MsgSettings;
 import cn.ac.caict.iiiiot.id.client.service.IIDManageServiceChannel;
 import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.security.PrivateKey;
@@ -30,6 +31,8 @@ import java.security.PrivateKey;
  */
 public class DefaultIDAdapter implements IDAdapter {
 
+    private static final Logger logger = Logger.getLogger(DefaultIDAdapter.class);
+
     private IIDManageServiceChannel channel;
 
     private BeanFactory factory;
@@ -47,7 +50,7 @@ public class DefaultIDAdapter implements IDAdapter {
         this.channel = factory.proxyChannel();
     }
 
-    public DefaultIDAdapter(String adminIdentifier, int keyIndex, String privateKeyPem,String password, int cipher) {
+    public DefaultIDAdapter(String adminIdentifier, int keyIndex, String privateKeyPem, int cipher) {
         this.factory = BeanFactory.getBeanFactory();
         msgSettings = new MsgSettings();
         msgSettings.setTruestyQuery(false);
@@ -56,19 +59,130 @@ public class DefaultIDAdapter implements IDAdapter {
         try {
             prefixSite = resolveSiteByProxy(prefix);
         } catch (Exception e) {
-           throw new IdentifierAdapterRuntimeException("instance idAdapter failed",e);
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed", e);
         }
-        this.channel = factory.newChannel(prefixSite.getIp(),prefixSite.getPort(),prefixSite.getProtocolName());
+        logger.info("connect to server,ip: " + prefixSite.getIp() + ",port: " + prefixSite.getPort());
+        this.channel = factory.newChannel(prefixSite.getIp(), prefixSite.getPort(), prefixSite.getProtocolName());
         PrivateKey privateKey;
         try {
-            privateKey = KeyConverter.fromPkcs8Pem(privateKeyPem,password);
+            privateKey = KeyConverter.fromPkcs8Pem(privateKeyPem, null);
         } catch (Exception e) {
-            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, load key failed ",e);
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, load key failed ", e);
         }
         try {
-            this.channel.login(adminIdentifier,keyIndex,privateKey,cipher,msgSettings);
+            this.channel.login(adminIdentifier, keyIndex, privateKey, cipher, msgSettings);
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed ",e);
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed ,server is " + prefixSite.getIp() + ";" + prefixSite.getPort(), e);
+        }
+        if (!this.channel.isLogin()) {
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed ,server is " + prefixSite.getIp() + ";" + prefixSite.getPort());
+        }
+    }
+
+    public DefaultIDAdapter(String serverPrefix, String adminIdentifier, int keyIndex, String privateKeyPem, int cipher) {
+        this.factory = BeanFactory.getBeanFactory();
+        msgSettings = new MsgSettings();
+        msgSettings.setTruestyQuery(false);
+        PrefixSite prefixSite;
+        try {
+            prefixSite = resolveSiteByProxy(serverPrefix);
+        } catch (Exception e) {
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed", e);
+        }
+        this.channel = factory.newChannel(prefixSite.getIp(), prefixSite.getPort(), prefixSite.getProtocolName());
+        PrivateKey privateKey;
+        try {
+            privateKey = KeyConverter.fromPkcs8Pem(privateKeyPem, null);
+        } catch (Exception e) {
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, load key failed ", e);
+        }
+        try {
+            this.channel.login(adminIdentifier, keyIndex, privateKey, cipher, msgSettings);
+        } catch (IdentifierException e) {
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed ,server is " + prefixSite.getIp() + ";" + prefixSite.getPort(), e);
+        }
+        if (!this.channel.isLogin()) {
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed, on exception, server is " + prefixSite.getIp() + ";" + prefixSite.getPort());
+        }
+    }
+
+    public DefaultIDAdapter(String serverIp, int port, String adminIdentifier, int keyIndex, String privateKeyPem, int cipher) {
+        this.factory = BeanFactory.getBeanFactory();
+        msgSettings = new MsgSettings();
+        msgSettings.setTruestyQuery(false);
+        this.channel = factory.newChannel(serverIp, port, "TCP");
+        PrivateKey privateKey;
+        try {
+            privateKey = KeyConverter.fromPkcs8Pem(privateKeyPem, null);
+        } catch (Exception e) {
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, load key failed ", e);
+        }
+        try {
+            this.channel.login(adminIdentifier, keyIndex, privateKey, cipher, msgSettings);
+        } catch (IdentifierException e) {
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed ,server is " + serverIp + ";" + port, e);
+        }
+        if (!this.channel.isLogin()) {
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed, on exception ,server is " + serverIp + ";" + port);
+        }
+    }
+
+    public DefaultIDAdapter(String serverIp, int port) {
+        this.factory = BeanFactory.getBeanFactory();
+        msgSettings = new MsgSettings();
+        msgSettings.setTruestyQuery(false);
+        this.channel = factory.newChannel(serverIp, port, "TCP");
+    }
+
+    @Override
+    public void addIdentifierValues(String identifier, IdentifierValue[] values) throws IdentifierAdapterException {
+        try {
+            BaseResponse response = channel.addIdentifierValues(identifier, values, msgSettings);
+            if (response != null && response.responseCode == 1) {
+                logger.debug("标识值添加成功:" + identifier);
+            } else if (response instanceof ErrorResponse) {
+                throw new IdentifierAdapterException(new StringBuilder("add value error,response:").append(response.toString()).toString());
+            } else {
+                throw new IdentifierAdapterException(new StringBuilder("add value error,response:").append(response.toString()).toString());
+            }
+        } catch (IdentifierException e) {
+            throw new IdentifierAdapterException("add value error", e);
+        }
+    }
+
+    @Override
+    public void createIdentifier(String identifier, IdentifierValue[] values) throws IdentifierAdapterException {
+        try {
+            BaseResponse createResp = channel.createIdentifier(identifier, values, msgSettings);
+            if (createResp != null && createResp.responseCode == 1) {
+                logger.debug("标识创建成功:" + identifier);
+            } else if (createResp instanceof ErrorResponse) {
+                throw new IdentifierAdapterException(new StringBuilder("create error,response:").append(createResp.toString()).toString());
+            } else {
+                throw new IdentifierAdapterException(new StringBuilder("create error,response:").append(createResp.toString()).toString());
+            }
+        } catch (IdentifierException e) {
+            throw new IdentifierAdapterException("create error", e);
+        }
+    }
+
+    @Override
+    public void deleteIdentifierValues(String identifier, IdentifierValue[] values) throws IdentifierAdapterException {
+        int[] indexArray = new int[values.length];
+        for (int i = 0; i < values.length; i++) {
+            indexArray[i] = values[i].getIndex();
+        }
+        try {
+            BaseResponse response = channel.removeIdentifierValues(identifier, indexArray, msgSettings);
+            if (response != null && response.responseCode == 1) {
+                logger.debug("标识值删除成功:" + identifier);
+            } else if (response instanceof ErrorResponse) {
+                throw new IdentifierAdapterException(new StringBuilder("delete value error,response:").append(response.toString()).toString());
+            } else {
+                throw new IdentifierAdapterException(new StringBuilder("delete value error,response:").append(response.toString()).toString());
+            }
+        } catch (IdentifierException e) {
+            throw new IdentifierAdapterException("delete value error", e);
         }
     }
 
@@ -106,6 +220,39 @@ public class DefaultIDAdapter implements IDAdapter {
     }
 
     @Override
+    public void updateIdentifierValues(String identifier, IdentifierValue[] values) throws IdentifierAdapterException {
+        try {
+            BaseResponse modifyResp = channel.modifyIdentifierValues(identifier, values, msgSettings);
+            if (modifyResp != null && modifyResp.responseCode == 1) {
+                logger.debug("标识值更新成功:" + identifier);
+            } else if (modifyResp instanceof ErrorResponse) {
+                throw new IdentifierAdapterException(new StringBuilder("update values error,response:").append(modifyResp.toString()).toString());
+            } else {
+                throw new IdentifierAdapterException(new StringBuilder("update values error,response:").append(modifyResp.toString()).toString());
+            }
+
+        } catch (IdentifierException e) {
+            throw new IdentifierAdapterException("update values error", e);
+        }
+    }
+
+    @Override
+    public void deleteIdentifier(String identifier) throws IdentifierAdapterException {
+        try {
+            BaseResponse response = channel.deleteIdentifier(identifier, msgSettings);
+            if (response != null && response.responseCode == 1) {
+                logger.debug("标识删除成功:" + identifier);
+            } else if (response instanceof ErrorResponse) {
+                throw new IdentifierAdapterException(new StringBuilder("delete error,response:").append(response.toString()).toString());
+            } else {
+                throw new IdentifierAdapterException(new StringBuilder("delete error,response:").append(response.toString()).toString());
+            }
+        } catch (IdentifierException e) {
+            throw new IdentifierAdapterException("delete error", e);
+        }
+    }
+
+    @Override
     public void setTcpTimeout(int timeout) {
         this.tcpTimeout = timeout;
     }
@@ -128,7 +275,7 @@ public class DefaultIDAdapter implements IDAdapter {
 
     protected PrefixSite resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
 
-        try(IDAdapter idAdapter = IDAdapterFactory.newInstance()){
+        try (IDAdapter idAdapter = IDAdapterFactory.newInstance()) {
             String[] types = {"HS_SITE"};
             IdentifierValue[] valueArray = idAdapter.resolve(prefixIdentifier, types, null);
 

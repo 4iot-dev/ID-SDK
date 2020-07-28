@@ -8,6 +8,7 @@ import java.security.PublicKey;
 
 import static org.junit.Assert.*;
 
+
 public class RSAUtilsTest {
 
     @Test
@@ -17,11 +18,15 @@ public class RSAUtilsTest {
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
 
-        String pubkeyPem = KeyConverter.toX509Pem(publicKey);
-        System.out.println(pubkeyPem);
+        String publicKeyPem = KeyConverter.toX509Pem(publicKey);
+        System.out.println(publicKeyPem);
 
-        String privPem = KeyConverter.toPkcs8UnencryptedPem(privateKey);
-        System.out.println(privPem);
+//        publicKeyPem = publicKeyPem.replaceAll("\r\n", "\\\\r\\\\n");
+//
+//        System.out.println(publicKeyPem);
+
+        String prvPem = KeyConverter.toPkcs8UnencryptedPem(privateKey);
+        System.out.println(prvPem);
 
     }
 

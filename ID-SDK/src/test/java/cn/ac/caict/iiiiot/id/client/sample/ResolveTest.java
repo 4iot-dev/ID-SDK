@@ -7,7 +7,6 @@ import cn.ac.caict.iiiiot.id.client.data.MsgSettings;
 import cn.ac.caict.iiiiot.id.client.service.IChannelManageService;
 import cn.ac.caict.iiiiot.id.client.service.IIDManageServiceChannel;
 import cn.ac.caict.iiiiot.id.client.service.impl.ChannelManageServiceImpl;
-import cn.ac.caict.iiiiot.id.client.utils.Util;
 import org.junit.Test;
 
 public class ResolveTest {
@@ -19,7 +18,7 @@ public class ResolveTest {
             IIDManageServiceChannel channel = chnnlManage.generateChannel("45.120.243.40", 3641, "TCP");
             if(channel != null){
                 // 查询的目标标识
-                String identifier = "0.NA/88.300.15907541011";
+                String identifier = "0.NA/88";
                 MsgSettings msgSettings = new MsgSettings();
                 // 当MsgSettings的truestyQuery设置为true时，查询结果是经过国家标识体系验证的，具有可信性
                 msgSettings.setTruestyQuery(true);
