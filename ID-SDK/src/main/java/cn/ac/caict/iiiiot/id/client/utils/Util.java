@@ -1252,4 +1252,48 @@ public abstract class Util {
 		}
 		return res;
 	}
+
+	public static boolean isHandleUnderPrefix(String handle, String prefix) {
+		prefix = upperCase(prefix);
+		handle = upperCasePrefix(handle);
+		if (!prefix.startsWith("0.NA/")) return false;
+		String actualPrefix = prefix.substring("0.NA/".length());
+		return handle.startsWith(actualPrefix + "/");
+	}
+
+	public static boolean isDerivedFrom(String handle, String ancestorHandle) {
+		ancestorHandle = upperCase(ancestorHandle);
+		handle = upperCase(handle);
+		if (!handle.startsWith("0.NA/")) return false;
+		//        if (handle.equals(ancestorHandle)) return true;
+		return handle.startsWith(ancestorHandle + ".");
+	}
+
+	/** Get only the prefix part of this handle. */
+	public static final byte[] getPrefixPart(byte handle[]) {
+		int slashIndex = indexOf(handle, (byte) '/');
+		return slashIndex < 0 ? Common.NA_IDENTIFIRE_PREFIX : substring(handle, 0, slashIndex);
+	}
+
+	public static String getPrefixPart(String handle) {
+		return decodeString(getPrefixPart(encodeString(handle)));
+	}
+
+	/** Get the 0.NA authority handle that applies to the specified handle */
+	public static final byte[] getZeroNAHandle(byte handle[]) {
+		int slashIndex = indexOf(handle, (byte) '/');
+		if (slashIndex >= 0) {
+			byte naHandle[] = new byte[slashIndex + Common.NA_IDENTIFIRE_PREFIX.length];
+			System.arraycopy(Common.NA_IDENTIFIRE_PREFIX, 0, naHandle, 0, Common.NA_IDENTIFIRE_PREFIX.length);
+			System.arraycopy(handle, 0, naHandle, Common.NA_IDENTIFIRE_PREFIX.length, slashIndex);
+			upperCaseInPlace(naHandle);
+			return naHandle;
+		} else {
+			return Common.ROOT_HANDLE;
+		}
+	}
+
+	public static String getZeroNAHandle(String handle) {
+		return decodeString(getZeroNAHandle(encodeString(handle)));
+	}
 }

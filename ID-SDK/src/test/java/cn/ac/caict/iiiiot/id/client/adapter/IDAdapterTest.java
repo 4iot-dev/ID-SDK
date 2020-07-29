@@ -8,7 +8,7 @@ public class IDAdapterTest {
 
     @Test
     public void resolve() throws IdentifierAdapterException {
-        IDAdapterFactory.newInstance().resolve("88",null,null);
+        IDAdapterFactory.newInstance().resolve("88.300.15907541011/0.88.300",null,null);
     }
 
     @Test

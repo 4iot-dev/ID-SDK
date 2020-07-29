@@ -626,11 +626,11 @@ public class IdentifierResolveEngine {
 				if (req.bCertify)
 					checkMessageCredential(req, response);
 				if (!response.continuous) {
-					logger.info("接收响应数据结束：response--" + response);
+					logger.debug("接收响应数据结束：response--\n" + response);
 					return response;
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+//				e.printStackTrace();
 				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_CANNOT_CONNECT_TO_ID_SYS_SERVER,
 						"Error talking to " + Util.rfcIpRepresentation(addr), e);
 			} finally {

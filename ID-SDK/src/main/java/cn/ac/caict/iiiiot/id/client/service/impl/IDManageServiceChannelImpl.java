@@ -127,9 +127,9 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		ResolutionRequest req = new ResolutionRequest(id, reqTypes, indexes, null);
 		setMessageSettings(req,settings);
 		long beforeTime = new Date().getTime();
-		log.debug("before processRequest req:" + req);
+//		log.debug("before processRequest req:" + req);
 		BaseResponse response = resolverEngine.processRequest(req,null);
-		log.debug("after processRequest response:" + response);
+//		log.debug("after processRequest response:" + response);
 		long afterTime = new Date().getTime();
 		long time = afterTime - beforeTime;
 		log.debug("查询耗时(毫秒):" + time);

@@ -1,4 +1,4 @@
-package cn.ac.caict.iiiiot.id.client.security.trust;
+package cn.ac.caict.iiiiot.id.client.adapter.trust;
 
 import cn.ac.caict.iiiiot.id.client.adapter.IDAdapter;
 import cn.ac.caict.iiiiot.id.client.adapter.IDAdapterFactory;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class CertTest {
 
-    @Test
+//    @Test
     public void rootSelfSignCert() throws Exception {
         String rootPublicKeyPem = ResourceUtil.readUtf8Str("/Users/bluepoint/temp/ote-root-cert/rsa_public_key.pem");
 
@@ -45,7 +45,7 @@ public class CertTest {
         idAdapter.updateIdentifierValues("88.300.15907541011/0.0", values);
     }
 
-    @Test
+//    @Test
     public void shrSignCert() throws Exception {
         String issueRoot = "301:88.300.15907541011/0.0";
         String rootPrivateKeyPem = ResourceUtil.readUtf8Str("/Users/bluepoint/temp/ote-root-cert/rsa_private_pkcs8.pem");
@@ -75,7 +75,7 @@ public class CertTest {
         idAdapter.updateIdentifierValues("88.300.15907541011/0.88.300", values);
     }
 
-    @Test
+//    @Test
     public void lhsCertTest() throws Exception {
         String issue = "301:88.300.15907541011/0.88.300";
         String issuePrivateKeyPem = "-----BEGIN PRIVATE KEY-----\n" +
@@ -123,6 +123,10 @@ public class CertTest {
         values[0] = valueHelper.newPublicKeyValue(301, publicKey);
         values[1] = valueHelper.newCertValue(400, publicKey, issue, "301:88.300.15907541011/0.88.300.15907541011", issuePrivateKey, "2020-12-31 23:59:59", "2020-01-01 00:00:00", "2020-07-28 00:00:00");
 
-        idAdapter.createIdentifier("88.300.15907541011/0.88.300.15907541011", values);
+        idAdapter.updateIdentifierValues("88.300.15907541011/0.88.300.15907541011", values);
+    }
+
+    public void verifyCert(){
+
     }
 }

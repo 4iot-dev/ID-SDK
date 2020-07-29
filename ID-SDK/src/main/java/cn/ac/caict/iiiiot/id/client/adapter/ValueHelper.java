@@ -49,6 +49,19 @@ public class ValueHelper {
         return prefix;
     }
 
+    public List<IdentifierValue> filterOnlyPublicValues(List<IdentifierValue> values) {
+        List<IdentifierValue> res = null;
+        for (int i = values.size() - 1; i >= 0; i--) {
+            IdentifierValue value = values.get(i);
+            if (!value.bPublicRead) {
+                if (res == null) res = new ArrayList<>(values);
+                res.remove(i);
+            }
+        }
+        if (res == null) return values;
+        return res;
+    }
+
     public IdentifierValue newPublicKeyValue(int index, PublicKey publicKey) throws IdentifierException {
         IdentifierValue iv = new IdentifierValue();
         IdentifierValueUtil.makeIdentifierValueOfPublicKey(iv, publicKey, index);
@@ -98,7 +111,7 @@ public class ValueHelper {
 
         IdentifierValue value = new IdentifierValue();
 
-        SignatureInfo signInfo = SignatureInfo.newCertificationInstance(admPrvKey, pubKey, perms, issue, index+":"+subject, expirationTime, notBefore, issedAfterTime);
+        SignatureInfo signInfo = SignatureInfo.newCertificationInstance(admPrvKey, pubKey, perms, issue, subject, expirationTime, notBefore, issedAfterTime);
         IdentifierValueUtil.makeIdentifierValueOfCertification(value, index, signInfo);
         return newCertValue(index,pubKey,perms,issue,subject,admPrvKey,expirationTime,notBefore,issedAfterTime);
 
@@ -107,8 +120,7 @@ public class ValueHelper {
     public IdentifierValue newCertValue(int index,PublicKey pubKey,List<Permission> perms,String issue,String subject,PrivateKey admPrvKey,String expirationTime,String notBefore,String issedAfterTime) throws Exception {
 
         IdentifierValue value = new IdentifierValue();
-
-        SignatureInfo signInfo = SignatureInfo.newCertificationInstance(admPrvKey, pubKey, perms, issue, index+":"+subject, expirationTime, notBefore, issedAfterTime);
+        SignatureInfo signInfo = SignatureInfo.newCertificationInstance(admPrvKey, pubKey, perms, issue, subject, expirationTime, notBefore, issedAfterTime);
         IdentifierValueUtil.makeIdentifierValueOfCertification(value, index, signInfo);
         return value;
 

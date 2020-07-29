@@ -35,7 +35,7 @@ public class DefaultIDAdapter implements IDAdapter {
 
     private IIDManageServiceChannel channel;
 
-    private BeanFactory factory;
+    private ChannelFactory factory;
 
     private MsgSettings msgSettings;
 
@@ -44,14 +44,14 @@ public class DefaultIDAdapter implements IDAdapter {
     private int tcpTimeout = 60 * 1000;
 
     public DefaultIDAdapter() {
-        this.factory = BeanFactory.getBeanFactory();
+        this.factory = ChannelFactory.getChannelFactory();
         msgSettings = new MsgSettings();
         msgSettings.setTruestyQuery(false);
         this.channel = factory.proxyChannel();
     }
 
     public DefaultIDAdapter(String adminIdentifier, int keyIndex, String privateKeyPem, int cipher) {
-        this.factory = BeanFactory.getBeanFactory();
+        this.factory = ChannelFactory.getChannelFactory();
         msgSettings = new MsgSettings();
         msgSettings.setTruestyQuery(false);
         String prefix = valueHelper.extraPrefix(adminIdentifier);
@@ -80,7 +80,7 @@ public class DefaultIDAdapter implements IDAdapter {
     }
 
     public DefaultIDAdapter(String serverPrefix, String adminIdentifier, int keyIndex, String privateKeyPem, int cipher) {
-        this.factory = BeanFactory.getBeanFactory();
+        this.factory = ChannelFactory.getChannelFactory();
         msgSettings = new MsgSettings();
         msgSettings.setTruestyQuery(false);
         PrefixSite prefixSite;
@@ -107,7 +107,7 @@ public class DefaultIDAdapter implements IDAdapter {
     }
 
     public DefaultIDAdapter(String serverIp, int port, String adminIdentifier, int keyIndex, String privateKeyPem, int cipher) {
-        this.factory = BeanFactory.getBeanFactory();
+        this.factory = ChannelFactory.getChannelFactory();
         msgSettings = new MsgSettings();
         msgSettings.setTruestyQuery(false);
         this.channel = factory.newChannel(serverIp, port, "TCP");
@@ -128,7 +128,7 @@ public class DefaultIDAdapter implements IDAdapter {
     }
 
     public DefaultIDAdapter(String serverIp, int port) {
-        this.factory = BeanFactory.getBeanFactory();
+        this.factory = ChannelFactory.getChannelFactory();
         msgSettings = new MsgSettings();
         msgSettings.setTruestyQuery(false);
         this.channel = factory.newChannel(serverIp, port, "TCP");
@@ -202,7 +202,7 @@ public class DefaultIDAdapter implements IDAdapter {
     public IdentifierValue[] resolve(String identifier, String[] types, int[] indexes) throws IdentifierAdapterException {
 
         try {
-            BaseResponse lookupResp = channel.lookupIdentifier(identifier, null, null, msgSettings);
+            BaseResponse lookupResp = channel.lookupIdentifier(identifier, indexes, types, msgSettings);
             if (lookupResp != null && lookupResp.responseCode == 1) {
                 ResolutionResponse resolutionResponse = (ResolutionResponse) lookupResp;
                 IdentifierValue[] values = resolutionResponse.getAllIDValues();
