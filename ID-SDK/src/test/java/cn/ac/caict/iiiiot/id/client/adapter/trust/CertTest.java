@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class CertTest {
 
-//    @Test
+    @Test
     public void rootSelfSignCert() throws Exception {
         String rootPublicKeyPem = ResourceUtil.readUtf8Str("/Users/bluepoint/temp/ote-root-cert/rsa_public_key.pem");
 
@@ -30,7 +30,8 @@ public class CertTest {
         String rootPrivateKeyPem = ResourceUtil.readUtf8Str("/Users/bluepoint/temp/ote-root-cert/rsa_private_pkcs8.pem");
 
         PrivateKey rootPrivateKey = KeyConverter.fromPkcs8Pem(rootPrivateKeyPem, null);
-        System.out.println(rootPrivateKey.toString());
+
+        System.out.println(KeyConverter.toPkcs8UnencryptedPem(rootPrivateKey));
 
         IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37", 5643);
 
@@ -42,7 +43,7 @@ public class CertTest {
         perms.add(new Permission(null, Permission.EVERYTHING));
         values[1] = valueHelper.newCertValue(400, rootPublicKey,perms, "301:88.300.15907541011/0.0", "301:88.300.15907541011/0.0", rootPrivateKey, "2020-12-31 23:59:59", "2020-01-01 00:00:00", "2020-07-28 00:00:00");
 
-        idAdapter.updateIdentifierValues("88.300.15907541011/0.0", values);
+//        idAdapter.updateIdentifierValues("88.300.15907541011/0.0", values);
     }
 
 //    @Test
@@ -103,8 +104,6 @@ public class CertTest {
                 "qjUsZW3q9/v8rG834S9cLXS+FA==\n" +
                 "-----END PRIVATE KEY-----";
         PrivateKey issuePrivateKey = KeyConverter.fromPkcs8Pem(issuePrivateKeyPem, null);
-
-
 
         String publicKeyPem = "-----BEGIN PUBLIC KEY-----\n" +
                 "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhKyKf1EFZZ1Qe4NW8pITZg+zWUtdoYJ6\n" +

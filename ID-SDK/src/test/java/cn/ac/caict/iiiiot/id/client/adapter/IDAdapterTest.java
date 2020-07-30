@@ -1,12 +1,23 @@
 package cn.ac.caict.iiiiot.id.client.adapter;
 
+import cn.ac.caict.iiiiot.id.client.adapter.trust.*;
+import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
+import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
 import org.junit.Test;
 
 public class IDAdapterTest {
 
     @Test
-    public void resolve() throws IdentifierAdapterException {
-        IDAdapterFactory.cachedInstance().resolve("88.300.15907541011/0.88.300",null,null);
+    public void resolve() throws IdentifierAdapterException, IdentifierTrustException {
+        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88",null,null);
+        IdentifierValue[] certValues = ValueHelper.getInstance().filter(values,"HS_CERT");
+        if(certValues.length>0){
+            IdentifierValue cert = certValues[0];
+            String jwsStr= cert.getDataStr();
+            JWS jws = JWSFactory.getInstance().deserialize(jwsStr);
+            IdentifierClaimsSet claims = IdentifierVerifier.getInstance().getIdentifierClaimsSet(jws);
+            System.out.println(KeyConverter.toX509Pem(claims.publicKey));
+        }
     }
 
     @Test

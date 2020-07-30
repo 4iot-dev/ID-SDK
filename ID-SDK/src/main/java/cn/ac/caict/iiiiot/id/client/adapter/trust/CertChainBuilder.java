@@ -142,7 +142,9 @@ public class CertChainBuilder {
             }
             if (values == null) {
                 IdentifierRecord identifierRecord = IdentifierRecordCache.getInstance().get(Util.upperCasePrefix(identifier));
-                values = identifierRecord.getValues();
+                if(identifierRecord!=null){
+                    values = identifierRecord.getValues();
+                }
             }
             if (values == null) {
                 if (idAdapter != null) {

@@ -13,11 +13,11 @@ public class ChannelFactory {
 
     private IDAdapter proxyIdAdapter;
 
-//    private String recursionServerIp = "45.120.243.40";
-//    private int recursionServerPort = 3641;
+    private String recursionServerIp = "45.120.243.40";
+    private int recursionServerPort = 3641;
 
-    private String recursionServerIp = "192.168.150.37";
-    private int recursionServerPort = 5643;
+//    private String recursionServerIp = "192.168.150.37";
+//    private int recursionServerPort = 5643;
 
 
     private ChannelFactory() {

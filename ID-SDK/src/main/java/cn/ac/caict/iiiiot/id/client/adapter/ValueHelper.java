@@ -12,6 +12,8 @@ import cn.ac.caict.iiiiot.id.client.utils.Util;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class ValueHelper {
@@ -62,6 +64,7 @@ public class ValueHelper {
         if (res == null) return values;
         return res;
     }
+
     public static SiteInfo getPrimarySite(SiteInfo[] sites) {
         for (SiteInfo site : sites) {
             if (site.isPrimarySite) {
@@ -78,11 +81,11 @@ public class ValueHelper {
     }
 
     public IdentifierValue newAdminValue(int valueIndex, String admId, int admIdIndex,
-                                                boolean perm_createId, boolean perm_deleteId,
-                                                boolean perm_addNA, boolean perm_deleteNA,
-                                                boolean perm_modifyValue, boolean perm_removeValue, boolean perm_addValue,
-                                                boolean perm_modifyAdmin, boolean perm_removeAdmin, boolean perm_addAdmin,
-                                                boolean perm_readValue, boolean perm_showAll) throws IdentifierException {
+                                         boolean perm_createId, boolean perm_deleteId,
+                                         boolean perm_addNA, boolean perm_deleteNA,
+                                         boolean perm_modifyValue, boolean perm_removeValue, boolean perm_addValue,
+                                         boolean perm_modifyAdmin, boolean perm_removeAdmin, boolean perm_addAdmin,
+                                         boolean perm_readValue, boolean perm_showAll) throws IdentifierException {
         IdentifierValue value = new IdentifierValue();
         AdminInfo admin = new AdminInfo();
         admin.admId = Util.encodeString(admId);
@@ -97,32 +100,31 @@ public class ValueHelper {
     }
 
     public IdentifierValue newAdminValue(int valueIndex, String admId, int admIdIndex) throws IdentifierException {
-        return newAdminValue(valueIndex,admId,admIdIndex,true, true, true, true, true, true, true, true, true, true, true, true);
+        return newAdminValue(valueIndex, admId, admIdIndex, true, true, true, true, true, true, true, true, true, true, true, true);
     }
 
     /**
-     *
      * @param index
      * @param pubKey
-     * @param issue 300:88.111/test
+     * @param issue          300:88.111/test
      * @param subject
      * @param admPrvKey
      * @param expirationTime "2020-12-12 23:59:59"
-     * @param notBefore "2019-11-25 00:00:00"
+     * @param notBefore      "2019-11-25 00:00:00"
      * @param issedAfterTime "2019-11-24 15:44:00"
      * @return
      * @throws Exception
      */
-    public IdentifierValue newCertValue(int index,PublicKey pubKey,String issue,String subject,PrivateKey admPrvKey,String expirationTime,String notBefore,String issedAfterTime) throws Exception {
+    public IdentifierValue newCertValue(int index, PublicKey pubKey, String issue, String subject, PrivateKey admPrvKey, String expirationTime, String notBefore, String issedAfterTime) throws Exception {
 
         List<Permission> perms = new ArrayList<>();
         perms.add(new Permission(null, Permission.EVERYTHING));
 
-        return newCertValue(index,pubKey,perms,issue,subject,admPrvKey,expirationTime,notBefore,issedAfterTime);
+        return newCertValue(index, pubKey, perms, issue, subject, admPrvKey, expirationTime, notBefore, issedAfterTime);
 
     }
 
-    public IdentifierValue newCertValue(int index,PublicKey pubKey,List<Permission> perms,String issue,String subject,PrivateKey admPrvKey,String expirationTime,String notBefore,String issedAfterTime) throws Exception {
+    public IdentifierValue newCertValue(int index, PublicKey pubKey, List<Permission> perms, String issue, String subject, PrivateKey admPrvKey, String expirationTime, String notBefore, String issedAfterTime) throws Exception {
 
         IdentifierValue value = new IdentifierValue();
         SignatureInfo signInfo = SignatureInfo.newCertificationInstance(admPrvKey, pubKey, perms, issue, subject, expirationTime, notBefore, issedAfterTime);
@@ -132,20 +134,19 @@ public class ValueHelper {
     }
 
     /**
-     *
      * @param index
      * @param values
-     * @param issue 300:88.111/test
+     * @param issue          300:88.111/test
      * @param subject
      * @param admPrvKey
      * @param expirationTime
      * @param notBefore
      * @param issedAfterTime
-     * @param digestAlg SHA-256
+     * @param digestAlg      SHA-256
      * @return
      * @throws Exception
      */
-    public IdentifierValue newSignatureValue(int index,IdentifierValue[] values,String issue,String subject,PrivateKey admPrvKey,String expirationTime,String notBefore,String issedAfterTime, String digestAlg) throws Exception {
+    public IdentifierValue newSignatureValue(int index, IdentifierValue[] values, String issue, String subject, PrivateKey admPrvKey, String expirationTime, String notBefore, String issedAfterTime, String digestAlg) throws Exception {
 
         IdentifierValue value = new IdentifierValue();
         SignatureInfo signInfo = SignatureInfo.newSignatureInstance(admPrvKey, values, issue, subject,
@@ -153,6 +154,19 @@ public class ValueHelper {
         IdentifierValueUtil.makeIdentifierValueOfSignature(value, index, signInfo);
         return value;
 
+    }
+
+    public IdentifierValue[] filter(IdentifierValue[] values, String type) {
+        List<IdentifierValue> list = new ArrayList<>(Arrays.asList(values));
+        Iterator<IdentifierValue> it = list.iterator();
+        while (it.hasNext()) {
+            if(!type.equals(it.next().getTypeStr())){
+                it.remove();
+            }
+        }
+        IdentifierValue[] result = new IdentifierValue[list.size()];
+        list.toArray(result);
+        return result;
     }
 
 }
