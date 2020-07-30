@@ -2,13 +2,11 @@ package cn.ac.caict.iiiiot.id.client.adapter;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class IDAdapterTest {
 
     @Test
     public void resolve() throws IdentifierAdapterException {
-        IDAdapterFactory.newInstance().resolve("88.300.15907541011/0.88.300",null,null);
+        IDAdapterFactory.cachedInstance().resolve("88.300.15907541011/0.88.300",null,null);
     }
 
     @Test
@@ -37,7 +35,7 @@ public class IDAdapterTest {
                 "whhWREGhoDnaowcJ9A8tenDUgDNf98pDKpeudMLG+32YaHPtxWOBTywLVpbh4I1sykLJnwAq+Lve\n" +
                 "KMLphT7U+sCwvAKmOQ6vGLhXsg==\n" +
                 "-----END PRIVATE KEY-----";
-        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37",5647,"88.300.15907541011",300,privateKeyPem,1);
+        IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37",5647,"88.300.15907541011",300,privateKeyPem,1);
         idAdapter.resolve("88.300.15907541011/user002",null,null,true);
     }
 

@@ -17,8 +17,7 @@ public class IdentifierRecord {
     public IdentifierRecord(String identifier, IdentifierValue[] valuesArray) {
         this.identifier = identifier;
         if (valuesArray != null) {
-            values = new ArrayList<>();
-            values.addAll(Arrays.asList(valuesArray));
+            values = Arrays.asList(valuesArray);
         } else {
             values = null;
         }

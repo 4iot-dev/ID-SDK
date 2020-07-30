@@ -30,6 +30,10 @@ public class CachedPrefixIDAdapter extends DefaultIDAdapter {
     @Override
     protected PrefixSiteInfo resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
 
+        PrefixSiteInfo prefixSiteInfo = prefixSiteCache.get(prefixIdentifier);
+        if (prefixSiteInfo != null) {
+            return prefixSiteInfo;
+        }
         if (prefixSiteCache.isFull()) {
             cleanExecutor.submit(new Runnable() {
                 @Override
@@ -38,12 +42,7 @@ public class CachedPrefixIDAdapter extends DefaultIDAdapter {
                 }
             });
         }
-
-        PrefixSiteInfo prefixSiteInfo = prefixSiteCache.get(prefixIdentifier);
-        if (prefixSiteInfo != null) {
-            return prefixSiteInfo;
-        }
-        try (IDAdapter idAdapter = IDAdapterFactory.newInstance()) {
+        try (IDAdapter idAdapter = IDAdapterFactory.cachedInstance()) {
             String[] types = {"HS_SITE"};
             IdentifierValue[] valueArray = idAdapter.resolve(prefixIdentifier, types, null);
 

@@ -47,7 +47,7 @@ public class SignatureTest {
                 "-----END PRIVATE KEY-----";
         PrivateKey issuePrivateKey = KeyConverter.fromPkcs8Pem(issuePrivateKeyPem, null);
 
-        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37", 5643);
+        IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37", 5643);
         ValueHelper valueHelper = ValueHelper.getInstance();
 
         String identifier = "88.300.15907541011/1";
@@ -67,7 +67,7 @@ public class SignatureTest {
     @Test
     public void verifyIdentifier() throws Exception {
         IdentifierVerifier identifierVerifier = IdentifierVerifier.getInstance();
-        IDAdapter idAdapter = IDAdapterFactory.newInstance();
+        IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
 
         String identifier = "88.300.15907541011/1";
         IdentifierValue[] values = idAdapter.resolve(identifier, null, null);

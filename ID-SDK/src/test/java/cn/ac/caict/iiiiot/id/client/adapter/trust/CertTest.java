@@ -32,7 +32,7 @@ public class CertTest {
         PrivateKey rootPrivateKey = KeyConverter.fromPkcs8Pem(rootPrivateKeyPem, null);
         System.out.println(rootPrivateKey.toString());
 
-        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37", 5643);
+        IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37", 5643);
 
         ValueHelper valueHelper = ValueHelper.getInstance();
 
@@ -53,7 +53,7 @@ public class CertTest {
         PrivateKey rootPrivateKey = KeyConverter.fromPkcs8Pem(rootPrivateKeyPem, null);
         System.out.println(rootPrivateKey.toString());
 
-        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37", 5643);
+        IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37", 5643);
         ValueHelper valueHelper = ValueHelper.getInstance();
 
         String publicKeyPem = "-----BEGIN PUBLIC KEY-----\n" +
@@ -116,7 +116,7 @@ public class CertTest {
                 "-----END PUBLIC KEY-----";
         PublicKey publicKey = KeyConverter.fromX509Pem(publicKeyPem);
 
-        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37", 5643);
+        IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37", 5643);
         ValueHelper valueHelper = ValueHelper.getInstance();
 
         IdentifierValue[] values = new IdentifierValue[2];
@@ -129,7 +129,7 @@ public class CertTest {
     @Test
     public void verifyCert() throws Exception {
         IdentifierVerifier identifierVerifier = IdentifierVerifier.getInstance();
-        IDAdapter idAdapter = IDAdapterFactory.newInstance();
+        IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
 
         String identifier = "88.300.15907541011/0.88.300.15907541011";
         IdentifierValue[] values = idAdapter.resolve(identifier, new String[]{"HS_CERT"}, null);

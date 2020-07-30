@@ -3,6 +3,7 @@ package cn.ac.caict.iiiiot.id.client.adapter.trust;
 import cn.ac.caict.iiiiot.id.client.adapter.IDAdapter;
 import cn.ac.caict.iiiiot.id.client.adapter.IdentifierAdapterException;
 import cn.ac.caict.iiiiot.id.client.adapter.IdentifierRecord;
+import cn.ac.caict.iiiiot.id.client.adapter.cache.IdentifierRecordCache;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.data.ValueReference;
 import cn.ac.caict.iiiiot.id.client.utils.Common;
@@ -73,8 +74,11 @@ public class CertChainBuilder {
                 }
             }
             String nextLinkInChain = chain.get(0);
-            if (seenIds.contains(nextLinkInChain)) throw new IdentifierTrustException("cycle in chain");
-            else seenIds.add(nextLinkInChain);
+            if (seenIds.contains(nextLinkInChain)) {
+                throw new IdentifierTrustException("cycle in chain");
+            } else {
+                seenIds.add(nextLinkInChain);
+            }
             String parentSignatureString;
             try {
                 parentSignatureString = lookup(nextLinkInChain, childClaims.iss);
@@ -82,19 +86,22 @@ public class CertChainBuilder {
                 throw new IdentifierTrustException("handle resolution exception", e);
             }
             if (parentSignatureString == null) {
-                if (noChain) throw new IdentifierTrustException("no chain and unable to resolve issuer " + nextLinkInChain);
+                if (noChain)
+                    throw new IdentifierTrustException("no chain and unable to resolve issuer " + nextLinkInChain);
                 throw new IdentifierTrustException("unable to resolve chain " + nextLinkInChain);
             }
             JWS parentSignature;
             try {
                 parentSignature = signatureFactory.deserialize(parentSignatureString);
             } catch (IdentifierTrustException e) {
-                if (noChain) throw new IdentifierTrustException("no chain and not a signature at issuer " + nextLinkInChain);
+                if (noChain)
+                    throw new IdentifierTrustException("no chain and not a signature at issuer " + nextLinkInChain);
                 throw new IdentifierTrustException("not a signature at chain " + nextLinkInChain);
             }
             IdentifierClaimsSet parentClaims = identifierVerifier.getIdentifierClaimsSet(parentSignature);
             if (parentClaims == null) throw new IdentifierTrustException("signature payload not valid");
-            if (!Util.equalsPrefixCaseInsensitive(parentClaims.sub, childClaims.iss)) throw new IdentifierTrustException("chain is broken");
+            if (!Util.equalsPrefixCaseInsensitive(parentClaims.sub, childClaims.iss))
+                throw new IdentifierTrustException("chain is broken");
             IssuedSignature issuedSignature = new IssuedSignature(childSignature, parentClaims.publicKey, parentClaims.perms);
             result.add(issuedSignature);
             childSignature = parentSignature;
@@ -109,8 +116,8 @@ public class CertChainBuilder {
         }
 
         if (idAdapter != null) {
-            IdentifierValue[] values = idAdapter.resolve(valueReference.getIdentifierAsString(),null,new int[]{valueReference.index});
-            if(values.length==1){
+            IdentifierValue[] values = idAdapter.resolve(valueReference.getIdentifierAsString(), null, new int[]{valueReference.index});
+            if (values.length == 1) {
                 return values[0];
             }
         }
@@ -128,13 +135,20 @@ public class CertChainBuilder {
             }
         } else {
             List<IdentifierValue> values = null;
+            String identifier = valueReference.getIdentifierAsString();
             if (handleMap != null) {
-                IdentifierRecord record = handleMap.get(Util.upperCasePrefix(valueReference.getIdentifierAsString()));
+                IdentifierRecord record = handleMap.get(Util.upperCasePrefix(identifier));
                 if (record != null) values = record.getValues();
             }
             if (values == null) {
+                IdentifierRecord identifierRecord = IdentifierRecordCache.getInstance().get(Util.upperCasePrefix(identifier));
+                values = identifierRecord.getValues();
+            }
+            if (values == null) {
                 if (idAdapter != null) {
-                    values = Arrays.asList(idAdapter.resolve(valueReference.getIdentifierAsString(),null,null));
+                    IdentifierValue[] result = idAdapter.resolve(identifier, null, null);
+                    IdentifierRecordCache.getInstance().cacheIdentifierRecord(new IdentifierRecord(Util.upperCasePrefix(identifier), result));
+                    values = Arrays.asList(result);
                 }
             }
             if (values == null) return null;
@@ -143,7 +157,6 @@ public class CertChainBuilder {
             return latestCert.serialize();
         }
     }
-
 
 
     private IdentifierValue handleMapLookup(ValueReference valueReference) {

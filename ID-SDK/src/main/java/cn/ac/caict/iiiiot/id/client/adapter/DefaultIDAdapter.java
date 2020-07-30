@@ -275,7 +275,7 @@ public class DefaultIDAdapter implements IDAdapter {
 
     protected PrefixSiteInfo resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
 
-        try (IDAdapter idAdapter = IDAdapterFactory.newInstance()) {
+        try (IDAdapter idAdapter = IDAdapterFactory.cachedInstance()) {
             String[] types = {"HS_SITE"};
             IdentifierValue[] valueArray = idAdapter.resolve(prefixIdentifier, types, null);
 
