@@ -1,4 +1,4 @@
-package cn.ac.caict.iiiiot.id.client.sample;
+package cn.ac.caict.iiiiot.id.client.test;
 
 import cn.ac.caict.iiiiot.id.client.core.BaseResponse;
 import cn.ac.caict.iiiiot.id.client.core.ErrorResponse;

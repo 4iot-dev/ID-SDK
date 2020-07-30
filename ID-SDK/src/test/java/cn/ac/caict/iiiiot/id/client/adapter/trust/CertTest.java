@@ -1,12 +1,12 @@
 package cn.ac.caict.iiiiot.id.client.adapter.trust;
 
-import cn.ac.caict.iiiiot.id.client.adapter.IDAdapter;
-import cn.ac.caict.iiiiot.id.client.adapter.IDAdapterFactory;
-import cn.ac.caict.iiiiot.id.client.adapter.ValueHelper;
+import cn.ac.caict.iiiiot.id.client.adapter.*;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.security.Permission;
 import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
 import cn.hutool.core.io.resource.ResourceUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.junit.Test;
 
 import java.security.PrivateKey;
@@ -133,43 +133,11 @@ public class CertTest {
         String identifier = "88.300.15907541011/0.88.300.15907541011";
         IdentifierValue[] values = idAdapter.resolve(identifier, new String[]{"HS_CERT"}, null);
 //        IdentifierValue[] hvs =  Util.filterValues(values,null, Common.HS_SIGNATURE_TYPE_LIST);
-        String signatureString = values[0].getDataStr();
-        System.out.println(signatureString);
 
-        JWS jws = JWSFactory.getInstance().deserialize(signatureString);
-        CertChainBuilder certChainBuilder = new CertChainBuilder(idAdapter);
-        List<IssuedSignature> issuedSignatures = null;
-        String message = "";
-        boolean unableToBuildChain = false;
-        try {
-            issuedSignatures = certChainBuilder.buildChain(jws);
-        } catch (IdentifierTrustException e) {
-            message = "Signature NOT VERIFIED unable to build chain: " + e.getMessage();
-            unableToBuildChain = true;
-        }
+        Verifier verifier = Verifier.getInstance();
+        VerifyResult result = verifier.verifyCert(identifier,values[0]);
+        String json = GsonCompose.getPrettyGson().toJson(result);
+        System.out.println(json);
 
-        System.err.println(issuedSignatures);
-
-        List<PublicKey> rootKeys = new ArrayList<>();
-        String rootPublicKeyPem = ResourceUtil.readUtf8Str("/Users/bluepoint/temp/ote-root-cert/rsa_public_key.pem");
-        PublicKey rootPublicKey = KeyConverter.fromX509Pem(rootPublicKeyPem);
-        rootKeys.add(rootPublicKey);
-
-        CertChainVerifier certChainVerifier = new CertChainVerifier(rootKeys);
-
-        CertChainVerificationResult chainReport = certChainVerifier.verifyChain(issuedSignatures);
-        chainReport.unableToBuildChain = unableToBuildChain;
-        String chainReportJson = GsonCompose.getPrettyGson().toJson(chainReport);
-        System.out.println(chainReportJson);
-        if (chainReport.canTrust()) {
-            message = "Signature VERIFIED";
-            String publicKeyIssue = new CertPublicKeyChecker().checkPublicKeyIssue(jws, idAdapter);
-            if (publicKeyIssue != null) {
-                message += "; WARNING " + publicKeyIssue;
-            }
-        } else {
-            message = "Signature NOT VERIFIED";
-        }
-        System.out.println(message);
     }
 }

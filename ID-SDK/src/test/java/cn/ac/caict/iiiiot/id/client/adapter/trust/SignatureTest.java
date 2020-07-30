@@ -1,19 +1,13 @@
 package cn.ac.caict.iiiiot.id.client.adapter.trust;
 
-import cn.ac.caict.iiiiot.id.client.adapter.IDAdapter;
-import cn.ac.caict.iiiiot.id.client.adapter.IDAdapterFactory;
-import cn.ac.caict.iiiiot.id.client.adapter.ValueHelper;
+import cn.ac.caict.iiiiot.id.client.adapter.*;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
-import cn.ac.caict.iiiiot.id.client.data.ValueReference;
 import cn.ac.caict.iiiiot.id.client.utils.Common;
 import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
-import cn.hutool.core.io.resource.ResourceUtil;
 import org.junit.Test;
 
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SignatureTest {
@@ -53,87 +47,40 @@ public class SignatureTest {
         String identifier = "88.300.15907541011/1";
 
         IdentifierValue[] values = new IdentifierValue[1];
-        values[0] = new IdentifierValue(1,"URL","http://www.baidu.com");
+        values[0] = new IdentifierValue(1, "URL", "http://www.baidu.com");
 
 
         IdentifierValue[] valuesa = new IdentifierValue[2];
         valuesa[0] = values[0];
-        valuesa[1] = valueHelper.newSignatureValue(401,values,issue,identifier,issuePrivateKey,"2020-12-31 23:59:59", "2020-01-01 00:00:00", "2020-07-28 00:00:00","SHA-256");
+        valuesa[1] = valueHelper.newSignatureValue(401, values, issue, identifier, issuePrivateKey, "2020-12-31 23:59:59", "2020-01-01 00:00:00", "2020-07-28 00:00:00", "SHA-256");
 
 
-        idAdapter.createIdentifier(identifier,valuesa);
+        idAdapter.createIdentifier(identifier, valuesa);
     }
 
     @Test
     public void verifyIdentifier() throws Exception {
-        IdentifierVerifier identifierVerifier = IdentifierVerifier.getInstance();
-        IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
-
-        String identifier = "88.300.15907541011/1";
-        IdentifierValue[] values = idAdapter.resolve(identifier, null, null);
-
-        List<IdentifierValue> list = new ArrayList<>(values.length);
-        for(int i=0;i<values.length;i++){
-            if(values[i].getTypeStr().equals(Common.HS_SIGNATURE)){
-                list.add(values[i]);
-            }
-        }
-
-        String signatureString = list.get(0).getDataStr();
-
-
-        JWS jws = JWSFactory.getInstance().deserialize(signatureString);
-        CertChainBuilder certChainBuilder = new CertChainBuilder(idAdapter);
-        List<IssuedSignature> issuedSignatures = null;
-        String message = "";
         try {
-            issuedSignatures = certChainBuilder.buildChain(jws);
-        } catch (IdentifierTrustException e) {
-            try {
-                IdentifierClaimsSet claims = IdentifierVerifier.getInstance().getIdentifierClaimsSet(jws);
-                String issuer = claims.iss;
-                ValueReference issuerValRef = ValueReference.transStr2ValueReference(issuer);
-                IdentifierValue[] handleValues = idAdapter.resolve(issuerValRef.getIdentifierAsString(), null, new int[]{issuerValRef.index});
-                IdentifierValue identifierValue = handleValues[0];
-                if (identifierValue != null) {
-                    PublicKey issuerPublicKey = KeyConverter.fromX509Pem(identifierValue.getDataStr());
-                    ValuesSignatureVerificationResult valuesReport = IdentifierVerifier.getInstance().verifyValues(identifier, ValueHelper.getInstance().filterOnlyPublicValues(Arrays.asList(values)), jws, issuerPublicKey);
-                    String valuesReportJson = GsonCompose.getPrettyGson().toJson(valuesReport);
-                    System.out.println(valuesReportJson);
+            IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
+
+            String identifier = "88.300.15907541011/1";
+            IdentifierValue[] values = idAdapter.resolve(identifier, null, null);
+
+            List<IdentifierValue> list = new ArrayList<>(values.length);
+            for (int i = 0; i < values.length; i++) {
+                if (values[i].getTypeStr().equals(Common.HS_SIGNATURE)) {
+                    list.add(values[i]);
                 }
-            } catch (Exception ex) {
-                // ignore
             }
-            message = "Signature NOT VERIFIED unable to build chain: " + e.getMessage();
-            System.out.println(message);
 
+            Verifier verifier = Verifier.getInstance();
+            VerifyResult result = verifier.verifySignature(identifier,list.get(0),values);
+            String json = GsonCompose.getPrettyGson().toJson(result);
+            System.out.println(json);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        List<PublicKey> rootKeys = new ArrayList<>();
-        String rootPublicKeyPem = ResourceUtil.readUtf8Str("/Users/bluepoint/temp/ote-root-cert/rsa_public_key.pem");
-        PublicKey rootPublicKey = KeyConverter.fromX509Pem(rootPublicKeyPem);
-        rootKeys.add(rootPublicKey);
-
-        CertChainVerifier certChainVerifier = new CertChainVerifier(rootKeys);
-
-        CertChainVerificationResult result = certChainVerifier.verifyValues(identifier, Arrays.asList(values), issuedSignatures);
-        String reportJson = GsonCompose.getPrettyGson().toJson(result);
-        System.out.println(reportJson);
-        boolean badDigests = result.valuesResult.badDigestValues.size() != 0;
-        boolean missingValues = result.valuesResult.missingValues.size() != 0;
-        if (result.canTrustAndAuthorized() && !badDigests && !missingValues) {
-            message = "Signature VERIFIED";
-        } else {
-            message = "Signature NOT VERIFIED";
-            if (badDigests) {
-                message += " bad digests";
-            }
-            if (missingValues) {
-                message += " missing values";
-            }
-        }
-
-        System.out.println(message);
     }
 
 }

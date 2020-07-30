@@ -82,7 +82,6 @@ public class JWSImpl implements JWS {
 
     private static String getAlgStringFromHeader(byte[] header) throws IdentifierTrustException {
         try {
-            System.out.println(Util.bytesToHexString(header));
             String alg = new JsonParser().parse(Util.decodeString(header))
                 .getAsJsonObject()
                 .get("alg")

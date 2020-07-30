@@ -17,35 +17,35 @@ public class IdentifierVerifier {
         return INSTANCE;
     }
 
-    public ValuesSignatureVerificationResult verifyValues(String handle, List<IdentifierValue> values, JWS signature, PublicKey publicKey) {
-        ValuesSignatureVerificationResult report = new ValuesSignatureVerificationResult();
-        verifyHandleClaimsSetAndSetReportProperties(report, signature, publicKey);
+    public ValuesSignatureVerificationResult verifyValues(String identifier, List<IdentifierValue> values, JWS signature, PublicKey publicKey) {
+        ValuesSignatureVerificationResult result = new ValuesSignatureVerificationResult();
+        verifyHandleClaimsSetAndSetReportProperties(result, signature, publicKey);
         IdentifierClaimsSet claims = getIdentifierClaimsSet(signature);
-        if (claims == null) return report;
+        if (claims == null) return result;
 
-        report.correctHandle = Util.equalsPrefixCaseInsensitive(handle, claims.sub);
+        result.correctHandle = Util.equalsPrefixCaseInsensitive(identifier, claims.sub);
 
         if (claims.digests == null || claims.digests.alg == null) {
-            report.validPayload = false;
-            return report;
+            result.validPayload = false;
+            return result;
         }
 
         DigestedIdentifierValues digestedIdentifierValues;
         try {
             digestedIdentifierValues = new IdentifierValueDigester().digest(values, claims.digests.alg);
         } catch (NoSuchAlgorithmException e) {
-            report.validPayload = false;
-            report.exceptions.add(e);
-            return report;
+            result.validPayload = false;
+            result.exceptions.add(e);
+            return result;
         }
 
-        report.verifiedValues = getVerifiedValues(digestedIdentifierValues.digests, claims.digests.digests);
-        report.unsignedValues = getUnsignedValues(digestedIdentifierValues.digests, claims.digests.digests);
-        report.badDigestValues = getBadDigestValues(digestedIdentifierValues.digests, claims.digests.digests);
-        report.missingValues = getMissingValues(digestedIdentifierValues.digests, claims.digests.digests);
-        report.iss = claims.iss;
-        report.sub = claims.sub;
-        return report;
+        result.verifiedValues = getVerifiedValues(digestedIdentifierValues.digests, claims.digests.digests);
+        result.unsignedValues = getUnsignedValues(digestedIdentifierValues.digests, claims.digests.digests);
+        result.badDigestValues = getBadDigestValues(digestedIdentifierValues.digests, claims.digests.digests);
+        result.missingValues = getMissingValues(digestedIdentifierValues.digests, claims.digests.digests);
+        result.iss = claims.iss;
+        result.sub = claims.sub;
+        return result;
     }
 
     public IdentifierClaimsSet getIdentifierClaimsSet(JWS signature) {
@@ -59,27 +59,27 @@ public class IdentifierVerifier {
         return claims;
     }
 
-    public void verifyHandleClaimsSetAndSetReportProperties(SignatureVerificationResult report, JWS signature, PublicKey publicKey) {
+    public void verifyHandleClaimsSetAndSetReportProperties(SignatureVerificationResult result, JWS signature, PublicKey publicKey) {
         try {
-            report.signatureVerifies = signature.validates(publicKey);
+            result.signatureVerifies = signature.validates(publicKey);
         } catch (Exception e) {
-            report.signatureVerifies = false;
-            report.exceptions.add(e);
+            result.signatureVerifies = false;
+            result.exceptions.add(e);
         }
 
         IdentifierClaimsSet claims;
         try {
             String payload = signature.getPayloadAsString();
             claims = GsonCompose.getGson().fromJson(payload, IdentifierClaimsSet.class);
-            report.validPayload = true;
+            result.validPayload = true;
         } catch (Exception e) {
-            report.validPayload = false;
-            report.exceptions.add(e);
+            result.validPayload = false;
+            result.exceptions.add(e);
             return;
         }
 
         long nowInSeconds = System.currentTimeMillis() / 1000L;
-        report.dateInRange = claims.isDateInRange(nowInSeconds);
+        result.dateInRange = claims.isDateInRange(nowInSeconds);
     }
 
     List<Integer> getBadDigestValues(List<DigestedIdentifierValues.DigestedIdentifierValue> actual, List<DigestedIdentifierValue> claimedDigests) {

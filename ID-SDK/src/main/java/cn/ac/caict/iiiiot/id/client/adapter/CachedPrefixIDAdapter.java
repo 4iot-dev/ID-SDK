@@ -7,6 +7,7 @@ import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
 import cn.ac.caict.iiiiot.id.client.core.ServerInfo;
 import cn.ac.caict.iiiiot.id.client.core.SiteInfo;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
+import cn.ac.caict.iiiiot.id.client.utils.Common;
 import cn.ac.caict.iiiiot.id.client.utils.Util;
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.LRUCache;
@@ -31,7 +32,7 @@ public class CachedPrefixIDAdapter extends DefaultIDAdapter {
         try (IDAdapter idAdapter = IDAdapterFactory.cachedInstance()) {
             valueArray = idAdapter.resolve(prefixIdentifier, null, null);
 
-            valueArray = ValueHelper.getInstance().filter(valueArray,"HS_SITE");
+            valueArray = ValueHelper.getInstance().filter(valueArray, Common.HS_SITE);
             if (valueArray.length > 0) {
                 IdentifierValue iv = valueArray[0];
                 SiteInfo siteInfo = BytesObjConvertor.bytesCovertToSiteInfo(iv.getData());

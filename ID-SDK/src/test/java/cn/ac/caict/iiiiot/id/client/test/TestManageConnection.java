@@ -1,4 +1,4 @@
-package cn.ac.caict.iiiiot.id.client.sample;
+package cn.ac.caict.iiiiot.id.client.test;
 
 import java.io.IOException;
 import java.security.PrivateKey;
