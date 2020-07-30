@@ -3,6 +3,7 @@ package cn.ac.caict.iiiiot.id.client.adapter;
 import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
+import cn.hutool.cache.Cache;
 import org.junit.Test;
 
 import java.security.PublicKey;
@@ -31,6 +32,7 @@ public class IDUserTest {
         PublicKey publicKey = KeyConverter.fromX509Pem(publicKeyPem);
         values[1] = valueHelper.newPublicKeyValue(300,publicKey);
         idAdapter.createIdentifier("88.300.15907541011/user002", values);
+
     }
 
     @Test

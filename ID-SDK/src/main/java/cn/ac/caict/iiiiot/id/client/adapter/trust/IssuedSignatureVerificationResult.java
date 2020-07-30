@@ -1,6 +1,6 @@
 package cn.ac.caict.iiiiot.id.client.adapter.trust;
 
-public class IssuedSignatureVerificationReport extends SignatureVerificationReport {
+public class IssuedSignatureVerificationResult extends SignatureVerificationResult {
 
     // permission granted
     public Boolean authorized;

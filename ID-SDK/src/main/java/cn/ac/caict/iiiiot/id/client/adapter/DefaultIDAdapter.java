@@ -55,14 +55,14 @@ public class DefaultIDAdapter implements IDAdapter {
         msgSettings = new MsgSettings();
         msgSettings.setTruestyQuery(false);
         String prefix = valueHelper.extraPrefix(adminIdentifier);
-        PrefixSite prefixSite;
+        PrefixSiteInfo prefixSiteInfo;
         try {
-            prefixSite = resolveSiteByProxy(prefix);
+            prefixSiteInfo = resolveSiteByProxy(prefix);
         } catch (Exception e) {
             throw new IdentifierAdapterRuntimeException("instance idAdapter failed", e);
         }
-        logger.info("connect to server,ip: " + prefixSite.getIp() + ",port: " + prefixSite.getPort());
-        this.channel = factory.newChannel(prefixSite.getIp(), prefixSite.getPort(), prefixSite.getProtocolName());
+        logger.info("connect to server,ip: " + prefixSiteInfo.getIp() + ",port: " + prefixSiteInfo.getPort());
+        this.channel = factory.newChannel(prefixSiteInfo.getIp(), prefixSiteInfo.getPort(), prefixSiteInfo.getProtocolName());
         PrivateKey privateKey;
         try {
             privateKey = KeyConverter.fromPkcs8Pem(privateKeyPem, null);
@@ -72,10 +72,10 @@ public class DefaultIDAdapter implements IDAdapter {
         try {
             this.channel.login(adminIdentifier, keyIndex, privateKey, cipher, msgSettings);
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed ,server is " + prefixSite.getIp() + ";" + prefixSite.getPort(), e);
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed ,server is " + prefixSiteInfo.getIp() + ";" + prefixSiteInfo.getPort(), e);
         }
         if (!this.channel.isLogin()) {
-            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed ,server is " + prefixSite.getIp() + ";" + prefixSite.getPort());
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed ,server is " + prefixSiteInfo.getIp() + ";" + prefixSiteInfo.getPort());
         }
     }
 
@@ -83,13 +83,13 @@ public class DefaultIDAdapter implements IDAdapter {
         this.factory = ChannelFactory.getChannelFactory();
         msgSettings = new MsgSettings();
         msgSettings.setTruestyQuery(false);
-        PrefixSite prefixSite;
+        PrefixSiteInfo prefixSiteInfo;
         try {
-            prefixSite = resolveSiteByProxy(serverPrefix);
+            prefixSiteInfo = resolveSiteByProxy(serverPrefix);
         } catch (Exception e) {
             throw new IdentifierAdapterRuntimeException("instance idAdapter failed", e);
         }
-        this.channel = factory.newChannel(prefixSite.getIp(), prefixSite.getPort(), prefixSite.getProtocolName());
+        this.channel = factory.newChannel(prefixSiteInfo.getIp(), prefixSiteInfo.getPort(), prefixSiteInfo.getProtocolName());
         PrivateKey privateKey;
         try {
             privateKey = KeyConverter.fromPkcs8Pem(privateKeyPem, null);
@@ -99,10 +99,10 @@ public class DefaultIDAdapter implements IDAdapter {
         try {
             this.channel.login(adminIdentifier, keyIndex, privateKey, cipher, msgSettings);
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed ,server is " + prefixSite.getIp() + ";" + prefixSite.getPort(), e);
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed ,server is " + prefixSiteInfo.getIp() + ";" + prefixSiteInfo.getPort(), e);
         }
         if (!this.channel.isLogin()) {
-            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed, on exception, server is " + prefixSite.getIp() + ";" + prefixSite.getPort());
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed, on exception, server is " + prefixSiteInfo.getIp() + ";" + prefixSiteInfo.getPort());
         }
     }
 
@@ -273,7 +273,7 @@ public class DefaultIDAdapter implements IDAdapter {
         }
     }
 
-    protected PrefixSite resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
+    protected PrefixSiteInfo resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
 
         try (IDAdapter idAdapter = IDAdapterFactory.newInstance()) {
             String[] types = {"HS_SITE"};
@@ -288,7 +288,7 @@ public class DefaultIDAdapter implements IDAdapter {
 
                     ServerInfo serverInfo = servers[0];
                     IDCommunicationItems tcpItem = findFirstByProtocolName(serverInfo, "TCP");
-                    return new PrefixSite(serverInfo, tcpItem);
+                    return new PrefixSiteInfo(serverInfo, tcpItem);
 
                 } else {
                     throw new IdentifierAdapterException("cannot find servers");
@@ -301,7 +301,7 @@ public class DefaultIDAdapter implements IDAdapter {
         }
     }
 
-    private IDCommunicationItems findFirstByProtocolName(ServerInfo serverInfo, String protocolName) {
+    protected IDCommunicationItems findFirstByProtocolName(ServerInfo serverInfo, String protocolName) {
         IDCommunicationItems[] itemArray = serverInfo.communicationItems;
 
         String itemProtocolName;

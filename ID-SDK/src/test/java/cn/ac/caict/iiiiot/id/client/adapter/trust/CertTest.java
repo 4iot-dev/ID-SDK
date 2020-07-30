@@ -75,7 +75,7 @@ public class CertTest {
         idAdapter.updateIdentifierValues("88.300.15907541011/0.88.300", values);
     }
 
-//    @Test
+    @Test
     public void lhsCertTest() throws Exception {
         String issue = "301:88.300.15907541011/0.88.300";
         String issuePrivateKeyPem = "-----BEGIN PRIVATE KEY-----\n" +
@@ -126,7 +126,51 @@ public class CertTest {
         idAdapter.updateIdentifierValues("88.300.15907541011/0.88.300.15907541011", values);
     }
 
-    public void verifyCert(){
+    @Test
+    public void verifyCert() throws Exception {
+        IdentifierVerifier identifierVerifier = IdentifierVerifier.getInstance();
+        IDAdapter idAdapter = IDAdapterFactory.newInstance();
 
+        String identifier = "88.300.15907541011/0.88.300.15907541011";
+        IdentifierValue[] values = idAdapter.resolve(identifier, new String[]{"HS_CERT"}, null);
+//        IdentifierValue[] hvs =  Util.filterValues(values,null, Common.HS_SIGNATURE_TYPE_LIST);
+        String signatureString = values[0].getDataStr();
+        System.out.println(signatureString);
+
+        JWS jws = JWSFactory.getInstance().deserialize(signatureString);
+        CertChainBuilder certChainBuilder = new CertChainBuilder(idAdapter);
+        List<IssuedSignature> issuedSignatures = null;
+        String message = "";
+        boolean unableToBuildChain = false;
+        try {
+            issuedSignatures = certChainBuilder.buildChain(jws);
+        } catch (IdentifierTrustException e) {
+            message = "Signature NOT VERIFIED unable to build chain: " + e.getMessage();
+            unableToBuildChain = true;
+        }
+
+        System.err.println(issuedSignatures);
+
+        List<PublicKey> rootKeys = new ArrayList<>();
+        String rootPublicKeyPem = ResourceUtil.readUtf8Str("/Users/bluepoint/temp/ote-root-cert/rsa_public_key.pem");
+        PublicKey rootPublicKey = KeyConverter.fromX509Pem(rootPublicKeyPem);
+        rootKeys.add(rootPublicKey);
+
+        CertChainVerifier certChainVerifier = new CertChainVerifier(rootKeys);
+
+        CertChainVerificationResult chainReport = certChainVerifier.verifyChain(issuedSignatures);
+        chainReport.unableToBuildChain = unableToBuildChain;
+        String chainReportJson = GsonCompose.getPrettyGson().toJson(chainReport);
+        System.out.println(chainReportJson);
+        if (chainReport.canTrust()) {
+            message = "Signature VERIFIED";
+            String publicKeyIssue = new CertPublicKeyChecker().checkPublicKeyIssue(jws, idAdapter);
+            if (publicKeyIssue != null) {
+                message += "; WARNING " + publicKeyIssue;
+            }
+        } else {
+            message = "Signature NOT VERIFIED";
+        }
+        System.out.println(message);
     }
 }

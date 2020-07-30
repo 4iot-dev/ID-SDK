@@ -8,7 +8,7 @@ import java.util.List;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.security.Permission;
 import cn.ac.caict.iiiiot.id.client.utils.Util;
-import cn.ac.caict.iiiiot.id.client.adapter.trust.DigestedHandleValues.DigestedHandleValue;
+import cn.ac.caict.iiiiot.id.client.adapter.trust.DigestedIdentifierValues.DigestedIdentifierValue;
 
 public class IdentifierVerifier {
     private static IdentifierVerifier INSTANCE = new IdentifierVerifier();
@@ -17,8 +17,8 @@ public class IdentifierVerifier {
         return INSTANCE;
     }
 
-    public ValuesSignatureVerificationReport verifyValues(String handle, List<IdentifierValue> values, JsonWebSignature signature, PublicKey publicKey) {
-        ValuesSignatureVerificationReport report = new ValuesSignatureVerificationReport();
+    public ValuesSignatureVerificationResult verifyValues(String handle, List<IdentifierValue> values, JWS signature, PublicKey publicKey) {
+        ValuesSignatureVerificationResult report = new ValuesSignatureVerificationResult();
         verifyHandleClaimsSetAndSetReportProperties(report, signature, publicKey);
         IdentifierClaimsSet claims = getIdentifierClaimsSet(signature);
         if (claims == null) return report;
@@ -30,36 +30,36 @@ public class IdentifierVerifier {
             return report;
         }
 
-        DigestedHandleValues digestedHandleValues;
+        DigestedIdentifierValues digestedIdentifierValues;
         try {
-            digestedHandleValues = new HandleValueDigester().digest(values, claims.digests.alg);
+            digestedIdentifierValues = new IdentifierValueDigester().digest(values, claims.digests.alg);
         } catch (NoSuchAlgorithmException e) {
             report.validPayload = false;
             report.exceptions.add(e);
             return report;
         }
 
-        report.verifiedValues = getVerifiedValues(digestedHandleValues.digests, claims.digests.digests);
-        report.unsignedValues = getUnsignedValues(digestedHandleValues.digests, claims.digests.digests);
-        report.badDigestValues = getBadDigestValues(digestedHandleValues.digests, claims.digests.digests);
-        report.missingValues = getMissingValues(digestedHandleValues.digests, claims.digests.digests);
+        report.verifiedValues = getVerifiedValues(digestedIdentifierValues.digests, claims.digests.digests);
+        report.unsignedValues = getUnsignedValues(digestedIdentifierValues.digests, claims.digests.digests);
+        report.badDigestValues = getBadDigestValues(digestedIdentifierValues.digests, claims.digests.digests);
+        report.missingValues = getMissingValues(digestedIdentifierValues.digests, claims.digests.digests);
         report.iss = claims.iss;
         report.sub = claims.sub;
         return report;
     }
 
-    public IdentifierClaimsSet getIdentifierClaimsSet(JsonWebSignature signature) {
+    public IdentifierClaimsSet getIdentifierClaimsSet(JWS signature) {
         IdentifierClaimsSet claims = null;
         try {
             String payload = signature.getPayloadAsString();
-            claims = GsonUtility.getGson().fromJson(payload, IdentifierClaimsSet.class);
+            claims = GsonCompose.getGson().fromJson(payload, IdentifierClaimsSet.class);
         } catch (Exception e) {
             return null;
         }
         return claims;
     }
 
-    public void verifyHandleClaimsSetAndSetReportProperties(SignatureVerificationReport report, JsonWebSignature signature, PublicKey publicKey) {
+    public void verifyHandleClaimsSetAndSetReportProperties(SignatureVerificationResult report, JWS signature, PublicKey publicKey) {
         try {
             report.signatureVerifies = signature.validates(publicKey);
         } catch (Exception e) {
@@ -70,7 +70,7 @@ public class IdentifierVerifier {
         IdentifierClaimsSet claims;
         try {
             String payload = signature.getPayloadAsString();
-            claims = GsonUtility.getGson().fromJson(payload, IdentifierClaimsSet.class);
+            claims = GsonCompose.getGson().fromJson(payload, IdentifierClaimsSet.class);
             report.validPayload = true;
         } catch (Exception e) {
             report.validPayload = false;
@@ -82,11 +82,11 @@ public class IdentifierVerifier {
         report.dateInRange = claims.isDateInRange(nowInSeconds);
     }
 
-    List<Integer> getBadDigestValues(List<DigestedHandleValues.DigestedHandleValue> actual, List<DigestedHandleValue> claimedDigests) {
+    List<Integer> getBadDigestValues(List<DigestedIdentifierValues.DigestedIdentifierValue> actual, List<DigestedIdentifierValue> claimedDigests) {
         List<Integer> result = new ArrayList<>();
         if (claimedDigests == null) return result;
-        for (DigestedHandleValue actualDigest : actual) {
-            for (DigestedHandleValue claimedDigest : claimedDigests) {
+        for (DigestedIdentifierValue actualDigest : actual) {
+            for (DigestedIdentifierValue claimedDigest : claimedDigests) {
                 if (actualDigest.index == claimedDigest.index) {
                     if (!actualDigest.digest.equals(claimedDigest.digest)) {
                         result.add(actualDigest.index);
@@ -98,11 +98,11 @@ public class IdentifierVerifier {
         return result;
     }
 
-    List<Integer> getVerifiedValues(List<DigestedHandleValue> actual, List<DigestedHandleValue> claimedDigests) {
+    List<Integer> getVerifiedValues(List<DigestedIdentifierValue> actual, List<DigestedIdentifierValue> claimedDigests) {
         List<Integer> result = new ArrayList<>();
         if (claimedDigests == null) return result;
-        for (DigestedHandleValue actualDigest : actual) {
-            for (DigestedHandleValue claimedDigest : claimedDigests) {
+        for (DigestedIdentifierValue actualDigest : actual) {
+            for (DigestedIdentifierValue claimedDigest : claimedDigests) {
                 if (actualDigest.index == claimedDigest.index) {
                     if (actualDigest.digest.equals(claimedDigest.digest)) {
                         result.add(actualDigest.index);
@@ -114,18 +114,18 @@ public class IdentifierVerifier {
         return result;
     }
 
-    List<Integer> getUnsignedValues(List<DigestedHandleValue> actual, List<DigestedHandleValue> claimedDigests) {
+    List<Integer> getUnsignedValues(List<DigestedIdentifierValue> actual, List<DigestedIdentifierValue> claimedDigests) {
         List<Integer> result = new ArrayList<>();
         if (claimedDigests == null) {
-            for (DigestedHandleValue actualDigest : actual) {
+            for (DigestedIdentifierValue actualDigest : actual) {
                 result.add(actualDigest.index);
             }
             return result;
         }
 
-        for (DigestedHandleValue actualDigest : actual) {
+        for (DigestedIdentifierValue actualDigest : actual) {
             boolean found = false;
-            for (DigestedHandleValue claimedDigest : claimedDigests) {
+            for (DigestedIdentifierValue claimedDigest : claimedDigests) {
                 if (actualDigest.index == claimedDigest.index) {
                     found = true;
                     break;
@@ -138,15 +138,15 @@ public class IdentifierVerifier {
         return result;
     }
 
-    List<Integer> getMissingValues(List<DigestedHandleValue> actual, List<DigestedHandleValue> claimedDigests) {
+    List<Integer> getMissingValues(List<DigestedIdentifierValue> actual, List<DigestedIdentifierValue> claimedDigests) {
         List<Integer> result = new ArrayList<>();
         if (claimedDigests == null) {
             return result;
         }
 
-        for (DigestedHandleValue claimedDigest : claimedDigests) {
+        for (DigestedIdentifierValue claimedDigest : claimedDigests) {
             boolean found = false;
-            for (DigestedHandleValue actualDigest : actual) {
+            for (DigestedIdentifierValue actualDigest : actual) {
                 if (actualDigest.index == claimedDigest.index) {
                     found = true;
                     break;
@@ -159,25 +159,25 @@ public class IdentifierVerifier {
         return result;
     }
 
-    public void verifyIssuedSignatureIsValid(IssuedSignature issuedSignature, SignatureVerificationReport report) {
+    public void verifyIssuedSignatureIsValid(IssuedSignature issuedSignature, SignatureVerificationResult report) {
         verifyHandleClaimsSetAndSetReportProperties(report, issuedSignature.jws, issuedSignature.issuerPublicKey);
     }
 
-    public boolean verifyPermissionsAreAuthorizedOverHandle(String handle, List<Permission> perms) {
+    public boolean verifyPermissionsAreAuthorizedOverIdentifier(String identifier, List<Permission> perms) {
         if (perms == null || perms.isEmpty()) return false;
         for (Permission permission : perms) {
             if (Permission.EVERYTHING.equals(permission.perm)) {
                 return true;
             } else if (Permission.THIS_IDENTIFER.equals(permission.perm)) {
-                if (Util.equalsPrefixCaseInsensitive(handle, permission.identifier) || Util.isHandleUnderPrefix(handle, permission.identifier)) {
+                if (Util.equalsPrefixCaseInsensitive(identifier, permission.identifier) || Util.isIdentifierUnderPrefix(identifier, permission.identifier)) {
                     return true;
                 }
             } else if (Permission.DERIVED_PREFIXES.equals(permission.perm)) {
-                if (Util.isDerivedFrom(handle, permission.identifier) || Util.isDerivedFrom(Util.getZeroNAHandle(handle), permission.identifier)) {
+                if (Util.isDerivedFrom(identifier, permission.identifier) || Util.isDerivedFrom(Util.getZeroNAHandle(identifier), permission.identifier)) {
                     return true;
                 }
             } else if (Permission.IDENTIFIERS_UNDER_THIS_PREFIX.equals(permission.perm)) {
-                if (Util.isHandleUnderPrefix(handle, permission.identifier)) {
+                if (Util.isIdentifierUnderPrefix(identifier, permission.identifier)) {
                     return true;
                 }
             }
@@ -185,13 +185,13 @@ public class IdentifierVerifier {
         return false;
     }
 
-    public void verifyIssuedSignatureIsAuthorizedOverHandle(String handle, IssuedSignature issuedSignature, IssuedSignatureVerificationReport report) {
-        boolean verified = verifyPermissionsAreAuthorizedOverHandle(handle, issuedSignature.issuerPermissions);
+    public void verifyIssuedSignatureIsAuthorizedOverHandle(String identifier, IssuedSignature issuedSignature, IssuedSignatureVerificationResult report) {
+        boolean verified = verifyPermissionsAreAuthorizedOverIdentifier(identifier, issuedSignature.issuerPermissions);
         report.authorized = verified;
     }
 
-    public IssuedSignatureVerificationReport verifyIssuedSignature(String handle, IssuedSignature issuedSignature) {
-        IssuedSignatureVerificationReport report = new IssuedSignatureVerificationReport();
+    public IssuedSignatureVerificationResult verifyIssuedSignature(String handle, IssuedSignature issuedSignature) {
+        IssuedSignatureVerificationResult report = new IssuedSignatureVerificationResult();
         IdentifierClaimsSet claims = getIdentifierClaimsSet(issuedSignature.jws);
         report.iss = claims.iss;
         report.sub = claims.sub;

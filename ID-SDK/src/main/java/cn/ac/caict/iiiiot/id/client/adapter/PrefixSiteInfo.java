@@ -3,11 +3,12 @@ package cn.ac.caict.iiiiot.id.client.adapter;
 import cn.ac.caict.iiiiot.id.client.core.IDCommunicationItems;
 import cn.ac.caict.iiiiot.id.client.core.ServerInfo;
 
-public class PrefixSite {
+public class PrefixSiteInfo {
+
     private ServerInfo serverInfo;
     private IDCommunicationItems communication;
 
-    public PrefixSite(ServerInfo serverInfo, IDCommunicationItems communication) {
+    public PrefixSiteInfo(ServerInfo serverInfo, IDCommunicationItems communication) {
         this.serverInfo = serverInfo;
         this.communication = communication;
     }

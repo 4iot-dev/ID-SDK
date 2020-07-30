@@ -6,10 +6,10 @@ import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractRequiredSignerStore {
+public abstract class RequiredSigners {
 
     private static IdentifierVerifier identifierVerifier = IdentifierVerifier.getInstance();
-    protected volatile List<JsonWebSignature> requiredSigners;
+    protected volatile List<JWS> requiredSigners;
 
     public void loadSigners() {
         //no-op
@@ -19,7 +19,7 @@ public abstract class AbstractRequiredSignerStore {
         return false;
     }
 
-    protected boolean validateSelfSignedCert(JsonWebSignature cert) throws TrustException {
+    protected boolean validateSelfSignedCert(JWS cert) throws IdentifierTrustException {
         IdentifierClaimsSet claims = identifierVerifier.getIdentifierClaimsSet(cert);
         PublicKey publicKey = claims.publicKey;
         String issuer = claims.iss;
@@ -33,13 +33,13 @@ public abstract class AbstractRequiredSignerStore {
         return cert.validates(publicKey);
     }
 
-    public List<JsonWebSignature> getRequiredSignersAuthorizedOver(String handle) {
-        List<JsonWebSignature> currentRequiredSigners = requiredSigners;
-        List<JsonWebSignature> results = new ArrayList<>();
-        for (JsonWebSignature cert : currentRequiredSigners) {
+    public List<JWS> getRequiredSignersAuthorizedOver(String handle) {
+        List<JWS> currentRequiredSigners = requiredSigners;
+        List<JWS> results = new ArrayList<>();
+        for (JWS cert : currentRequiredSigners) {
             IdentifierClaimsSet claims = identifierVerifier.getIdentifierClaimsSet(cert);
             List<Permission> perms = claims.perms;
-            boolean isAuthorizedOver = identifierVerifier.verifyPermissionsAreAuthorizedOverHandle(handle, perms);
+            boolean isAuthorizedOver = identifierVerifier.verifyPermissionsAreAuthorizedOverIdentifier(handle, perms);
             if (isAuthorizedOver) {
                 results.add(cert);
             }

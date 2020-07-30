@@ -91,10 +91,12 @@ public class IdentifierValueUtil {
     //////////////////////////////////////////////////////private-function////////////////////////////////////////////////////////////////////////
     private static void makeValueByType(String type, int index, IdentifierValue iv, Object originData)
             throws IdentifierException {
-        if (iv == null)
+        if (iv == null){
             iv = new IdentifierValue();
-        if (iv.index < 0)
+        }
+        if (iv.index < 0){
             iv.setIndex(index);
+        }
         byte[] data_buf = new byte[0];
         switch (type) {
             case Common.HS_PUBKEY:
@@ -140,20 +142,25 @@ public class IdentifierValueUtil {
                     data_buf = ObjBytesConvertor.vListCovertToBytes((ValueReference[]) originData);
                 break;
             case Common.HS_SITE:
-                if (iv.type.length == 0)
+                if (iv.type.length == 0){
                     iv.setType(Common.TYPE_SITE);
+                }
             case Common.HS_SITE_PREFIX:
-                if (iv.type.length == 0)
+                if (iv.type.length == 0){
                     iv.setType(Common.TYPE_PREFIX_SITE);
-                if (originData instanceof SiteInfo)
+                }
+                if (originData instanceof SiteInfo){
                     data_buf = ObjBytesConvertor.siteInfoCovertToBytes((SiteInfo) originData);
+                }
                 break;
             case Common.HS_CERT:
-                if (iv.type.length == 0)
+                if (iv.type.length == 0){
                     iv.setType(Common.TYPE_CERT);
+                }
             case Common.HS_SIGNATURE:
-                if (iv.type.length == 0)
+                if (iv.type.length == 0) {
                     iv.setType(Common.TYPE_SIGNATURE);
+                }
                 if (originData instanceof SignatureInfo) {
                     try {
                         SignatureInfo signInfo = (SignatureInfo) originData;

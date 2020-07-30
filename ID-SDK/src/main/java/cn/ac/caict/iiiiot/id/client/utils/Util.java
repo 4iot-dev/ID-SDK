@@ -1253,12 +1253,12 @@ public abstract class Util {
 		return res;
 	}
 
-	public static boolean isHandleUnderPrefix(String handle, String prefix) {
+	public static boolean isIdentifierUnderPrefix(String identifier, String prefix) {
 		prefix = upperCase(prefix);
-		handle = upperCasePrefix(handle);
+		identifier = upperCasePrefix(identifier);
 		if (!prefix.startsWith("0.NA/")) return false;
 		String actualPrefix = prefix.substring("0.NA/".length());
-		return handle.startsWith(actualPrefix + "/");
+		return identifier.startsWith(actualPrefix + "/");
 	}
 
 	public static boolean isDerivedFrom(String handle, String ancestorHandle) {

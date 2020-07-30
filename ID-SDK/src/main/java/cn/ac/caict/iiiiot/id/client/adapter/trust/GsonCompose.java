@@ -1,46 +1,18 @@
 package cn.ac.caict.iiiiot.id.client.adapter.trust;
 
+import com.google.gson.*;
+import org.apache.commons.codec.binary.Base64;
+
 import java.lang.reflect.Type;
 import java.math.BigInteger;
-import java.net.InetAddress;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.interfaces.DSAParams;
-import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.DSAPublicKey;
-import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.DSAPrivateKeySpec;
-import java.security.spec.DSAPublicKeySpec;
-import java.security.spec.RSAPrivateCrtKeySpec;
-import java.security.spec.RSAPrivateKeySpec;
-import java.security.spec.RSAPublicKeySpec;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
+import java.security.interfaces.*;
+import java.security.spec.*;
 import java.util.Map;
 
-import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
-
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-
-public class GsonUtility {
+public class GsonCompose {
     /**
      * Register Handle.net type adapters on a given GsonBuilder, to enable serialization and deserialization of various Handle.net types.
      *
@@ -85,7 +57,7 @@ public class GsonUtility {
         static Gson gson;
 
         static {
-            gson = GsonUtility.setup(new GsonBuilder().disableHtmlEscaping()).create();
+            gson = GsonCompose.setup(new GsonBuilder().disableHtmlEscaping()).create();
         }
     }
 
@@ -93,7 +65,7 @@ public class GsonUtility {
         static Gson prettyGson;
 
         static {
-            prettyGson = GsonUtility.setup(new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()).create();
+            prettyGson = GsonCompose.setup(new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()).create();
         }
     }
 

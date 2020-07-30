@@ -8,14 +8,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class IdentifierRecord {
-    private String handle;
+    private String identifier;
     private List<IdentifierValue> values;
 
     public IdentifierRecord() {
     }
 
-    public IdentifierRecord(String handle, IdentifierValue[] valuesArray) {
-        this.handle = handle;
+    public IdentifierRecord(String identifier, IdentifierValue[] valuesArray) {
+        this.identifier = identifier;
         if (valuesArray != null) {
             values = new ArrayList<>();
             values.addAll(Arrays.asList(valuesArray));
@@ -24,21 +24,21 @@ public class IdentifierRecord {
         }
     }
 
-    public IdentifierRecord(String handle, List<IdentifierValue> values) {
-        this.handle = handle;
+    public IdentifierRecord(String identifier, List<IdentifierValue> values) {
+        this.identifier = identifier;
         this.values = values;
     }
 
-    public String getHandle() {
-        return handle;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setHandle(String handle) {
-        this.handle = handle;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public byte[] getHandleBytes() {
-        return Util.encodeString(handle);
+        return Util.encodeString(identifier);
     }
 
     public List<IdentifierValue> getValues() {

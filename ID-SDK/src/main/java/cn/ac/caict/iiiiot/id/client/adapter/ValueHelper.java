@@ -1,6 +1,7 @@
 package cn.ac.caict.iiiiot.id.client.adapter;
 
 import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
+import cn.ac.caict.iiiiot.id.client.core.SiteInfo;
 import cn.ac.caict.iiiiot.id.client.data.AdminInfo;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.data.SignatureInfo;
@@ -61,6 +62,14 @@ public class ValueHelper {
         if (res == null) return values;
         return res;
     }
+    public static SiteInfo getPrimarySite(SiteInfo[] sites) {
+        for (SiteInfo site : sites) {
+            if (site.isPrimarySite) {
+                return site;
+            }
+        }
+        return null;
+    }
 
     public IdentifierValue newPublicKeyValue(int index, PublicKey publicKey) throws IdentifierException {
         IdentifierValue iv = new IdentifierValue();
@@ -107,12 +116,8 @@ public class ValueHelper {
     public IdentifierValue newCertValue(int index,PublicKey pubKey,String issue,String subject,PrivateKey admPrvKey,String expirationTime,String notBefore,String issedAfterTime) throws Exception {
 
         List<Permission> perms = new ArrayList<>();
-        perms.add(new Permission(null, Permission.IDENTIFIERS_UNDER_THIS_PREFIX));
+        perms.add(new Permission(null, Permission.EVERYTHING));
 
-        IdentifierValue value = new IdentifierValue();
-
-        SignatureInfo signInfo = SignatureInfo.newCertificationInstance(admPrvKey, pubKey, perms, issue, subject, expirationTime, notBefore, issedAfterTime);
-        IdentifierValueUtil.makeIdentifierValueOfCertification(value, index, signInfo);
         return newCertValue(index,pubKey,perms,issue,subject,admPrvKey,expirationTime,notBefore,issedAfterTime);
 
     }

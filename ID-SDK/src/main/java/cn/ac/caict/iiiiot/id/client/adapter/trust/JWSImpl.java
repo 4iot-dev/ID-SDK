@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 
 
-public class JsonWebSignatureImpl implements JsonWebSignature {
+public class JWSImpl implements JWS {
     private final String hashAlg;
     private final String keyAlg;
     private final byte[] header;
@@ -21,11 +21,11 @@ public class JsonWebSignatureImpl implements JsonWebSignature {
     private final byte[] signature;
     private final byte[] serializedSignature;
 
-    public JsonWebSignatureImpl(String payload, PrivateKey privateKey) throws TrustException {
+    public JWSImpl(String payload, PrivateKey privateKey) throws IdentifierTrustException {
         this(Util.encodeString(payload), privateKey);
     }
 
-    public JsonWebSignatureImpl(byte[] payload, PrivateKey privateKey) throws TrustException {
+    public JWSImpl(byte[] payload, PrivateKey privateKey) throws IdentifierTrustException {
         this.payload = payload;
         keyAlg = privateKey.getAlgorithm();
         if ("RSA".equals(keyAlg)) {
@@ -48,11 +48,11 @@ public class JsonWebSignatureImpl implements JsonWebSignature {
             signature = sig.sign();
             serializedSignature = Base64.encodeBase64URLSafe(signature);
         } catch (Exception e) {
-            throw new TrustException("Error creating JWS", e);
+            throw new IdentifierTrustException("Error creating JWS", e);
         }
     }
 
-    public JsonWebSignatureImpl(String serialization) throws TrustException {
+    public JWSImpl(String serialization) throws IdentifierTrustException {
         if (isCompact(serialization)) {
             try {
                 String[] dotSeparatedParts = serialization.split("\\.");
@@ -63,11 +63,11 @@ public class JsonWebSignatureImpl implements JsonWebSignature {
                 serializedSignature = Util.encodeString(dotSeparatedParts[2]);
                 signature = Base64.decodeBase64(serializedSignature);
             } catch (Exception e) {
-                throw new TrustException("Couldn't parse JWS", e);
+                throw new IdentifierTrustException("Couldn't parse JWS", e);
             }
         } else {
-            Gson gson = GsonUtility.getGson();
-            JsonWebSignatureJsonSerialization jwsjs = gson.fromJson(serialization, JsonWebSignatureJsonSerialization.class);
+            Gson gson = GsonCompose.getGson();
+            JWSJsonSerialization jwsjs = gson.fromJson(serialization, JWSJsonSerialization.class);
             serializedHeader = Util.encodeString(jwsjs.signatures.get(0).protectedPart);
             header = Base64.decodeBase64(serializedHeader);
             serializedPayload = Util.encodeString(jwsjs.payload);
@@ -80,7 +80,7 @@ public class JsonWebSignatureImpl implements JsonWebSignature {
         hashAlg = getHashAlgFromAlg(algString);
     }
 
-    private static String getAlgStringFromHeader(byte[] header) throws TrustException {
+    private static String getAlgStringFromHeader(byte[] header) throws IdentifierTrustException {
         try {
             System.out.println(Util.bytesToHexString(header));
             String alg = new JsonParser().parse(Util.decodeString(header))
@@ -89,22 +89,22 @@ public class JsonWebSignatureImpl implements JsonWebSignature {
                 .getAsString();
             return alg;
         } catch (Exception e) {
-            throw new TrustException("Couldn't parse JWS header", e);
+            throw new IdentifierTrustException("Couldn't parse JWS header", e);
         }
     }
 
-    private static String getKeyAlgFromAlg(String alg) throws TrustException {
+    private static String getKeyAlgFromAlg(String alg) throws IdentifierTrustException {
         if (alg.startsWith("RS")) return "RSA";
         else if (alg.startsWith("DS")) return "DSA";
-        throw new TrustException("Couldn't parse JWS header");
+        throw new IdentifierTrustException("Couldn't parse JWS header");
     }
 
-    private static String getHashAlgFromAlg(String alg) throws TrustException {
+    private static String getHashAlgFromAlg(String alg) throws IdentifierTrustException {
         if (alg.endsWith("256")) return "SHA256";
         else if (alg.endsWith("160") || alg.endsWith("128") || alg.equals("DSA") || alg.equals("DS")) return "SHA1";
         else if (alg.endsWith("384")) return "SHA384";
         else if (alg.endsWith("512")) return "SHA512";
-        throw new TrustException("Couldn't parse JWS header");
+        throw new IdentifierTrustException("Couldn't parse JWS header");
     }
 
     private static boolean isCompact(String serialization) {
@@ -122,7 +122,7 @@ public class JsonWebSignatureImpl implements JsonWebSignature {
     }
 
     @Override
-    public boolean validates(PublicKey publicKey) throws TrustException {
+    public boolean validates(PublicKey publicKey) throws IdentifierTrustException {
         if (!keyAlg.equals(publicKey.getAlgorithm())) return false;
         try {
             Signature sig = Signature.getInstance(hashAlg + "with" + publicKey.getAlgorithm());
@@ -132,7 +132,7 @@ public class JsonWebSignatureImpl implements JsonWebSignature {
             sig.update(serializedPayload);
             return sig.verify(signature);
         } catch (Exception e) {
-            throw new TrustException("Error validating JWS", e);
+            throw new IdentifierTrustException("Error validating JWS", e);
         }
     }
 

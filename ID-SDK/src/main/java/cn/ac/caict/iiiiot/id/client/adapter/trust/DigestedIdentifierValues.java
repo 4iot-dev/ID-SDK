@@ -2,18 +2,18 @@ package cn.ac.caict.iiiiot.id.client.adapter.trust;
 
 import java.util.List;
 
-public class DigestedHandleValues {
+public class DigestedIdentifierValues {
     public String alg;
-    public List<DigestedHandleValue> digests;
+    public List<DigestedIdentifierValue> digests;
 
-    public static class DigestedHandleValue {
+    public static class DigestedIdentifierValue {
         public int index;
         public String digest;
 
-        public DigestedHandleValue() {
+        public DigestedIdentifierValue() {
         }
 
-        public DigestedHandleValue(int index, String digest) {
+        public DigestedIdentifierValue(int index, String digest) {
             this.index = index;
             this.digest = digest;
         }

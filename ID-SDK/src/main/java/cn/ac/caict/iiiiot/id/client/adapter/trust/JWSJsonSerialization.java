@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
-public class JsonWebSignatureJsonSerialization {
+public class JWSJsonSerialization {
     String payload;
     List<JsonWebSignatureSignatureJsonSerialization> signatures;
 

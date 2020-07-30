@@ -3,54 +3,53 @@ package cn.ac.caict.iiiiot.id.client.adapter.trust;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.data.ValueReference;
 import cn.ac.caict.iiiiot.id.client.utils.Util;
-import org.apache.commons.codec.binary.StringUtils;
 
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChainVerifier {
+public class CertChainVerifier {
     private static final String TRUST_ROOT_IDENTIFIER = "88.300.15907541011/0.0";
     private final IdentifierVerifier identifierVerifier = new IdentifierVerifier();
 
     private final List<PublicKey> rootKeys;
-    private AbstractRequiredSignerStore requiredSigners;
+    private RequiredSigners requiredSigners;
 
-    public ChainVerifier(List<PublicKey> rootKeys) {
+    public CertChainVerifier(List<PublicKey> rootKeys) {
         this.rootKeys = rootKeys;
     }
 
-    public ChainVerifier(List<PublicKey> rootKeys, AbstractRequiredSignerStore requiredSigners) {
+    public CertChainVerifier(List<PublicKey> rootKeys, RequiredSigners requiredSigners) {
         this.rootKeys = rootKeys;
         this.requiredSigners = requiredSigners;
     }
 
-    public ChainVerificationReport verifyValues(String identifier, List<IdentifierValue> values, List<IssuedSignature> issuedSignatures) {
-        ChainVerificationReport report = new ChainVerificationReport();
-        ValuesSignatureVerificationReport valuesReport = identifierVerifier.verifyValues(identifier, values, issuedSignatures.get(0).jws, issuedSignatures.get(0).issuerPublicKey);
-        report.valuesReport = valuesReport;
+    public CertChainVerificationResult verifyValues(String identifier, List<IdentifierValue> values, List<IssuedSignature> issuedSignatures) {
+        CertChainVerificationResult report = new CertChainVerificationResult();
+        ValuesSignatureVerificationResult valuesReport = identifierVerifier.verifyValues(identifier, values, issuedSignatures.get(0).jws, issuedSignatures.get(0).issuerPublicKey);
+        report.valuesResult = valuesReport;
         setChainReportValues(report, identifier, issuedSignatures);
         return report;
     }
 
-    public ChainVerificationReport verifyChain(List<IssuedSignature> issuedSignatures) {
-        ChainVerificationReport report = new ChainVerificationReport();
+    public CertChainVerificationResult verifyChain(List<IssuedSignature> issuedSignatures) {
+        CertChainVerificationResult report = new CertChainVerificationResult();
         setChainReportValues(report, null, issuedSignatures);
         return report;
     }
 
-    private void setChainReportValues(ChainVerificationReport report, String identifier, List<IssuedSignature> issuedSignatures) {
-        List<IssuedSignatureVerificationReport> reports = checkIssuedSignatures(identifier, issuedSignatures);
-        report.issuedSignatureVerificationReports = reports;
+    private void setChainReportValues(CertChainVerificationResult report, String identifier, List<IssuedSignature> issuedSignatures) {
+        List<IssuedSignatureVerificationResult> reports = checkIssuedSignatures(identifier, issuedSignatures);
+        report.issuedSignatureVerificationResults = reports;
         if (requiredSigners != null && identifier != null) {
-            List<JsonWebSignature> relevantRequiredSigners = requiredSigners.getRequiredSignersAuthorizedOver(identifier);
+            List<JWS> relevantRequiredSigners = requiredSigners.getRequiredSignersAuthorizedOver(identifier);
             if (relevantRequiredSigners != null && !relevantRequiredSigners.isEmpty()) {
                 report.chainNeedsRequiredSigner = true;
                 report.chainGoodUpToRequiredSigner = areIssuedSignaturesTrustAndAuthorizedUpToRequiredSigner(relevantRequiredSigners, issuedSignatures, reports);
             }
         }
         if(issuedSignatures!=null){
-            JsonWebSignature rootSig = issuedSignatures.get(issuedSignatures.size() - 1).jws;
+            JWS rootSig = issuedSignatures.get(issuedSignatures.size() - 1).jws;
             IdentifierClaimsSet rootClaims = identifierVerifier.getIdentifierClaimsSet(rootSig);
             if (rootClaims == null) {
                 return;
@@ -64,13 +63,13 @@ public class ChainVerifier {
 
     }
 
-    private boolean areIssuedSignaturesTrustAndAuthorizedUpToRequiredSigner(List<JsonWebSignature> relevantRequiredSigners, List<IssuedSignature> issuedSignatures, List<IssuedSignatureVerificationReport> reports) {
+    private boolean areIssuedSignaturesTrustAndAuthorizedUpToRequiredSigner(List<JWS> relevantRequiredSigners, List<IssuedSignature> issuedSignatures, List<IssuedSignatureVerificationResult> reports) {
         // go up the chain
         for (int i = 0; i < issuedSignatures.size(); i++) {
             IssuedSignature sig = issuedSignatures.get(i);
-            IssuedSignatureVerificationReport sigReport = reports.get(i);
+            IssuedSignatureVerificationResult sigReport = reports.get(i);
             IdentifierClaimsSet chainClaims = identifierVerifier.getIdentifierClaimsSet(sig.jws);
-            for (JsonWebSignature requiredSigner : relevantRequiredSigners) {
+            for (JWS requiredSigner : relevantRequiredSigners) {
                 IdentifierClaimsSet requiredSignerClaims = identifierVerifier.getIdentifierClaimsSet(requiredSigner);
                 // if you see an entity named in a relevant local cert, you are done
                 if (Util.equalsPrefixCaseInsensitive(requiredSignerClaims.sub, chainClaims.iss) && requiredSignerClaims.publicKey.equals(sig.issuerPublicKey)) {
@@ -86,11 +85,11 @@ public class ChainVerifier {
         return false;
     }
 
-    private List<IssuedSignatureVerificationReport> checkIssuedSignatures(String handle, List<IssuedSignature> issuedSignatures) {
-        List<IssuedSignatureVerificationReport> result = new ArrayList<>();
+    private List<IssuedSignatureVerificationResult> checkIssuedSignatures(String handle, List<IssuedSignature> issuedSignatures) {
+        List<IssuedSignatureVerificationResult> result = new ArrayList<>();
         if (issuedSignatures != null) {
             for (IssuedSignature issuedSignature : issuedSignatures) {
-                IssuedSignatureVerificationReport report = identifierVerifier.verifyIssuedSignature(handle, issuedSignature);
+                IssuedSignatureVerificationResult report = identifierVerifier.verifyIssuedSignature(handle, issuedSignature);
                 result.add(report);
             }
         }

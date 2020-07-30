@@ -3,7 +3,7 @@ package cn.ac.caict.iiiiot.id.client.adapter.trust;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ValuesSignatureVerificationReport extends SignatureVerificationReport {
+public class ValuesSignatureVerificationResult extends SignatureVerificationResult {
 
     public boolean correctHandle;
     public List<Integer> verifiedValues;
@@ -11,7 +11,7 @@ public class ValuesSignatureVerificationReport extends SignatureVerificationRepo
     public List<Integer> unsignedValues; //present in values missing in signature digests
     public List<Integer> badDigestValues;
 
-    public ValuesSignatureVerificationReport() {
+    public ValuesSignatureVerificationResult() {
         this.verifiedValues = new ArrayList<>();
         this.missingValues = new ArrayList<>();
         this.unsignedValues = new ArrayList<>();

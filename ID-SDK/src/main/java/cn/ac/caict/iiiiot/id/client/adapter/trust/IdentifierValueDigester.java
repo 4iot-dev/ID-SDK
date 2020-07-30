@@ -11,29 +11,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cn.ac.caict.iiiiot.id.client.adapter.trust.DigestedHandleValues.DigestedHandleValue;
+import cn.ac.caict.iiiiot.id.client.adapter.trust.DigestedIdentifierValues.DigestedIdentifierValue;
 import cn.ac.caict.iiiiot.id.client.utils.Common;
 import org.apache.commons.codec.binary.Base64;
 
-public class HandleValueDigester {
+public class IdentifierValueDigester {
     private static final int VALUE_DIGEST_OFFSET = Common.FOUR_SIZE * 2;
 
-    public DigestedHandleValues digest(List<IdentifierValue> values, String alg) throws NoSuchAlgorithmException {
-        List<DigestedHandleValue> digests = new ArrayList<>();
+    public DigestedIdentifierValues digest(List<IdentifierValue> values, String alg) throws NoSuchAlgorithmException {
+        List<DigestedIdentifierValue> digests = new ArrayList<>();
         MessageDigest digester = MessageDigest.getInstance(alg);
         for (IdentifierValue value : values) {
-            DigestedHandleValue digest = digest(value, digester);
+            DigestedIdentifierValue digest = digest(value, digester);
             digests.add(digest);
         }
-        DigestedHandleValues result = new DigestedHandleValues();
+        DigestedIdentifierValues result = new DigestedIdentifierValues();
         result.alg = alg;
         result.digests = digests;
         return result;
     }
 
-    private DigestedHandleValue digest(IdentifierValue value, MessageDigest digester) {
+    private DigestedIdentifierValue digest(IdentifierValue value, MessageDigest digester) {
         byte[] digestBytes = digestHandleValue(value, digester);
-        DigestedHandleValue result = new DigestedHandleValue();
+        DigestedIdentifierValue result = new DigestedIdentifierValue();
         result.digest = Base64.encodeBase64String(digestBytes);
         result.index = value.getIndex();
         return result;
@@ -58,7 +58,7 @@ public class HandleValueDigester {
      * @return true if the digests and values correspond, otherwise false.
      * @throws NoSuchAlgorithmException
      */
-    public boolean verify(DigestedHandleValues digestedValues, List<IdentifierValue> values) throws NoSuchAlgorithmException {
+    public boolean verify(DigestedIdentifierValues digestedValues, List<IdentifierValue> values) throws NoSuchAlgorithmException {
         Map<Integer, IdentifierValue> indexOfValues = new HashMap<>();
         for (IdentifierValue value : values) {
             indexOfValues.put(value.getIndex(), value);
@@ -68,7 +68,7 @@ public class HandleValueDigester {
             return false;
         }
         MessageDigest digester = MessageDigest.getInstance(digestedValues.alg);
-        for (DigestedHandleValue digestedHandleValue : digestedValues.digests) {
+        for (DigestedIdentifierValue digestedHandleValue : digestedValues.digests) {
             IdentifierValue value = indexOfValues.get(digestedHandleValue.index);
             if (value == null) {
                 return false;

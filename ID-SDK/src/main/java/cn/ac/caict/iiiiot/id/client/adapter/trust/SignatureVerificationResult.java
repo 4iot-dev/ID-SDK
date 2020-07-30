@@ -3,7 +3,7 @@ package cn.ac.caict.iiiiot.id.client.adapter.trust;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SignatureVerificationReport {
+public class SignatureVerificationResult {
     public boolean validPayload;
     public boolean signatureVerifies;
     public boolean dateInRange;
