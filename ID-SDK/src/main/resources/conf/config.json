@@ -1,6 +1,6 @@
 {
-   "ip":"127.0.0.1",
-   "port":"1999",
+   "ip":"45.120.243.40",
+   "port":"3641",
    "query":true,
    "admin":true,
    "protocol":"TCP"

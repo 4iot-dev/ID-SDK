@@ -1,6 +1,8 @@
 package cn.ac.caict.iiiiot.id.client.adapter;
 
+import cn.ac.caict.iiiiot.id.client.core.IDCommunicationItems;
 import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
+import cn.ac.caict.iiiiot.id.client.core.ServerInfo;
 import cn.ac.caict.iiiiot.id.client.core.SiteInfo;
 import cn.ac.caict.iiiiot.id.client.data.AdminInfo;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
@@ -167,6 +169,23 @@ public class ValueHelper {
         IdentifierValue[] result = new IdentifierValue[list.size()];
         list.toArray(result);
         return result;
+    }
+
+    public IDCommunicationItems findFirstByProtocolName(ServerInfo serverInfo, String protocolName) {
+        IDCommunicationItems[] itemArray = serverInfo.communicationItems;
+
+        String itemProtocolName;
+        IDCommunicationItems item;
+        IDCommunicationItems matchItem = null;
+        for (int i = 0; i < itemArray.length; i++) {
+            item = itemArray[i];
+            itemProtocolName = IDCommunicationItems.getProtocolName(item.getProtocol());
+            if (protocolName.equals(itemProtocolName)) {
+                matchItem = item;
+                break;
+            }
+        }
+        return matchItem;
     }
 
 }

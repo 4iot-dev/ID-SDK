@@ -12,7 +12,7 @@ public class IDUserTest {
 
     @Test
     public void test() throws Exception {
-        IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37", 5643);
+        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37", 5643);
 
         ValueHelper valueHelper = ValueHelper.getInstance();
 
@@ -35,7 +35,7 @@ public class IDUserTest {
 
     @Test
     public void testModUser() throws Exception {
-        IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37", 2642);
+        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37", 2642);
         IdentifierValue[] result = idAdapter.resolve("88.300.15907541011",null,null);
 
         List<IdentifierValue> toRemove = new ArrayList<IdentifierValue>();

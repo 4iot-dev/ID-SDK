@@ -41,7 +41,7 @@ public class SignatureTest {
                 "-----END PRIVATE KEY-----";
         PrivateKey issuePrivateKey = KeyConverter.fromPkcs8Pem(issuePrivateKeyPem, null);
 
-        IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37", 5643);
+        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37", 5643);
         ValueHelper valueHelper = ValueHelper.getInstance();
 
         String identifier = "88.300.15907541011/1";
@@ -60,27 +60,23 @@ public class SignatureTest {
 
     @Test
     public void verifyIdentifier() throws Exception {
-        try {
-            IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
+        IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
 
-            String identifier = "88.300.15907541011/1";
-            IdentifierValue[] values = idAdapter.resolve(identifier, null, null);
+        String identifier = "88.300.15907541011/1";
+        IdentifierValue[] values = idAdapter.resolve(identifier, null, null);
 
-            List<IdentifierValue> list = new ArrayList<>(values.length);
-            for (int i = 0; i < values.length; i++) {
-                if (values[i].getTypeStr().equals(Common.HS_SIGNATURE)) {
-                    list.add(values[i]);
-                }
+        List<IdentifierValue> list = new ArrayList<>(values.length);
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].getTypeStr().equals(Common.HS_SIGNATURE)) {
+                list.add(values[i]);
             }
-
-            Verifier verifier = Verifier.getInstance();
-            VerifyResult result = verifier.verifySignature(identifier,list.get(0),values);
-            String json = GsonCompose.getPrettyGson().toJson(result);
-            System.out.println(json);
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
+        Verifier verifier = Verifier.getInstance();
+        VerifyResult result = verifier.verifySignature(identifier, list.get(0), values);
+        String json = GsonCompose.getPrettyGson().toJson(result);
+        System.out.println(json);
+
     }
 
 }

@@ -5,8 +5,6 @@ import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.security.Permission;
 import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
 import cn.hutool.core.io.resource.ResourceUtil;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.junit.Test;
 
 import java.security.PrivateKey;
@@ -33,7 +31,7 @@ public class CertTest {
 
         System.out.println(KeyConverter.toPkcs8UnencryptedPem(rootPrivateKey));
 
-        IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37", 5643);
+        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37", 5643);
 
         ValueHelper valueHelper = ValueHelper.getInstance();
 
@@ -46,7 +44,7 @@ public class CertTest {
 //        idAdapter.updateIdentifierValues("88.300.15907541011/0.0", values);
     }
 
-//    @Test
+    @Test
     public void shrSignCert() throws Exception {
         String issueRoot = "301:88.300.15907541011/0.0";
         String rootPrivateKeyPem = ResourceUtil.readUtf8Str("/Users/bluepoint/temp/ote-root-cert/rsa_private_pkcs8.pem");
@@ -54,7 +52,7 @@ public class CertTest {
         PrivateKey rootPrivateKey = KeyConverter.fromPkcs8Pem(rootPrivateKeyPem, null);
         System.out.println(rootPrivateKey.toString());
 
-        IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37", 5643);
+        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37", 5643);
         ValueHelper valueHelper = ValueHelper.getInstance();
 
         String publicKeyPem = "-----BEGIN PUBLIC KEY-----\n" +
@@ -115,7 +113,7 @@ public class CertTest {
                 "-----END PUBLIC KEY-----";
         PublicKey publicKey = KeyConverter.fromX509Pem(publicKeyPem);
 
-        IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37", 5643);
+        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37", 5643);
         ValueHelper valueHelper = ValueHelper.getInstance();
 
         IdentifierValue[] values = new IdentifierValue[2];
@@ -127,6 +125,7 @@ public class CertTest {
 
     @Test
     public void verifyCert() throws Exception {
+
         IdentifierVerifier identifierVerifier = IdentifierVerifier.getInstance();
         IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
 

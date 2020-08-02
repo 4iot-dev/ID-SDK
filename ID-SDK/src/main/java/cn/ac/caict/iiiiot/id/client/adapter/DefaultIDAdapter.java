@@ -4,8 +4,10 @@ import cn.ac.caict.iiiiot.id.client.convertor.BytesObjConvertor;
 import cn.ac.caict.iiiiot.id.client.core.*;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.data.MsgSettings;
+import cn.ac.caict.iiiiot.id.client.log.IDLog;
 import cn.ac.caict.iiiiot.id.client.service.IIDManageServiceChannel;
 import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
+import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -31,8 +33,7 @@ import java.security.PrivateKey;
  */
 public class DefaultIDAdapter implements IDAdapter {
 
-    private static final Logger logger = Logger.getLogger(DefaultIDAdapter.class);
-
+    private Log logger = IDLog.getLogger(DefaultIDAdapter.class);
     private IIDManageServiceChannel channel;
 
     private ChannelFactory factory;
@@ -126,6 +127,20 @@ public class DefaultIDAdapter implements IDAdapter {
             throw new IdentifierAdapterRuntimeException("instance idAdapter failed, login failed, on exception ,server is " + serverIp + ";" + port);
         }
     }
+
+    public DefaultIDAdapter(String serverPrefix) {
+        this.factory = ChannelFactory.getChannelFactory();
+        msgSettings = new MsgSettings();
+        msgSettings.setTruestyQuery(false);
+        PrefixSiteInfo prefixSiteInfo;
+        try {
+            prefixSiteInfo = resolveSiteByProxy(serverPrefix);
+        } catch (Exception e) {
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed", e);
+        }
+        this.channel = factory.newChannel(prefixSiteInfo.getIp(), prefixSiteInfo.getPort(), prefixSiteInfo.getProtocolName());
+    }
+
 
     public DefaultIDAdapter(String serverIp, int port) {
         this.factory = ChannelFactory.getChannelFactory();

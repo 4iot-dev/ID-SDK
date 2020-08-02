@@ -5,6 +5,9 @@ import cn.ac.caict.iiiiot.id.client.service.IChannelManageService;
 import cn.ac.caict.iiiiot.id.client.service.IIDManageServiceChannel;
 import cn.ac.caict.iiiiot.id.client.service.impl.ChannelManageServiceImpl;
 
+import java.io.IOException;
+import java.util.Map;
+
 public class ChannelFactory {
 
     private static ChannelFactory channelFactory;
@@ -13,15 +16,24 @@ public class ChannelFactory {
 
     private IDAdapter proxyIdAdapter;
 
-//    private String recursionServerIp = "45.120.243.40";
-//    private int recursionServerPort = 3641;
+    private String recursionServerIp = "127.0.0.1";
+    private int recursionServerPort = 2641;
 
-    private String recursionServerIp = "192.168.150.37";
-    private int recursionServerPort = 5643;
+//    private String recursionServerIp = "192.168.150.37";
+//    private int recursionServerPort = 5643;
 
 
     private ChannelFactory() {
         channelManageService = new ChannelManageServiceImpl();
+        Configuration configuration = new Configuration();
+        try {
+            configuration.loadConfig();
+        } catch (IOException e) {
+
+        }
+        Map<String, Object> config = configuration.getConfig();
+        this.recursionServerIp = (String) config.get("ip");
+        this.recursionServerPort = Integer.parseInt((String) config.get("port"));
     }
 
     public static ChannelFactory getChannelFactory() {
@@ -60,5 +72,19 @@ public class ChannelFactory {
         return channel;
     }
 
+    public String getRecursionServerIp() {
+        return recursionServerIp;
+    }
 
+    public void setRecursionServerIp(String recursionServerIp) {
+        this.recursionServerIp = recursionServerIp;
+    }
+
+    public int getRecursionServerPort() {
+        return recursionServerPort;
+    }
+
+    public void setRecursionServerPort(int recursionServerPort) {
+        this.recursionServerPort = recursionServerPort;
+    }
 }

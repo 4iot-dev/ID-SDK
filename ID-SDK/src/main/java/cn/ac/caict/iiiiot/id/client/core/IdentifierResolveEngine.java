@@ -120,7 +120,7 @@ public class IdentifierResolveEngine {
 				is = new BufferedInputStream(new FileInputStream(fConfig));
 			} else {
 				is = IdentifierResolveEngine.class
-						.getResourceAsStream("/cn/ac/caict/iiiiot/id/client/conf/config.json");
+						.getResourceAsStream("/conf/config.json");
 				if (is == null) {
 					logger.error("读取ID-SDK的配置文件失败");
 				}

@@ -9,23 +9,20 @@ import cn.ac.caict.iiiiot.id.client.core.SiteInfo;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.utils.Common;
 import cn.ac.caict.iiiiot.id.client.utils.Util;
-import cn.hutool.cache.CacheUtil;
-import cn.hutool.cache.impl.LRUCache;
 
 import java.io.IOException;
-import java.util.concurrent.*;
 
 public class CachedPrefixIDAdapter extends DefaultIDAdapter {
 
     public CachedPrefixIDAdapter() {
-
+        super();
     }
 
     @Override
     protected PrefixSiteInfo resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
         IdentifierRecord identifierRecord = IdentifierRecordCache.getInstance().get(Util.upperCasePrefix(prefixIdentifier));
         IdentifierValue[] valueArray = null;
-        if(identifierRecord!=null){
+        if (identifierRecord != null) {
             valueArray = new IdentifierValue[identifierRecord.getValues().size()];
             identifierRecord.getValues().toArray(valueArray);
         }

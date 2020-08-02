@@ -1,6 +1,11 @@
 package cn.ac.caict.iiiiot.id.client.adapter;
 
 import cn.ac.caict.iiiiot.id.client.adapter.trust.*;
+import cn.ac.caict.iiiiot.id.client.convertor.BytesObjConvertor;
+import cn.ac.caict.iiiiot.id.client.core.IDCommunicationItems;
+import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
+import cn.ac.caict.iiiiot.id.client.core.ServerInfo;
+import cn.ac.caict.iiiiot.id.client.core.SiteInfo;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
 import org.junit.Test;
@@ -8,8 +13,8 @@ import org.junit.Test;
 public class IDAdapterTest {
 
     @Test
-    public void resolve() throws IdentifierAdapterException, IdentifierTrustException {
-        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88",null,null);
+    public void resolveCert() throws IdentifierAdapterException, IdentifierTrustException {
+        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88.300.15907541011/1",null,null);
         IdentifierValue[] certValues = ValueHelper.getInstance().filter(values,"HS_CERT");
         if(certValues.length>0){
             IdentifierValue cert = certValues[0];
@@ -18,6 +23,41 @@ public class IDAdapterTest {
             IdentifierClaimsSet claims = IdentifierVerifier.getInstance().getIdentifierClaimsSet(jws);
             System.out.println(KeyConverter.toX509Pem(claims.publicKey));
         }
+    }
+
+    @Test
+    public void resolveSite() throws IdentifierAdapterException, IdentifierException {
+        IdentifierValue[] valueArray = IDAdapterFactory.cachedInstance().resolve("88.300.15907541011",null,null);
+        if (valueArray.length > 0) {
+            IdentifierValue iv = valueArray[0];
+            SiteInfo siteInfo = BytesObjConvertor.bytesCovertToSiteInfo(iv.getData());
+            ServerInfo[] servers = siteInfo.servers;
+
+            if (servers.length > 0) {
+
+                ServerInfo serverInfo = servers[0];
+                IDCommunicationItems tcpItem = ValueHelper.getInstance().findFirstByProtocolName(serverInfo, "TCP");
+
+                System.out.println(serverInfo.getAddressStr());
+                System.out.println(tcpItem.getPort());
+            } else {
+                throw new IdentifierAdapterException("cannot find servers");
+            }
+        }
+
+    }
+
+    @Test
+    public void resolve() throws IdentifierAdapterException, IdentifierTrustException {
+        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88.300.15907541011/1",null,null);
+//        IdentifierValue[] certValues = ValueHelper.getInstance().filter(values,"HS_CERT");
+//        if(certValues.length>0){
+//            IdentifierValue cert = certValues[0];
+//            String jwsStr= cert.getDataStr();
+//            JWS jws = JWSFactory.getInstance().deserialize(jwsStr);
+//            IdentifierClaimsSet claims = IdentifierVerifier.getInstance().getIdentifierClaimsSet(jws);
+//            System.out.println(KeyConverter.toX509Pem(claims.publicKey));
+//        }
     }
 
     @Test
@@ -46,7 +86,7 @@ public class IDAdapterTest {
                 "whhWREGhoDnaowcJ9A8tenDUgDNf98pDKpeudMLG+32YaHPtxWOBTywLVpbh4I1sykLJnwAq+Lve\n" +
                 "KMLphT7U+sCwvAKmOQ6vGLhXsg==\n" +
                 "-----END PRIVATE KEY-----";
-        IDAdapter idAdapter = IDAdapterFactory.cachedInstance("192.168.150.37",5647,"88.300.15907541011",300,privateKeyPem,1);
+        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37",5647,"88.300.15907541011",300,privateKeyPem,1);
         idAdapter.resolve("88.300.15907541011/user002",null,null,true);
     }
 
