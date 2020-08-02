@@ -17,4 +17,16 @@ public class VerifyResult {
         this.message = message;
         this.result = result;
     }
+
+    public int getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public CertChainVerificationResult getResult() {
+        return result;
+    }
 }
