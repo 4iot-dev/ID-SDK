@@ -54,6 +54,7 @@ public class IDAdapterFactory {
      * @param privateKeyPem
      * @param cipher
      * @return
+     * @throws IdentifierAdapterRuntimeException 连接失败或认证失败
      */
     public static IDAdapter newInstance(String serverIp, int port, final String adminIdentifier, final int keyIndex, final String privateKeyPem, int cipher) {
         return new DefaultIDAdapter(serverIp, port, adminIdentifier, keyIndex, privateKeyPem, cipher);

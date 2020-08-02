@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CertChainVerifier {
-    private static final String TRUST_ROOT_IDENTIFIER = "88.300.15907541011/0.0";
+    private static final String TRUST_ROOT_IDENTIFIER = "88";
     private final IdentifierVerifier identifierVerifier = new IdentifierVerifier();
 
     private final List<PublicKey> rootKeys;

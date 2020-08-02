@@ -7,10 +7,12 @@ import cn.ac.caict.iiiiot.id.client.data.MsgSettings;
 import cn.ac.caict.iiiiot.id.client.service.IChannelManageService;
 import cn.ac.caict.iiiiot.id.client.service.IIDManageServiceChannel;
 import cn.ac.caict.iiiiot.id.client.service.impl.ChannelManageServiceImpl;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ResolveTest {
 
+    @Ignore
     @Test
     public void resolve(){
         IChannelManageService chnnlManage = new ChannelManageServiceImpl();

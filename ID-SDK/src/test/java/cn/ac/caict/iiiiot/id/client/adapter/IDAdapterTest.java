@@ -8,23 +8,25 @@ import cn.ac.caict.iiiiot.id.client.core.ServerInfo;
 import cn.ac.caict.iiiiot.id.client.core.SiteInfo;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class IDAdapterTest {
 
+    @Ignore
     @Test
     public void resolveCert() throws IdentifierAdapterException, IdentifierTrustException {
-        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88.300.15907541011/1",null,null);
+        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88");
         IdentifierValue[] certValues = ValueHelper.getInstance().filter(values,"HS_CERT");
         if(certValues.length>0){
             IdentifierValue cert = certValues[0];
-            String jwsStr= cert.getDataStr();
-            JWS jws = JWSFactory.getInstance().deserialize(jwsStr);
-            IdentifierClaimsSet claims = IdentifierVerifier.getInstance().getIdentifierClaimsSet(jws);
+            IdentifierClaimsSet claims = ValueHelper.getInstance().getIdentifierClaimsSet(cert);
             System.out.println(KeyConverter.toX509Pem(claims.publicKey));
+            System.out.println(claims.sub);
         }
     }
 
+    @Ignore
     @Test
     public void resolveSite() throws IdentifierAdapterException, IdentifierException {
         IdentifierValue[] valueArray = IDAdapterFactory.cachedInstance().resolve("88.300.15907541011",null,null);
@@ -39,6 +41,7 @@ public class IDAdapterTest {
                 IDCommunicationItems tcpItem = ValueHelper.getInstance().findFirstByProtocolName(serverInfo, "TCP");
 
                 System.out.println(serverInfo.getAddressStr());
+                System.out.println(siteInfo.isPrimarySite);
                 System.out.println(tcpItem.getPort());
             } else {
                 throw new IdentifierAdapterException("cannot find servers");
@@ -46,20 +49,13 @@ public class IDAdapterTest {
         }
 
     }
-
+    @Ignore
     @Test
     public void resolve() throws IdentifierAdapterException, IdentifierTrustException {
-        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88.300.15907541011/1",null,null);
-//        IdentifierValue[] certValues = ValueHelper.getInstance().filter(values,"HS_CERT");
-//        if(certValues.length>0){
-//            IdentifierValue cert = certValues[0];
-//            String jwsStr= cert.getDataStr();
-//            JWS jws = JWSFactory.getInstance().deserialize(jwsStr);
-//            IdentifierClaimsSet claims = IdentifierVerifier.getInstance().getIdentifierClaimsSet(jws);
-//            System.out.println(KeyConverter.toX509Pem(claims.publicKey));
-//        }
+        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88.300.15907541011");
     }
 
+    @Ignore
     @Test
     public void resolveAuth() throws IdentifierAdapterException {
         String privateKeyPem = "-----BEGIN PRIVATE KEY-----\n" +
