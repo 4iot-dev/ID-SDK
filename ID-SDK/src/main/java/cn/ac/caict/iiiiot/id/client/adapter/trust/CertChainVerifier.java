@@ -85,11 +85,11 @@ public class CertChainVerifier {
         return false;
     }
 
-    private List<IssuedSignatureVerificationResult> checkIssuedSignatures(String handle, List<IssuedSignature> issuedSignatures) {
+    private List<IssuedSignatureVerificationResult> checkIssuedSignatures(String identifier, List<IssuedSignature> issuedSignatures) {
         List<IssuedSignatureVerificationResult> result = new ArrayList<>();
         if (issuedSignatures != null) {
             for (IssuedSignature issuedSignature : issuedSignatures) {
-                IssuedSignatureVerificationResult report = identifierVerifier.verifyIssuedSignature(handle, issuedSignature);
+                IssuedSignatureVerificationResult report = identifierVerifier.verifyIssuedSignature(identifier, issuedSignature);
                 result.add(report);
             }
         }

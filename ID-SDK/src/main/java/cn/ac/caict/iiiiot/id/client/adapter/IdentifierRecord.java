@@ -36,7 +36,7 @@ public class IdentifierRecord {
         this.identifier = identifier;
     }
 
-    public byte[] getHandleBytes() {
+    public byte[] getIdentifierBytes() {
         return Util.encodeString(identifier);
     }
 

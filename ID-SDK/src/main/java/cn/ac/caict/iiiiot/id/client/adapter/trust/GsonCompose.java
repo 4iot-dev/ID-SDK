@@ -13,12 +13,6 @@ import java.security.spec.*;
 import java.util.Map;
 
 public class GsonCompose {
-    /**
-     * Register Handle.net type adapters on a given GsonBuilder, to enable serialization and deserialization of various Handle.net types.
-     *
-     * @param gsonBuilder a GsonBuilder
-     * @return the passed-in GsonBuilder.
-     */
     public static GsonBuilder setup(GsonBuilder gsonBuilder) {
 
         gsonBuilder.registerTypeHierarchyAdapter(PublicKey.class, new PublicKeyTypeHierarchyAdapter());
@@ -26,29 +20,14 @@ public class GsonCompose {
         return gsonBuilder;
     }
 
-    /**
-     * Returns a GsonBuilder which can serialize and deserialize various Handle.net types.
-     *
-     * @return a GsonBuilder which can serialize and deserialize various Handle.net types.
-     */
     public static GsonBuilder getNewGsonBuilder() {
         return setup(new GsonBuilder());
     }
 
-    /**
-     * Returns a Gson instance which can serialize and deserialize various Handle.net types.  This Gson instance has HTML escaping disabled.
-     *
-     * @return a Gson instance which can serialize and deserialize various Handle.net types.
-     */
     public static Gson getGson() {
         return GsonHolder.gson;
     }
 
-    /**
-     * Returns a Gson instance which can serialize and deserialize various Handle.net types.  This Gson instance has HTML escaping disabled and pretty-printing enabled.
-     *
-     * @return a Gson instance which can serialize and deserialize various Handle.net types.
-     */
     public static Gson getPrettyGson() {
         return PrettyGsonHolder.prettyGson;
     }

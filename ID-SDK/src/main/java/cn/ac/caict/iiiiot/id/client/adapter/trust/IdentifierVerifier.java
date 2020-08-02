@@ -19,7 +19,7 @@ public class IdentifierVerifier {
 
     public ValuesSignatureVerificationResult verifyValues(String identifier, List<IdentifierValue> values, JWS signature, PublicKey publicKey) {
         ValuesSignatureVerificationResult result = new ValuesSignatureVerificationResult();
-        verifyHandleClaimsSetAndSetReportProperties(result, signature, publicKey);
+        verifyIdentifierClaimsSetAndSetReportProperties(result, signature, publicKey);
         IdentifierClaimsSet claims = getIdentifierClaimsSet(signature);
         if (claims == null) return result;
 
@@ -59,7 +59,7 @@ public class IdentifierVerifier {
         return claims;
     }
 
-    public void verifyHandleClaimsSetAndSetReportProperties(SignatureVerificationResult result, JWS signature, PublicKey publicKey) {
+    public void verifyIdentifierClaimsSetAndSetReportProperties(SignatureVerificationResult result, JWS signature, PublicKey publicKey) {
         try {
             result.signatureVerifies = signature.validates(publicKey);
         } catch (Exception e) {
@@ -160,7 +160,7 @@ public class IdentifierVerifier {
     }
 
     public void verifyIssuedSignatureIsValid(IssuedSignature issuedSignature, SignatureVerificationResult report) {
-        verifyHandleClaimsSetAndSetReportProperties(report, issuedSignature.jws, issuedSignature.issuerPublicKey);
+        verifyIdentifierClaimsSetAndSetReportProperties(report, issuedSignature.jws, issuedSignature.issuerPublicKey);
     }
 
     public boolean verifyPermissionsAreAuthorizedOverIdentifier(String identifier, List<Permission> perms) {
@@ -173,7 +173,7 @@ public class IdentifierVerifier {
                     return true;
                 }
             } else if (Permission.DERIVED_PREFIXES.equals(permission.perm)) {
-                if (Util.isDerivedFrom(identifier, permission.identifier) || Util.isDerivedFrom(Util.getZeroNAHandle(identifier), permission.identifier)) {
+                if (Util.isDerivedFrom(identifier, permission.identifier) || Util.isDerivedFrom(Util.getZeroNAIdentifier(identifier), permission.identifier)) {
                     return true;
                 }
             } else if (Permission.IDENTIFIERS_UNDER_THIS_PREFIX.equals(permission.perm)) {
@@ -185,18 +185,18 @@ public class IdentifierVerifier {
         return false;
     }
 
-    public void verifyIssuedSignatureIsAuthorizedOverHandle(String identifier, IssuedSignature issuedSignature, IssuedSignatureVerificationResult report) {
+    public void verifyIssuedSignatureIsAuthorizedOverIdentifier(String identifier, IssuedSignature issuedSignature, IssuedSignatureVerificationResult report) {
         boolean verified = verifyPermissionsAreAuthorizedOverIdentifier(identifier, issuedSignature.issuerPermissions);
         report.authorized = verified;
     }
 
-    public IssuedSignatureVerificationResult verifyIssuedSignature(String handle, IssuedSignature issuedSignature) {
+    public IssuedSignatureVerificationResult verifyIssuedSignature(String identifier, IssuedSignature issuedSignature) {
         IssuedSignatureVerificationResult report = new IssuedSignatureVerificationResult();
         IdentifierClaimsSet claims = getIdentifierClaimsSet(issuedSignature.jws);
         report.iss = claims.iss;
         report.sub = claims.sub;
         verifyIssuedSignatureIsValid(issuedSignature, report);
-        if (handle != null) verifyIssuedSignatureIsAuthorizedOverHandle(handle, issuedSignature, report);
+        if (identifier != null) verifyIssuedSignatureIsAuthorizedOverIdentifier(identifier, issuedSignature, report);
         return report;
     }
 

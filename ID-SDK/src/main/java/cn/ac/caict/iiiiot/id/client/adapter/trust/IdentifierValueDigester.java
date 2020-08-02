@@ -32,17 +32,17 @@ public class IdentifierValueDigester {
     }
 
     private DigestedIdentifierValue digest(IdentifierValue value, MessageDigest digester) {
-        byte[] digestBytes = digestHandleValue(value, digester);
+        byte[] digestBytes = digestIdentifierValue(value, digester);
         DigestedIdentifierValue result = new DigestedIdentifierValue();
         result.digest = Base64.encodeBase64String(digestBytes);
         result.index = value.getIndex();
         return result;
     }
 
-    private byte[] digestHandleValue(IdentifierValue value, MessageDigest digester) {
+    private byte[] digestIdentifierValue(IdentifierValue value, MessageDigest digester) {
         digester.reset();
-        byte[] encodedHandleValue = MsgBytesConvertor.convertIdentifierValueToByte(value);
-        digester.update(encodedHandleValue, VALUE_DIGEST_OFFSET, encodedHandleValue.length - VALUE_DIGEST_OFFSET);
+        byte[] encodedIdentifierValue = MsgBytesConvertor.convertIdentifierValueToByte(value);
+        digester.update(encodedIdentifierValue, VALUE_DIGEST_OFFSET, encodedIdentifierValue.length - VALUE_DIGEST_OFFSET);
         byte[] digestBytes = digester.digest();
         return digestBytes;
     }
@@ -68,14 +68,14 @@ public class IdentifierValueDigester {
             return false;
         }
         MessageDigest digester = MessageDigest.getInstance(digestedValues.alg);
-        for (DigestedIdentifierValue digestedHandleValue : digestedValues.digests) {
-            IdentifierValue value = indexOfValues.get(digestedHandleValue.index);
+        for (DigestedIdentifierValue digestedIdentifierValue : digestedValues.digests) {
+            IdentifierValue value = indexOfValues.get(digestedIdentifierValue.index);
             if (value == null) {
                 return false;
             }
-            byte[] digestBytes = digestHandleValue(value, digester);
+            byte[] digestBytes = digestIdentifierValue(value, digester);
             String digestAsBase64 = Base64.encodeBase64String(digestBytes);
-            if (!digestedHandleValue.digest.equals(digestAsBase64)) {
+            if (!digestedIdentifierValue.digest.equals(digestAsBase64)) {
                 return false;
             }
         }

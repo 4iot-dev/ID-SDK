@@ -33,13 +33,13 @@ public abstract class RequiredSigners {
         return cert.validates(publicKey);
     }
 
-    public List<JWS> getRequiredSignersAuthorizedOver(String handle) {
+    public List<JWS> getRequiredSignersAuthorizedOver(String identifier) {
         List<JWS> currentRequiredSigners = requiredSigners;
         List<JWS> results = new ArrayList<>();
         for (JWS cert : currentRequiredSigners) {
             IdentifierClaimsSet claims = identifierVerifier.getIdentifierClaimsSet(cert);
             List<Permission> perms = claims.perms;
-            boolean isAuthorizedOver = identifierVerifier.verifyPermissionsAreAuthorizedOverIdentifier(handle, perms);
+            boolean isAuthorizedOver = identifierVerifier.verifyPermissionsAreAuthorizedOverIdentifier(identifier, perms);
             if (isAuthorizedOver) {
                 results.add(cert);
             }

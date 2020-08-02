@@ -21,15 +21,15 @@ import java.util.Set;
 public class CertChainBuilder {
     private static final int MAX_CHAIN_LENGTH = 50;
 
-    private Map<String, IdentifierRecord> handleMap;
+    private Map<String, IdentifierRecord> identifierMap;
     private IDAdapter idAdapter;
 
     private final JWSFactory signatureFactory = JWSFactory.getInstance();
     private final IdentifierVerifier identifierVerifier = new IdentifierVerifier();
 
-    public CertChainBuilder(Map<String, IdentifierRecord> handleMap, IDAdapter idAdapter) {
-        this.handleMap = handleMap;
-        fixHandleMapCase();
+    public CertChainBuilder(Map<String, IdentifierRecord> identifierMap, IDAdapter idAdapter) {
+        this.identifierMap = identifierMap;
+        fixIdentifierMapCase();
         this.idAdapter = idAdapter;
     }
 
@@ -38,9 +38,9 @@ public class CertChainBuilder {
     }
 
 
-    private void fixHandleMapCase() {
+    private void fixIdentifierMapCase() {
         Map<String, IdentifierRecord> newEntries = null;
-        for (Map.Entry<String, IdentifierRecord> entry : handleMap.entrySet()) {
+        for (Map.Entry<String, IdentifierRecord> entry : identifierMap.entrySet()) {
             String key = entry.getKey();
             String upperCaseKey = Util.upperCasePrefix(key);
             if (!key.equals(upperCaseKey)) {
@@ -48,7 +48,7 @@ public class CertChainBuilder {
                 newEntries.put(upperCaseKey, entry.getValue());
             }
         }
-        if (newEntries != null) handleMap.putAll(newEntries);
+        if (newEntries != null) identifierMap.putAll(newEntries);
     }
 
     public List<IssuedSignature> buildChain(JWS childSignature) throws IdentifierTrustException {
@@ -83,7 +83,7 @@ public class CertChainBuilder {
             try {
                 parentSignatureString = lookup(nextLinkInChain, childClaims.iss);
             } catch (IdentifierAdapterException e) {
-                throw new IdentifierTrustException("handle resolution exception", e);
+                throw new IdentifierTrustException("resolution exception", e);
             }
             if (parentSignatureString == null) {
                 if (noChain)
@@ -111,8 +111,8 @@ public class CertChainBuilder {
     }
 
     public IdentifierValue resolveValueReference(ValueReference valueReference) throws IdentifierAdapterException {
-        if (handleMap != null) {
-            return handleMapLookup(valueReference);
+        if (identifierMap != null) {
+            return identifierMapLookup(valueReference);
         }
 
         if (idAdapter != null) {
@@ -136,8 +136,8 @@ public class CertChainBuilder {
         } else {
             List<IdentifierValue> values = null;
             String identifier = valueReference.getIdentifierAsString();
-            if (handleMap != null) {
-                IdentifierRecord record = handleMap.get(Util.upperCasePrefix(identifier));
+            if (identifierMap != null) {
+                IdentifierRecord record = identifierMap.get(Util.upperCasePrefix(identifier));
                 if (record != null) values = record.getValues();
             }
             if (values == null) {
@@ -161,8 +161,8 @@ public class CertChainBuilder {
     }
 
 
-    private IdentifierValue handleMapLookup(ValueReference valueReference) {
-        IdentifierRecord record = handleMap.get(Util.upperCasePrefix(valueReference.getIdentifierAsString()));
+    private IdentifierValue identifierMapLookup(ValueReference valueReference) {
+        IdentifierRecord record = identifierMap.get(Util.upperCasePrefix(valueReference.getIdentifierAsString()));
         if (record == null) return null;
         return record.getValueAtIndex(valueReference.index);
     }

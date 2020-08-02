@@ -1261,31 +1261,30 @@ public abstract class Util {
 		return identifier.startsWith(actualPrefix + "/");
 	}
 
-	public static boolean isDerivedFrom(String handle, String ancestorHandle) {
-		ancestorHandle = upperCase(ancestorHandle);
-		handle = upperCase(handle);
-		if (!handle.startsWith("0.NA/")) return false;
+	public static boolean isDerivedFrom(String identifier, String ancestorIdentifier) {
+		ancestorIdentifier = upperCase(ancestorIdentifier);
+		identifier = upperCase(identifier);
+		if (!identifier.startsWith("0.NA/")) return false;
 		//        if (handle.equals(ancestorHandle)) return true;
-		return handle.startsWith(ancestorHandle + ".");
+		return identifier.startsWith(ancestorIdentifier + ".");
 	}
 
-	/** Get only the prefix part of this handle. */
-	public static final byte[] getPrefixPart(byte handle[]) {
-		int slashIndex = indexOf(handle, (byte) '/');
-		return slashIndex < 0 ? Common.NA_IDENTIFIRE_PREFIX : substring(handle, 0, slashIndex);
+	public static final byte[] getPrefixPart(byte identifier[]) {
+		int slashIndex = indexOf(identifier, (byte) '/');
+		return slashIndex < 0 ? Common.NA_IDENTIFIRE_PREFIX : substring(identifier, 0, slashIndex);
 	}
 
-	public static String getPrefixPart(String handle) {
-		return decodeString(getPrefixPart(encodeString(handle)));
+	public static String getPrefixPart(String identifier) {
+		return decodeString(getPrefixPart(encodeString(identifier)));
 	}
 
-	/** Get the 0.NA authority handle that applies to the specified handle */
-	public static final byte[] getZeroNAHandle(byte handle[]) {
-		int slashIndex = indexOf(handle, (byte) '/');
+	/** Get the 0.NA authority identifier that applies to the specified identifier */
+	public static final byte[] getZeroNAIdentifier(byte identifier[]) {
+		int slashIndex = indexOf(identifier, (byte) '/');
 		if (slashIndex >= 0) {
 			byte naHandle[] = new byte[slashIndex + Common.NA_IDENTIFIRE_PREFIX.length];
 			System.arraycopy(Common.NA_IDENTIFIRE_PREFIX, 0, naHandle, 0, Common.NA_IDENTIFIRE_PREFIX.length);
-			System.arraycopy(handle, 0, naHandle, Common.NA_IDENTIFIRE_PREFIX.length, slashIndex);
+			System.arraycopy(identifier, 0, naHandle, Common.NA_IDENTIFIRE_PREFIX.length, slashIndex);
 			upperCaseInPlace(naHandle);
 			return naHandle;
 		} else {
@@ -1293,7 +1292,7 @@ public abstract class Util {
 		}
 	}
 
-	public static String getZeroNAHandle(String handle) {
-		return decodeString(getZeroNAHandle(encodeString(handle)));
+	public static String getZeroNAIdentifier(String identifier) {
+		return decodeString(getZeroNAIdentifier(encodeString(identifier)));
 	}
 }
