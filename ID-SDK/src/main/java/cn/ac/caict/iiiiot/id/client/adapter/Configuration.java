@@ -26,7 +26,7 @@ public class Configuration {
     public void loadConfig() throws IOException {
         logger.info("begin----loadConfig()---");
         String path = System.getProperty("user.dir");
-        File fConfig = new File(path, "id-sdk/config.json");
+        File fConfig = new File(path, ".id-sdk/config.json");
 
         InputStream is = null;
         BufferedReader br = null;

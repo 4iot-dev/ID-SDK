@@ -1,5 +1,6 @@
 package cn.ac.caict.iiiiot.id.client.adapter;
 
+import cn.ac.caict.iiiiot.id.client.adapter.trust.*;
 import cn.ac.caict.iiiiot.id.client.core.IDCommunicationItems;
 import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
 import cn.ac.caict.iiiiot.id.client.core.ServerInfo;
@@ -67,7 +68,7 @@ public class ValueHelper {
         return res;
     }
 
-    public static SiteInfo getPrimarySite(SiteInfo[] sites) {
+    public SiteInfo getPrimarySite(SiteInfo[] sites) {
         for (SiteInfo site : sites) {
             if (site.isPrimarySite) {
                 return site;
@@ -162,12 +163,18 @@ public class ValueHelper {
         List<IdentifierValue> list = new ArrayList<>(Arrays.asList(values));
         Iterator<IdentifierValue> it = list.iterator();
         while (it.hasNext()) {
-            if(!type.equals(it.next().getTypeStr())){
+            if (!type.equals(it.next().getTypeStr())) {
                 it.remove();
             }
         }
         IdentifierValue[] result = new IdentifierValue[list.size()];
         list.toArray(result);
+        return result;
+    }
+
+    public IdentifierValue[] listToArray(List<IdentifierValue> values) {
+        IdentifierValue[] result = new IdentifierValue[values.size()];
+        values.toArray(result);
         return result;
     }
 
@@ -188,4 +195,18 @@ public class ValueHelper {
         return matchItem;
     }
 
+    public JWS getIdentifierJws(IdentifierValue value) throws IdentifierTrustException {
+        String jwsStr= value.getDataStr();
+        JWS jws = JWSFactory.getInstance().deserialize(jwsStr);
+        return jws;
+    }
+
+    public IdentifierClaimsSet getIdentifierClaimsSet(IdentifierValue value) throws IdentifierTrustException {
+        JWS jws = getIdentifierJws(value);
+        return getIdentifierClaimsSet(jws);
+    }
+    public IdentifierClaimsSet getIdentifierClaimsSet(JWS jws) throws IdentifierTrustException {
+        IdentifierClaimsSet claims = IdentifierVerifier.getInstance().getIdentifierClaimsSet(jws);
+        return claims;
+    }
 }

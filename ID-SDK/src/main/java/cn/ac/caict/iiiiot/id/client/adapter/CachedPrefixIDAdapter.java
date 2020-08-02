@@ -39,7 +39,7 @@ public class CachedPrefixIDAdapter extends DefaultIDAdapter {
 
                     ServerInfo serverInfo = servers[0];
                     IDCommunicationItems tcpItem = findFirstByProtocolName(serverInfo, "TCP");
-                    return new PrefixSiteInfo(serverInfo, tcpItem);
+                    return new PrefixSiteInfo(siteInfo,serverInfo, tcpItem);
 
                 } else {
                     throw new IdentifierAdapterException("cannot find servers");

@@ -235,6 +235,11 @@ public class DefaultIDAdapter implements IDAdapter {
     }
 
     @Override
+    public IdentifierValue[] resolve(String identifier) throws IdentifierAdapterException {
+        return resolve(identifier,null,null);
+    }
+
+    @Override
     public void updateIdentifierValues(String identifier, IdentifierValue[] values) throws IdentifierAdapterException {
         try {
             BaseResponse modifyResp = channel.modifyIdentifierValues(identifier, values, msgSettings);
@@ -268,16 +273,6 @@ public class DefaultIDAdapter implements IDAdapter {
     }
 
     @Override
-    public void setTcpTimeout(int timeout) {
-        this.tcpTimeout = timeout;
-    }
-
-    @Override
-    public int getTcpTimeout() {
-        return tcpTimeout;
-    }
-
-    @Override
     public void close() throws IOException {
         if (channel != null) {
             try {
@@ -293,7 +288,6 @@ public class DefaultIDAdapter implements IDAdapter {
         try (IDAdapter idAdapter = IDAdapterFactory.cachedInstance()) {
             String[] types = {"HS_SITE"};
             IdentifierValue[] valueArray = idAdapter.resolve(prefixIdentifier, types, null);
-
             if (valueArray.length > 0) {
                 IdentifierValue iv = valueArray[0];
                 SiteInfo siteInfo = BytesObjConvertor.bytesCovertToSiteInfo(iv.getData());
@@ -303,7 +297,7 @@ public class DefaultIDAdapter implements IDAdapter {
 
                     ServerInfo serverInfo = servers[0];
                     IDCommunicationItems tcpItem = findFirstByProtocolName(serverInfo, "TCP");
-                    return new PrefixSiteInfo(serverInfo, tcpItem);
+                    return new PrefixSiteInfo(siteInfo,serverInfo, tcpItem);
 
                 } else {
                     throw new IdentifierAdapterException("cannot find servers");

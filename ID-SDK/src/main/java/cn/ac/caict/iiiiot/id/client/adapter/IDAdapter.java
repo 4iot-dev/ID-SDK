@@ -78,6 +78,15 @@ public interface IDAdapter extends Closeable {
     public IdentifierValue[] resolve(String identifier, String[] types, int[] indexes) throws IdentifierAdapterException;
 
     /**
+     * 解析,支持递归解析
+     * @param identifier
+     * @return
+     * @throws IdentifierAdapterException
+     */
+    public IdentifierValue[] resolve(String identifier) throws IdentifierAdapterException;
+
+
+    /**
      * 更新标识
      * @param identifier
      * @param values
@@ -91,12 +100,5 @@ public interface IDAdapter extends Closeable {
      * @throws IdentifierAdapterException
      */
     public void deleteIdentifier(String identifier) throws IdentifierAdapterException;
-
-    /**
-     * @param timeout Milliseconds of tcp timeout
-     */
-    public void setTcpTimeout(int timeout);
-
-    public int getTcpTimeout();
 
 }
