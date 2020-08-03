@@ -51,8 +51,9 @@ public class ValueReference {
 		if (str == null)
 			return null;
 		int colon_index = str.indexOf(COLON_CHAR);
-		if (colon_index < 0)
+		if (colon_index < 0) {
 			return new ValueReference(Util.encodeString(str), 0);
+		}
 		String maybeIndex = str.substring(0, colon_index);
 		if (isDigits(maybeIndex)) {
 			String identifier = str.substring(colon_index + 1);

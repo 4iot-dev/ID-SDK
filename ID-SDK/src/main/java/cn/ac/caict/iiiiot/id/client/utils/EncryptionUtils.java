@@ -1,12 +1,6 @@
 package cn.ac.caict.iiiiot.id.client.utils;
 
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.Signature;
+import java.security.*;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
@@ -14,10 +8,10 @@ import javax.crypto.Cipher;
 /**
  * @author bluepoint
  * @since 2018-09-17
- * @title RSAUtils
+ * @title EncryptionUtils
  * Rsa 加密 签名
  */
-public abstract class RSAUtils {
+public abstract class EncryptionUtils {
 
 	public static final String KEY_ALGORITHM = "RSA";
 	public static final String SIGNATURE_ALGORITHM = "SHA1withRSA";
@@ -34,7 +28,7 @@ public abstract class RSAUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String sign(byte[] data, PrivateKey privateKey) throws Exception {
+	public static String sign(byte[] data, PrivateKey privateKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 		// 用私钥对信息生成数字签名
 		Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
 		signature.initSign(privateKey);
@@ -50,7 +44,7 @@ public abstract class RSAUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public static boolean verify(byte[] data, PublicKey pubKey, String sign) throws Exception {
+	public static boolean verify(byte[] data, PublicKey pubKey, String sign) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
 		Signature signature = Signature.getInstance(SIGNATURE_ALGORITHM);
 		signature.initVerify(pubKey);
 		signature.update(data);

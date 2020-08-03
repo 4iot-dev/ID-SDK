@@ -16,7 +16,7 @@ public class IDAdapterTest {
     @Ignore
     @Test
     public void resolveCert() throws IdentifierAdapterException, IdentifierTrustException {
-        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88");
+        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88.111.1");
         IdentifierValue[] certValues = ValueHelper.getInstance().filter(values,"HS_CERT");
         if(certValues.length>0){
             IdentifierValue cert = certValues[0];

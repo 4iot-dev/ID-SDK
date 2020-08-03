@@ -16,7 +16,7 @@ public class RSAUtilsTest {
     @Test
     public void test() throws Exception {
 
-        KeyPair keyPair = RSAUtils.generateKeyPair();
+        KeyPair keyPair = EncryptionUtils.generateKeyPair();
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
 
