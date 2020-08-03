@@ -7,6 +7,7 @@ import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
 import cn.ac.caict.iiiiot.id.client.core.ServerInfo;
 import cn.ac.caict.iiiiot.id.client.core.SiteInfo;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
+import cn.ac.caict.iiiiot.id.client.utils.Common;
 import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -16,13 +17,24 @@ public class IDAdapterTest {
     @Ignore
     @Test
     public void resolveCert() throws IdentifierAdapterException, IdentifierTrustException {
-        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88.111.1");
+        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88");
         IdentifierValue[] certValues = ValueHelper.getInstance().filter(values,"HS_CERT");
         if(certValues.length>0){
             IdentifierValue cert = certValues[0];
             IdentifierClaimsSet claims = ValueHelper.getInstance().getIdentifierClaimsSet(cert);
-            System.out.println(KeyConverter.toX509Pem(claims.publicKey));
-            System.out.println(claims.sub);
+            System.out.println(GsonCompose.getPrettyGson().toJson(claims));
+        }
+    }
+
+    @Ignore
+    @Test
+    public void resolveSignature() throws IdentifierAdapterException, IdentifierTrustException {
+        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88.300.15907541011/1038");
+        IdentifierValue[] certValues = ValueHelper.getInstance().filter(values, Common.HS_SIGNATURE);
+        if(certValues.length>0){
+            IdentifierValue cert = certValues[0];
+            IdentifierClaimsSet claims = ValueHelper.getInstance().getIdentifierClaimsSet(cert);
+            System.out.println(GsonCompose.getPrettyGson().toJson(claims));
         }
     }
 

@@ -36,7 +36,7 @@ public class Verifier {
         return verifier;
     }
 
-    public VerifyResult verifyCert(String identifier,IdentifierValue jwsValue) throws IdentifierAdapterException, IdentifierTrustException {
+    public VerifyResult verifyCert(String identifier, IdentifierValue jwsValue) throws IdentifierAdapterException, IdentifierTrustException {
         if (!Common.HS_CERT.equals((jwsValue.getTypeStr()))) {
             throw new IdentifierAdapterException("type must be HS_CERT");
         }
@@ -72,7 +72,7 @@ public class Verifier {
             code = 0;
             message = "Signature NOT VERIFIED";
         }
-        return new VerifyResult(code,message,chainResult);
+        return new VerifyResult(code, message, chainResult);
     }
 
     private List<PublicKey> getRootKeys() throws IdentifierAdapterException {
@@ -90,7 +90,7 @@ public class Verifier {
         return rootKeys;
     }
 
-    public VerifyResult verifySignature(String identifier,IdentifierValue jwsValue, IdentifierValue[] values) throws IdentifierAdapterException, IdentifierTrustException {
+    public VerifyResult verifySignature(String identifier, IdentifierValue jwsValue, IdentifierValue[] values) throws IdentifierAdapterException, IdentifierTrustException {
         if (!Common.HS_SIGNATURE.equals(jwsValue.getTypeStr())) {
             throw new IdentifierAdapterException("type must be HS_SIGNATURE");
         }
@@ -106,6 +106,7 @@ public class Verifier {
         try {
             issuedSignatures = certChainBuilder.buildChain(jws);
         } catch (IdentifierTrustException e) {
+            e.printStackTrace();
             try {
                 IdentifierClaimsSet claims = IdentifierVerifier.getInstance().getIdentifierClaimsSet(jws);
                 String issuer = claims.iss;
@@ -118,6 +119,7 @@ public class Verifier {
                 }
             } catch (Exception ex) {
                 // ignore
+                ex.printStackTrace();
             }
             message = "Signature NOT VERIFIED unable to build chain: " + e.getMessage();
 
@@ -146,7 +148,7 @@ public class Verifier {
             }
         }
 
-        return new VerifyResult(code,message,result);
+        return new VerifyResult(code, message, result);
     }
 
 }

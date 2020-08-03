@@ -100,8 +100,9 @@ public class CertChainBuilder {
             }
             IdentifierClaimsSet parentClaims = identifierVerifier.getIdentifierClaimsSet(parentSignature);
             if (parentClaims == null) throw new IdentifierTrustException("signature payload not valid");
-            if (!Util.equalsPrefixCaseInsensitive(parentClaims.sub, childClaims.iss))
+            if (!Util.equalsPrefixCaseInsensitive(parentClaims.sub, childClaims.iss)) {
                 throw new IdentifierTrustException("chain is broken");
+            }
             IssuedSignature issuedSignature = new IssuedSignature(childSignature, parentClaims.publicKey, parentClaims.perms);
             result.add(issuedSignature);
             childSignature = parentSignature;

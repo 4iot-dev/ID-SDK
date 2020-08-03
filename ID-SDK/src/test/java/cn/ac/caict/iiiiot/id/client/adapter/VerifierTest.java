@@ -197,7 +197,7 @@ public class VerifierTest {
     public void test2VerifySignature() throws IdentifierAdapterException, IdentifierTrustException {
         IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
 
-        String identifier = "88.300.15907541011/1024";
+        String identifier = "88.300.15907541011/1038";
         IdentifierValue[] values = idAdapter.resolve(identifier, null, null);
 
         //过滤签名数据
