@@ -64,7 +64,7 @@ public class IDAdapterTest {
     @Ignore
     @Test
     public void resolve() throws IdentifierAdapterException, IdentifierTrustException {
-        IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88.300.15907541011");
+        IdentifierValue[] values = IDAdapterFactory.newInstance("39.96.114.168",2641).resolve("88.176.1");
     }
 
     @Ignore
