@@ -142,18 +142,18 @@ public class ValueHelper {
      * @param issue          300:88.111/test
      * @param subject
      * @param admPrvKey
-     * @param expirationTime
-     * @param notBefore
-     * @param issedAfterTime
+     * @param expirationTime 过期时间
+     * @param notBefore 生效时间
+     * @param issuedAfterTime 颁发时间
      * @param digestAlg      SHA-256
      * @return
      * @throws Exception
      */
-    public IdentifierValue newSignatureValue(int index, IdentifierValue[] values, String issue, String subject, PrivateKey admPrvKey, String expirationTime, String notBefore, String issedAfterTime, String digestAlg) throws Exception {
+    public IdentifierValue newSignatureValue(int index, IdentifierValue[] values, String issue, String subject, PrivateKey admPrvKey, String expirationTime, String notBefore, String issuedAfterTime, String digestAlg) throws Exception {
 
         IdentifierValue value = new IdentifierValue();
         SignatureInfo signInfo = SignatureInfo.newSignatureInstance(admPrvKey, values, issue, subject,
-                expirationTime, notBefore, issedAfterTime, digestAlg);
+                expirationTime, notBefore, issuedAfterTime, digestAlg);
         IdentifierValueUtil.makeIdentifierValueOfSignature(value, index, signInfo);
         return value;
 
