@@ -12,6 +12,9 @@ import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class IDAdapterTest {
 
     @Ignore
@@ -64,8 +67,19 @@ public class IDAdapterTest {
     @Ignore
     @Test
     public void resolve() throws IdentifierAdapterException, IdentifierTrustException {
-        IdentifierValue[] values = IDAdapterFactory.newInstance("39.96.114.168",2641).resolve("88.176.1");
+        try{
+            IDAdapter idAdapter = IDAdapterFactory.newInstance("101.201.220.98",2641);
+            IdentifierValue[] values = idAdapter.resolve("88.167.1/1");
+//            List<IdentifierValue> valueList = new ArrayList<>();
+//            valueList.add(new IdentifierValue(1, "URL", "https://www.citln.cn/"));
+//            valueList.add(new IdentifierValue(2, "EMAIL", "test@email.com"));
+//            idAdapter.createIdentifier("88.167.14/1",ValueHelper.getInstance().listToArray(valueList));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
+
+
 
     @Ignore
     @Test
