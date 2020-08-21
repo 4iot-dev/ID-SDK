@@ -136,7 +136,7 @@ public class DefaultIDAdapter implements IDAdapter {
         try {
             prefixSiteInfo = resolveSiteByProxy(serverPrefix);
         } catch (Exception e) {
-            throw new IdentifierAdapterRuntimeException("instance idAdapter failed", e);
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, caused by: "+e.getMessage(), e);
         }
         this.channel = factory.newChannel(prefixSiteInfo.getIp(), prefixSiteInfo.getPort(), prefixSiteInfo.getProtocolName());
     }
@@ -161,7 +161,7 @@ public class DefaultIDAdapter implements IDAdapter {
                 throw new IdentifierAdapterException(new StringBuilder("add value error,response:").append(response.toString()).toString());
             }
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterException("add value error", e);
+            throw new IdentifierAdapterException("add value error, caused by: "+e.getMessage(), e);
         }
     }
 
@@ -177,7 +177,7 @@ public class DefaultIDAdapter implements IDAdapter {
                 throw new IdentifierAdapterException(new StringBuilder("create error,response:").append(createResp.toString()).toString());
             }
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterException("create error", e);
+            throw new IdentifierAdapterException("create error, caused by: "+e.getMessage(), e);
         }
     }
 
@@ -197,7 +197,7 @@ public class DefaultIDAdapter implements IDAdapter {
                 throw new IdentifierAdapterException(new StringBuilder("delete value error,response:").append(response.toString()).toString());
             }
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterException("delete value error", e);
+            throw new IdentifierAdapterException("delete value error, caused by: "+e.getMessage(), e);
         }
     }
 
@@ -229,7 +229,8 @@ public class DefaultIDAdapter implements IDAdapter {
                 throw new IdentifierAdapterException(new StringBuilder("resolve error,response:").append(lookupResp.toString()).toString());
             }
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterException("resolve error", e);
+            throw new IdentifierAdapterException("resolve error, caused by: "+e.getMessage(), e);
+
         }
 
     }
@@ -252,7 +253,7 @@ public class DefaultIDAdapter implements IDAdapter {
             }
 
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterException("update values error", e);
+            throw new IdentifierAdapterException("update values error, caused by: "+e.getMessage(), e);
         }
     }
 
@@ -268,7 +269,7 @@ public class DefaultIDAdapter implements IDAdapter {
                 throw new IdentifierAdapterException(new StringBuilder("delete error,response:").append(response.toString()).toString());
             }
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterException("delete error", e);
+            throw new IdentifierAdapterException("delete error, caused by: "+e.getMessage(), e);
         }
     }
 
@@ -278,7 +279,7 @@ public class DefaultIDAdapter implements IDAdapter {
             try {
                 factory.channelManage().closeChannel(channel);
             } catch (IdentifierException e) {
-                throw new IdentifierAdapterRuntimeException("close channel error", e);
+                throw new IdentifierAdapterRuntimeException("close channel error, caused by: "+e.getMessage(), e);
             }
         }
     }
@@ -306,7 +307,7 @@ public class DefaultIDAdapter implements IDAdapter {
                 throw new IdentifierAdapterException("cannot find site type value");
             }
         } catch (IOException e) {
-            throw new IdentifierAdapterException("idAdapter close error");
+            throw new IdentifierAdapterException("idAdapter close error, caused by: "+e.getMessage());
         }
     }
 
@@ -325,6 +326,18 @@ public class DefaultIDAdapter implements IDAdapter {
             }
         }
         return matchItem;
+    }
+
+    public IIDManageServiceChannel getChannel() {
+        return channel;
+    }
+
+    public void setChannel(IIDManageServiceChannel channel) {
+        this.channel = channel;
+    }
+
+    public ChannelFactory getFactory() {
+        return factory;
     }
 
 

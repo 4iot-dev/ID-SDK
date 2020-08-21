@@ -8,14 +8,36 @@ import cn.ac.caict.iiiiot.id.client.core.ServerInfo;
 import cn.ac.caict.iiiiot.id.client.core.SiteInfo;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.utils.Common;
+import cn.ac.caict.iiiiot.id.client.utils.ExceptionCommon;
 import cn.ac.caict.iiiiot.id.client.utils.Util;
 
 import java.io.IOException;
 
 public class CachedPrefixIDAdapter extends DefaultIDAdapter {
 
+
     public CachedPrefixIDAdapter() {
         super();
+    }
+
+    @Override
+    public IdentifierValue[] resolve(String identifier, String[] types, int[] indexes, boolean auth) throws IdentifierAdapterException {
+        return super.resolve(identifier, types, indexes, auth);
+    }
+
+    @Override
+    public IdentifierValue[] resolve(String identifier, String[] types, int[] indexes) throws IdentifierAdapterException {
+        try {
+            return super.resolve(identifier, types, indexes);
+        } catch (IdentifierAdapterException e) {
+            resetChannel();
+            return super.resolve(identifier, types, indexes);
+        }
+
+    }
+
+    private synchronized void resetChannel() {
+        setChannel(getFactory().proxyChannel());
     }
 
     @Override
@@ -39,7 +61,7 @@ public class CachedPrefixIDAdapter extends DefaultIDAdapter {
 
                     ServerInfo serverInfo = servers[0];
                     IDCommunicationItems tcpItem = findFirstByProtocolName(serverInfo, "TCP");
-                    return new PrefixSiteInfo(siteInfo,serverInfo, tcpItem);
+                    return new PrefixSiteInfo(siteInfo, serverInfo, tcpItem);
 
                 } else {
                     throw new IdentifierAdapterException("cannot find servers");
