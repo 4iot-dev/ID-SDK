@@ -8,6 +8,7 @@ import cn.ac.caict.iiiiot.id.client.core.SiteInfo;
 import cn.ac.caict.iiiiot.id.client.data.AdminInfo;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.data.SignatureInfo;
+import cn.ac.caict.iiiiot.id.client.data.ValueReference;
 import cn.ac.caict.iiiiot.id.client.security.Permission;
 import cn.ac.caict.iiiiot.id.client.utils.IdentifierValueUtil;
 import cn.ac.caict.iiiiot.id.client.utils.Util;
@@ -155,6 +156,21 @@ public class ValueHelper {
         SignatureInfo signInfo = SignatureInfo.newSignatureInstance(admPrvKey, values, issue, subject,
                 expirationTime, notBefore, issuedAfterTime, digestAlg);
         IdentifierValueUtil.makeIdentifierValueOfSignature(value, index, signInfo);
+        return value;
+
+    }
+
+    /**
+     * 创建VList类型数据
+     * @param index
+     * @param vList
+     * @return
+     * @throws Exception
+     */
+    public IdentifierValue newVListValue(int index, ValueReference[] vList) throws Exception {
+
+        IdentifierValue value = new IdentifierValue();
+        IdentifierValueUtil.makeIdentifierValueOfVList(value,vList,index);
         return value;
 
     }

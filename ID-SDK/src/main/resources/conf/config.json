@@ -1,7 +1,7 @@
 {
-   "ip":"36.112.25.8",
-   "port":"3641",
-   "query":true,
-   "admin":false,
-   "protocol":"TCP"
+  "ip": "36.112.25.8",
+  "port": "3641",
+  "query": true,
+  "admin": false,
+  "protocol": "TCP"
 }
