@@ -8,6 +8,7 @@ import cn.ac.caict.iiiiot.id.client.core.ServerInfo;
 import cn.ac.caict.iiiiot.id.client.core.SiteInfo;
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
 import cn.ac.caict.iiiiot.id.client.utils.Common;
+import cn.ac.caict.iiiiot.id.client.utils.IdentifierValueUtil;
 import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -16,6 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IDAdapterTest {
+    @Ignore
+    @Test
+    public void resolveTest() throws IdentifierAdapterException, IdentifierTrustException {
+        IdentifierValue[] values = IDAdapterFactory.newInstance("2408:4003:1f10:0000:0000:0000:0000:01f9",8080).resolve("88.168.288/se190911h2539");
+    }
 
     @Ignore
     @Test
@@ -68,8 +74,8 @@ public class IDAdapterTest {
     @Test
     public void resolve() throws IdentifierAdapterException, IdentifierTrustException {
         try{
-            IDAdapter idAdapter = IDAdapterFactory.newInstance("101.201.220.98",2641);
-            IdentifierValue[] values = idAdapter.resolve("88.167.1/1");
+            IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
+            IdentifierValue[] values = idAdapter.resolve("88.111.1001/1111111");
 //            List<IdentifierValue> valueList = new ArrayList<>();
 //            valueList.add(new IdentifierValue(1, "URL", "https://www.citln.cn/"));
 //            valueList.add(new IdentifierValue(2, "EMAIL", "test@email.com"));

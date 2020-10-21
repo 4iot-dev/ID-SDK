@@ -82,16 +82,39 @@ public class CertBuildTest {
     @Test
     public void lhsCertTest() throws Exception {
         String issue = "301:88.111.1/88.111";
-        String issuePrivateKeyPem = "";
+        String issuePrivateKeyPem = "-----BEGIN PRIVATE KEY-----\n" +
+                "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCDz+K7lXvihjT0fogbn5ml2sS2\n" +
+                "eg4pGVYr0qwbqx37bIgXfhTQOgUj46Or8utyx3o2BfOG+MjXbhX9mvaPykmI567gGEjZDhSKSPsX\n" +
+                "AEgi3G/OxcJy+vR/zN6XB9J9QuBgg2qLbkzNTKV8qXa8FKppzKWI0aIo2g3kEdNFmI5y5TzP9zN9\n" +
+                "xdXOQO9M8tbAAAciLmNhdiZ4FkwoQdVhCypcSBC2cjCXz6naxwS1PXbkh7PSlqFUU1aSmTcAr1OY\n" +
+                "i8CLyB+nbtsXGizc4zVugq6i28g+VMu/TlDbi7BPkJ+BXu91kEnb0aJ7dgArI9pUcQylQP8GACD+\n" +
+                "/iQZF1nVGzsxAgMBAAECggEAIhIeHTaqawcdsQTz0ZATexdtOW2bM2xlJbay3gQBH/gRxWDFqH0W\n" +
+                "zwwMRmnoCicdo9Et/XlZELZX4NGpYcl78HNSdIJScih9jrEGlg9wlfI8xEnB1U6g3FfsQUW4VsBu\n" +
+                "lwPhCmFcYMSrEeoL0tnUorxPHWpya/TRGl6xKZAhYfkXuP/NpGuzN7cQIDWp33P1ZXkCbqOw4iGC\n" +
+                "hAjqdMfYaXPsrS7gml+irGswJvehfvF7WurrcBQCLs4XZAh+sc+TOAxBKBMBLsZMluFJA+W/MHi6\n" +
+                "+9zHg6btNYz9bBrm3ltSGFR3XlTP4KBTc7qG74pHVpg7Qe1qQDpcfnfEg8mrAQKBgQDJw6cztmYp\n" +
+                "e7J1N6kJY+4on915vfw46ZzXRaGI1mS5Vo6FquH7YUTOCYacdxUBr51yysjHnQrjr4/udF0zqNcH\n" +
+                "gNtWGHWmPNlRgN+qfcTdAVvVDR5w+49vDu0rwSrmvQnWRL1LlMV+CJTMB9X6lFlHOeUKK7upLp6V\n" +
+                "2uCqNIvCOQKBgQCnPn317Bswtr71h8BAA4uZk3J2jLcrbazUAhFr1A97s8BXdzqlYwdtb/Yq6lGt\n" +
+                "Q56ZGR5VG1V4tTZI0XnMXIomwz2mQGNGWxPFlIFHCeglj3zBIb21XuFim67avUz0DEstkTN5TwYf\n" +
+                "5LOQUj4tdMFoMcIWMAiufsIi7ySRG3rguQKBgDJUV/USXtGiRZXv2H67KsF/f2PK/IvF2pXojK7x\n" +
+                "rBZ/fPXi9pQaY2tx/N4y5k6RXBkydHs2tWyucpzs8gLc7ya0AgKr/00EiMFIAIMq9Fyc5idzKlDM\n" +
+                "r67obkkn2mfMaBPG+eFMrycNRPDQU5Q6RTr7OiMbXaiKNIz1GG3cxbAhAoGAEn5fkWUlcJKUtTPo\n" +
+                "t2ts8XOTkbZnvt6m4N7FrGXLvIMY/tMJYiZ8OMbLst0sYPt8OzPC3ehi4DExqoW3cTi+ciDe3VZ7\n" +
+                "Y9lIa23Lid53lEe0pOqlPrwaMjxC7p9GNipx2b0Xsw9g/v/cN1ZQ19f0VyBBdRCktR8BOrm1EnK2\n" +
+                "eMkCgYB0Ab6vp6VC4+5DQSLv8Ze7BJmcdNU3bAQ//J9vP7U0m2g9KROw68OGUjxhDZNiFxsdMyzP\n" +
+                "KzRtILLqRTEWrXXNG4wS7d2sAfRfxBLRY0NZcBFUM7/KPiogoKZQzckxZZCIzIKZ7BL5v2HNKFNj\n" +
+                "qjUsZW3q9/v8rG834S9cLXS+FA==\n" +
+                "-----END PRIVATE KEY-----";
         PrivateKey issuePrivateKey = KeyConverter.fromPkcs8Pem(issuePrivateKeyPem, null);
 
         String publicKeyPem = "-----BEGIN PUBLIC KEY-----\n" +
-                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhKyKf1EFZZ1Qe4NW8pITZg+zWUtdoYJ6\n" +
-                "OxpslmQ4acOzM0L+0Xo0R97XYmWLALAzdwcbjLPSY62HTbBBXeDGvYRUrcDou4g62GmAdVnMPZjp\n" +
-                "SIRdA5cBH1mQnGXhEHhGw71dE3AaMajQKYrsgJXWapAkkN0prbanQanbfc4VRR1n3MjHzRfkMVK5\n" +
-                "aatcOpE1p80B6iWI74KzRVsaUoVWeHYmycmq94c/LwtstUwui7oa+403Kxb1Dy35Kc05dbrqKEZ5\n" +
-                "Qrb/fvAFOM5r+pHtug2P2PYJ91PNXXpJv+HXCOtUvvz0EfFidIbpbpzZs0xdEYX+BeQGmfLHu5vA\n" +
-                "8KGQrwIDAQAB\n" +
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt0KQi1Vx2Ccaf21gbvY6d0KfPXCs4+jC\n" +
+                "xoEmo6Ya9wKRTVBLaWsstSMcfwF/lgqP0g5Im8lbnYIHNRMu7UVRDqy9T2kp7Y1JxDCXW7KezvLN\n" +
+                "i/3QIChFMrS0t954gBzVPzWnV0M9zD7V0To9T6ha+/uzwGkdsV7U0GCkVuvD3PJCSif5uOF/Py8k\n" +
+                "EP+AYlv5lsDPiLQ7Q/alybX0iXqnKEe4P5g+7Pi0zL2J/XG3Bc/glHma3OL7vqfCKbuk2GPPhDTg\n" +
+                "/sODjj6MjI+9HzHYXAioTn83AhAtv/F4LYu88uftYgZTENf1LLE+kAQZnbWTgsaF70x8SASqgKmJ\n" +
+                "E/7fQwIDAQAB\n" +
                 "-----END PUBLIC KEY-----";
         PublicKey publicKey = KeyConverter.fromX509Pem(publicKeyPem);
 
@@ -100,8 +123,8 @@ public class CertBuildTest {
 
         IdentifierValue[] values = new IdentifierValue[2];
         values[0] = valueHelper.newPublicKeyValue(301, publicKey);
-        values[1] = valueHelper.newCertValue(400, publicKey, issue, "301:88.111.1/88.167", issuePrivateKey, "2022-01-01 00:00:00", "2020-01-01 00:00:00", "2020-07-28 00:00:00");
+        values[1] = valueHelper.newCertValue(400, publicKey, issue, "301:88.111.1/88.111.1001", issuePrivateKey, "2022-01-01 00:00:00", "2020-01-01 00:00:00", "2020-07-28 00:00:00");
 
-        idAdapter.updateIdentifierValues("88.111.1/88.167", values);
+        idAdapter.createIdentifier("88.111.1/88.111.1001", values);
     }
 }

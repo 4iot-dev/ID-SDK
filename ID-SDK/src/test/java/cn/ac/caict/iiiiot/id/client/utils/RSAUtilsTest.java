@@ -24,7 +24,6 @@ public class RSAUtilsTest {
         System.out.println(publicKeyPem);
 
 //        publicKeyPem = publicKeyPem.replaceAll("\r\n", "\\\\r\\\\n");
-//
 //        System.out.println(publicKeyPem);
 
         String prvPem = KeyConverter.toPkcs8UnencryptedPem(privateKey);
