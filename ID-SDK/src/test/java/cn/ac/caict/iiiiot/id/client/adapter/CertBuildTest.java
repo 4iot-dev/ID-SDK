@@ -82,30 +82,7 @@ public class CertBuildTest {
     @Test
     public void lhsCertTest() throws Exception {
         String issue = "301:88.111.1/88.111";
-        String issuePrivateKeyPem = "-----BEGIN PRIVATE KEY-----\n" +
-                "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCDz+K7lXvihjT0fogbn5ml2sS2\n" +
-                "eg4pGVYr0qwbqx37bIgXfhTQOgUj46Or8utyx3o2BfOG+MjXbhX9mvaPykmI567gGEjZDhSKSPsX\n" +
-                "AEgi3G/OxcJy+vR/zN6XB9J9QuBgg2qLbkzNTKV8qXa8FKppzKWI0aIo2g3kEdNFmI5y5TzP9zN9\n" +
-                "xdXOQO9M8tbAAAciLmNhdiZ4FkwoQdVhCypcSBC2cjCXz6naxwS1PXbkh7PSlqFUU1aSmTcAr1OY\n" +
-                "i8CLyB+nbtsXGizc4zVugq6i28g+VMu/TlDbi7BPkJ+BXu91kEnb0aJ7dgArI9pUcQylQP8GACD+\n" +
-                "/iQZF1nVGzsxAgMBAAECggEAIhIeHTaqawcdsQTz0ZATexdtOW2bM2xlJbay3gQBH/gRxWDFqH0W\n" +
-                "zwwMRmnoCicdo9Et/XlZELZX4NGpYcl78HNSdIJScih9jrEGlg9wlfI8xEnB1U6g3FfsQUW4VsBu\n" +
-                "lwPhCmFcYMSrEeoL0tnUorxPHWpya/TRGl6xKZAhYfkXuP/NpGuzN7cQIDWp33P1ZXkCbqOw4iGC\n" +
-                "hAjqdMfYaXPsrS7gml+irGswJvehfvF7WurrcBQCLs4XZAh+sc+TOAxBKBMBLsZMluFJA+W/MHi6\n" +
-                "+9zHg6btNYz9bBrm3ltSGFR3XlTP4KBTc7qG74pHVpg7Qe1qQDpcfnfEg8mrAQKBgQDJw6cztmYp\n" +
-                "e7J1N6kJY+4on915vfw46ZzXRaGI1mS5Vo6FquH7YUTOCYacdxUBr51yysjHnQrjr4/udF0zqNcH\n" +
-                "gNtWGHWmPNlRgN+qfcTdAVvVDR5w+49vDu0rwSrmvQnWRL1LlMV+CJTMB9X6lFlHOeUKK7upLp6V\n" +
-                "2uCqNIvCOQKBgQCnPn317Bswtr71h8BAA4uZk3J2jLcrbazUAhFr1A97s8BXdzqlYwdtb/Yq6lGt\n" +
-                "Q56ZGR5VG1V4tTZI0XnMXIomwz2mQGNGWxPFlIFHCeglj3zBIb21XuFim67avUz0DEstkTN5TwYf\n" +
-                "5LOQUj4tdMFoMcIWMAiufsIi7ySRG3rguQKBgDJUV/USXtGiRZXv2H67KsF/f2PK/IvF2pXojK7x\n" +
-                "rBZ/fPXi9pQaY2tx/N4y5k6RXBkydHs2tWyucpzs8gLc7ya0AgKr/00EiMFIAIMq9Fyc5idzKlDM\n" +
-                "r67obkkn2mfMaBPG+eFMrycNRPDQU5Q6RTr7OiMbXaiKNIz1GG3cxbAhAoGAEn5fkWUlcJKUtTPo\n" +
-                "t2ts8XOTkbZnvt6m4N7FrGXLvIMY/tMJYiZ8OMbLst0sYPt8OzPC3ehi4DExqoW3cTi+ciDe3VZ7\n" +
-                "Y9lIa23Lid53lEe0pOqlPrwaMjxC7p9GNipx2b0Xsw9g/v/cN1ZQ19f0VyBBdRCktR8BOrm1EnK2\n" +
-                "eMkCgYB0Ab6vp6VC4+5DQSLv8Ze7BJmcdNU3bAQ//J9vP7U0m2g9KROw68OGUjxhDZNiFxsdMyzP\n" +
-                "KzRtILLqRTEWrXXNG4wS7d2sAfRfxBLRY0NZcBFUM7/KPiogoKZQzckxZZCIzIKZ7BL5v2HNKFNj\n" +
-                "qjUsZW3q9/v8rG834S9cLXS+FA==\n" +
-                "-----END PRIVATE KEY-----";
+        String issuePrivateKeyPem =  ResourceUtil.readUtf8Str("/Users/bluepoint/temp/shr-key.pem");
         PrivateKey issuePrivateKey = KeyConverter.fromPkcs8Pem(issuePrivateKeyPem, null);
 
         String publicKeyPem = "-----BEGIN PUBLIC KEY-----\n" +
