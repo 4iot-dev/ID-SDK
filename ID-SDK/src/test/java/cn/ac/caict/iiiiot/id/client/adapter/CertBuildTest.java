@@ -86,12 +86,12 @@ public class CertBuildTest {
         PrivateKey issuePrivateKey = KeyConverter.fromPkcs8Pem(issuePrivateKeyPem, null);
 
         String publicKeyPem = "-----BEGIN PUBLIC KEY-----\n" +
-                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt0KQi1Vx2Ccaf21gbvY6d0KfPXCs4+jC\n" +
-                "xoEmo6Ya9wKRTVBLaWsstSMcfwF/lgqP0g5Im8lbnYIHNRMu7UVRDqy9T2kp7Y1JxDCXW7KezvLN\n" +
-                "i/3QIChFMrS0t954gBzVPzWnV0M9zD7V0To9T6ha+/uzwGkdsV7U0GCkVuvD3PJCSif5uOF/Py8k\n" +
-                "EP+AYlv5lsDPiLQ7Q/alybX0iXqnKEe4P5g+7Pi0zL2J/XG3Bc/glHma3OL7vqfCKbuk2GPPhDTg\n" +
-                "/sODjj6MjI+9HzHYXAioTn83AhAtv/F4LYu88uftYgZTENf1LLE+kAQZnbWTgsaF70x8SASqgKmJ\n" +
-                "E/7fQwIDAQAB\n" +
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7FyQTVfJful5kLSSRFeo7FT25YODvx/H\n" +
+                "WT9Q2jSPEQdwe7YqSY/ruBgG9JP/ZzLFfUKax94b3DQX6ktsyWqDi+m8F2XybBFJ0zGmCj4lFZEo\n" +
+                "DhLPugp/kuiG++WbPQJuApG9OvFqjHQOmZgBlcYGXQZ8XXopXN+6AOl/B6hJf7jfR9Q4KV6kzDtr\n" +
+                "7HlnqYD756TIWKbza7HgLnYUC9+6F47PA68MHOfei5Eetr7oAo0K7MwwKGW59CrfJlSh26l6H4ii\n" +
+                "k/bT311M84uBHex363Dk5MnOAKB0OEYXyGyfdBd/LlMSzhsNkJEed9fE+QTF2ja2nZjL97fOc91W\n" +
+                "PJNN4QIDAQAB\n" +
                 "-----END PUBLIC KEY-----";
         PublicKey publicKey = KeyConverter.fromX509Pem(publicKeyPem);
 
@@ -100,8 +100,8 @@ public class CertBuildTest {
 
         IdentifierValue[] values = new IdentifierValue[2];
         values[0] = valueHelper.newPublicKeyValue(301, publicKey);
-        values[1] = valueHelper.newCertValue(400, publicKey, issue, "301:88.111.1/88.111.1001", issuePrivateKey, "2022-01-01 00:00:00", "2020-01-01 00:00:00", "2020-07-28 00:00:00");
+        values[1] = valueHelper.newCertValue(400, publicKey, issue, "301:88.111.1/88.111.5000", issuePrivateKey, "2021-01-01 00:00:00", "2020-01-01 00:00:00", "2020-07-28 00:00:00");
 
-        idAdapter.createIdentifier("88.111.1/88.111.1001", values);
+        idAdapter.createIdentifier("88.111.1/88.111.5000", values);
     }
 }

@@ -9,7 +9,6 @@ import org.junit.runners.MethodSorters;
 import sun.jvm.hotspot.utilities.Assert;
 
 import java.io.IOException;
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
@@ -182,6 +181,37 @@ public class IDUserAuthTest {
             }
         }
         Assert.that(hasIndex3,"管理员可以查看管理员的值");
+    }
+
+    @Test
+    public void test7LoginResolve() throws Exception {
+        String identifier = "88.300.15907541011/1024";
+        String privateKeyPem = "-----BEGIN PRIVATE KEY-----\n" +
+                "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCWFZciDR7kgbe3hN6D97YCZyNE\n" +
+                "hOgdjx3/xAjuip3S816L539+X6Og8y+eRT8SFrphTNnqom7mwx42nXGmxEOA5M5ZOmxmaUjNnuuk\n" +
+                "hMD83KHvTItJ/qnCnmPvaorRpaqRZ8hu75CAIz+TZcTd/n7GHE0bBxuPrKEPc7BuZOydDhu3D9SE\n" +
+                "pdlcq7XqYquzZ6qy72iWWY9SXro8thMduzsbESpg0bG6xaQctNqzWCh3S6+cHBBOuJh9awzS0qDL\n" +
+                "+7LwbMcWITN6BrDJwJ/bTKK8xmyKPQM7Itfx1fgZIksLAjOv/uhPtvwvpJmJXM54C+IxXWgL2wqi\n" +
+                "OqbkRGmi1OcNAgMBAAECggEAciq4TanHbzGRzCNhlOeQ56EHPe8QFrQwsMext6twRPDmYexWmo4s\n" +
+                "DZoQBghM4vixDKUGO6sWS6nvSMJZmu8/HkRvB4cewISkYe3a+MoXeAJpmHwUlNQI1Mfh41SbhsDL\n" +
+                "0FIvMNxBgofNq9VFfU1DqHYM3Vt5xsAdwIBTnJZfO1Q0uJu8GcE1oK0iKikc1fBHERMwT1vEuB/9\n" +
+                "FZ/RsqbtRrKas2KunA48HsGLnEUKVm7Yd7UfNrq2WUUDN71wX6GMIXl6tstQPT6rLOKVd4i58qOF\n" +
+                "TOsCjxvcDqOHYzWFVC0qKc8DAfiJKBse2lrBPPyy1RObvtNF45aQBXIcNtn2rQKBgQD+Re28xRTE\n" +
+                "x2+XWtxv3XDC9G/kchIqIPtjFpcTGllIzqWvrfbAj3EtK6i8IwSzVhm4bK/f9QklwdXCvBa2Q7Ib\n" +
+                "FYwJ49TcLOUgPGR6XoeewTfxPtd7DHYc6Qf4lLvcXRNhTAYAUo38MCU/tFz4s2EzNSMvoiNZs0SG\n" +
+                "gvRa8dnx8wKBgQCXGoW0csug+iK2NCTUy2/beC1BTOw7Q/FR1LhTx5YZUSEcW1C13Yi1TBBC87e0\n" +
+                "+M6DwCRcCl53oGgIAvsoz3saFLi8VRaeEgGOMTzPbXyOjnbTFPaGLIQN/USrigYF9K/Wj3NEKKrD\n" +
+                "Y+xSsRoWdiVzANtlhcaPCEEtjTZFSwMC/wKBgQCLHZdEgE8smjDjjkKssWrQPww44HAvvHvNar6d\n" +
+                "JP1UaDseMv+dut0g6ZIX3NDljWXlERHoZhfrIHHjaSTD86WuS8uiXZRIIgf56xDOIonwwaXpx4f9\n" +
+                "OoQkrRo/VqCxn/rKcN2Xr5MfNvgqMnPrXbkAW0I0/XB50yrarSsj1s53IQKBgEh30N4dHCnlLRaj\n" +
+                "ZXKk6s2gElw6DyXRTQBI++o6U3Nq5G1cIhZG3BTPGRFzH4zssuafFRELbAkFZj9JZrlI4Ko+e+bf\n" +
+                "DAzdZ9+RH6//u3gHPVe4uw7YdLDc4b0/YeojUt2dSNPMiTFST/nMtE1Hdmh0ZcSH5xWcCN5W1ktf\n" +
+                "UV9zAoGALT1J6TKJmNEOY6Im8omUHJXKdY7BarFynBTAKupBkFZb7LHayPmmmCvbiEgGVJa8MsXD\n" +
+                "5qEZFbHm05VePrZnjczm+u+NmHTkWHn4dB/Uh2AhVD68+ZcY7ZT3N7BI6EVK0kRpe0//UfTXS4Lv\n" +
+                "fMMMSyAQeTw6sZsqQau+1g2JQT0=\n" +
+                "-----END PRIVATE KEY-----";
+        IDAdapter idAdapter = IDAdapterFactory.newInstance("139.198.126.227",2841,"88.708.8888/17301148449",300,privateKeyPem,1);
+        IdentifierValue[] values = idAdapter.resolve("88.708.8888/06247219_1100194130");
     }
 
     @Test

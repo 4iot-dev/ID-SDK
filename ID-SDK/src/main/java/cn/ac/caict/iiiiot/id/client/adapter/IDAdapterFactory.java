@@ -52,7 +52,7 @@ public class IDAdapterFactory {
      * @param adminIdentifier
      * @param keyIndex
      * @param privateKeyPem
-     * @param cipher
+     * @param cipher 生成摘要hash算法(MD5算法：rdType=1,SH1算法：rdType=2,SH256算法：rdType=3)
      * @return
      * @throws IdentifierAdapterRuntimeException 连接失败或认证失败
      */

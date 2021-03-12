@@ -20,7 +20,10 @@ public class IDAdapterTest {
     @Ignore
     @Test
     public void resolveTest() throws IdentifierAdapterException, IdentifierTrustException {
-        IdentifierValue[] values = IDAdapterFactory.newInstance("2408:4003:1f10:0000:0000:0000:0000:01f9",8080).resolve("88.168.288/se190911h2539");
+        IdentifierValue[] values = IDAdapterFactory.newInstance().resolve("88.111.1/test test");
+
+//        IDAdapterFactory.newInstance("39.107.157.33",2641).resolve("88.137.104/01087147297547321722092611190927101118296421970820694811778");
+
     }
 
     @Ignore
