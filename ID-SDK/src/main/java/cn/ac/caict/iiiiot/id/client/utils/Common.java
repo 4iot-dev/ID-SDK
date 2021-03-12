@@ -10,7 +10,13 @@ public abstract class Common {
 	public static final Pattern IPV6_COMPRESS_REGEX = Pattern.compile("^((?:[0-9A-Fa-f]{1,4}(:[0-9A-Fa-f]{1,4})*)?)::((?:([0-9A-Fa-f]{1,4}:)*[0-9A-Fa-f]{1,4})?)$");
 	
 	public static final Pattern PORT_REGEX = Pattern.compile("^([1-9]|[1-9]\\d{1,3}|[1-6][0-5][0-5][0-3][0-5])$");
-	
+
+	public static final byte ROOT_HANDLE[] = Util.encodeString("0.NA/0.NA");
+
+	public static final byte HS_SIGNATURE_TYPE[] = Util.encodeString("HS_SIGNATURE");
+
+	public static final byte HS_CERT_TYPE[] = Util.encodeString("HS_CERT");
+
 	public static final int RESOLUTION_RESULT_UNKNOWN = 0;
 	
 	public static final int RESOLUTION_RESULT_TRUSTY = 1;

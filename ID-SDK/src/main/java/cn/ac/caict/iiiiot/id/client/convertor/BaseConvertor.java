@@ -176,4 +176,11 @@ public class BaseConvertor {
 		System.out.println(Util.bytesToHexString(message));
 		return message;
 	}
+
+	public static final int INT2_SIZE = 2;
+	public static final int writeInt2(byte buf[], int offset, int value) {
+		buf[offset++] = (byte) ((value & 0xff00) >>> 8);
+		buf[offset++] = (byte) (value & 0xff);
+		return INT2_SIZE;
+	}
 }
