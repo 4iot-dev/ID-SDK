@@ -42,7 +42,7 @@ public class DefaultIDAdapter implements IDAdapter {
 
     private ValueHelper valueHelper = ValueHelper.getInstance();
 
-    private int tcpTimeout = 60 * 1000;
+    // private int tcpTimeout = 60 * 1000;
 
     public DefaultIDAdapter() {
         this.factory = ChannelFactory.getChannelFactory();
@@ -284,7 +284,7 @@ public class DefaultIDAdapter implements IDAdapter {
         }
     }
 
-    protected PrefixSiteInfo resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
+    public PrefixSiteInfo resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
 
         try (IDAdapter idAdapter = IDAdapterFactory.cachedInstance()) {
             String[] types = {"HS_SITE"};

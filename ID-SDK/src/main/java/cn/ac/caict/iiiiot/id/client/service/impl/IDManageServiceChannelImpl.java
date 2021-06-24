@@ -77,8 +77,9 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 
 	public IDManageServiceChannelImpl(IdentifierResolveEngine resolverEngine) {
 		this.resolverEngine = resolverEngine;
-		if(resolverEngine != null)
+		if(resolverEngine != null) {
 			printServInfo += resolverEngine.getSiteInfo().servers[0];
+		}
 	}
 	
 	@Override

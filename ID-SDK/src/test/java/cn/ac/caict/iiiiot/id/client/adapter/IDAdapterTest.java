@@ -19,10 +19,19 @@ import java.util.List;
 public class IDAdapterTest {
     @Ignore
     @Test
-    public void resolveTest() throws IdentifierAdapterException, IdentifierTrustException {
-        IdentifierValue[] values = IDAdapterFactory.newInstance().resolve("88.111.1/test test");
+    public void resolveTest() throws IdentifierAdapterException, IdentifierException {
+        //        IdentifierValue[] values = IDAdapterFactory.newInstance().resolve("88.111.1/test test");
 
-//        IDAdapterFactory.newInstance("39.107.157.33",2641).resolve("88.137.104/01087147297547321722092611190927101118296421970820694811778");
+
+        IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
+        PrefixSiteInfo prefixSiteInfo = idAdapter.resolveSiteByProxy("88.111.1");
+
+        long begin = System.currentTimeMillis();
+        IDAdapter adapter = IDAdapterFactory.newInstance(prefixSiteInfo.getIp(), prefixSiteInfo.getPort());
+
+        System.out.println((System.currentTimeMillis() - begin));
+
+        //        IDAdapterFactory.newInstance("88.55").resolve("88.55.1");
 
     }
 
@@ -30,8 +39,8 @@ public class IDAdapterTest {
     @Test
     public void resolveCert() throws IdentifierAdapterException, IdentifierTrustException {
         IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88");
-        IdentifierValue[] certValues = ValueHelper.getInstance().filter(values,"HS_CERT");
-        if(certValues.length>0){
+        IdentifierValue[] certValues = ValueHelper.getInstance().filter(values, "HS_CERT");
+        if (certValues.length > 0) {
             IdentifierValue cert = certValues[0];
             IdentifierClaimsSet claims = ValueHelper.getInstance().getIdentifierClaimsSet(cert);
             System.out.println(GsonCompose.getPrettyGson().toJson(claims));
@@ -43,7 +52,7 @@ public class IDAdapterTest {
     public void resolveSignature() throws IdentifierAdapterException, IdentifierTrustException {
         IdentifierValue[] values = IDAdapterFactory.cachedInstance().resolve("88.300.15907541011/1038");
         IdentifierValue[] certValues = ValueHelper.getInstance().filter(values, Common.HS_SIGNATURE);
-        if(certValues.length>0){
+        if (certValues.length > 0) {
             IdentifierValue cert = certValues[0];
             IdentifierClaimsSet claims = ValueHelper.getInstance().getIdentifierClaimsSet(cert);
             System.out.println(GsonCompose.getPrettyGson().toJson(claims));
@@ -53,7 +62,7 @@ public class IDAdapterTest {
     @Ignore
     @Test
     public void resolveSite() throws IdentifierAdapterException, IdentifierException {
-        IdentifierValue[] valueArray = IDAdapterFactory.cachedInstance().resolve("88.300.15907541011",null,null);
+        IdentifierValue[] valueArray = IDAdapterFactory.cachedInstance().resolve("88.300.15907541011", null, null);
         if (valueArray.length > 0) {
             IdentifierValue iv = valueArray[0];
             SiteInfo siteInfo = BytesObjConvertor.bytesCovertToSiteInfo(iv.getData());
@@ -73,21 +82,21 @@ public class IDAdapterTest {
         }
 
     }
+
     @Ignore
     @Test
     public void resolve() throws IdentifierAdapterException, IdentifierTrustException {
-        try{
+        try {
             IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
             IdentifierValue[] values = idAdapter.resolve("88.111.1001/1111111");
-//            List<IdentifierValue> valueList = new ArrayList<>();
-//            valueList.add(new IdentifierValue(1, "URL", "https://www.citln.cn/"));
-//            valueList.add(new IdentifierValue(2, "EMAIL", "test@email.com"));
-//            idAdapter.createIdentifier("88.167.14/1",ValueHelper.getInstance().listToArray(valueList));
-        }catch (Exception e){
+            //            List<IdentifierValue> valueList = new ArrayList<>();
+            //            valueList.add(new IdentifierValue(1, "URL", "https://www.citln.cn/"));
+            //            valueList.add(new IdentifierValue(2, "EMAIL", "test@email.com"));
+            //            idAdapter.createIdentifier("88.167.14/1",ValueHelper.getInstance().listToArray(valueList));
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
 
     @Ignore
@@ -117,8 +126,9 @@ public class IDAdapterTest {
                 "whhWREGhoDnaowcJ9A8tenDUgDNf98pDKpeudMLG+32YaHPtxWOBTywLVpbh4I1sykLJnwAq+Lve\n" +
                 "KMLphT7U+sCwvAKmOQ6vGLhXsg==\n" +
                 "-----END PRIVATE KEY-----";
-        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37",5647,"88.300.15907541011",300,privateKeyPem,1);
-        idAdapter.resolve("88.300.15907541011/user002",null,null,true);
+        IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37", 5647, "88.300.15907541011", 300, privateKeyPem, 1);
+        idAdapter.resolve("88.300.15907541011/user002", null, null, true);
     }
+
 
 }

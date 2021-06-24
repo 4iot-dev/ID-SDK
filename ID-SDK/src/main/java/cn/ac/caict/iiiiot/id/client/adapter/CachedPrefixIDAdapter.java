@@ -41,7 +41,7 @@ public class CachedPrefixIDAdapter extends DefaultIDAdapter {
     }
 
     @Override
-    protected PrefixSiteInfo resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
+    public PrefixSiteInfo resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
         IdentifierRecord identifierRecord = IdentifierRecordCache.getInstance().get(Util.upperCasePrefix(prefixIdentifier));
         IdentifierValue[] valueArray = null;
         if (identifierRecord != null) {

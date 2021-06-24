@@ -101,4 +101,6 @@ public interface IDAdapter extends Closeable {
      */
     public void deleteIdentifier(String identifier) throws IdentifierAdapterException;
 
+    public PrefixSiteInfo resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException;
+
 }
