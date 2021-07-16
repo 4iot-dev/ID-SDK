@@ -1,31 +1,52 @@
 package cn.ac.caict.iiiiot.id.client.adapter;
 
+import cn.ac.caict.iiiiot.id.client.adapter.cache.IdentifierRecordCache;
 import cn.ac.caict.iiiiot.id.client.core.IdentifierException;
-import com.sun.tools.javac.comp.Check;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.*;
 
 public class MonitorTest {
     private static ExecutorService executorService = Executors.newFixedThreadPool(10);
 
+    /**
+     *   "ip": "139.198.126.227",
+     *   "port": "2644",
+     *   {
+     *   "ip": "36.112.25.8",
+     *   "port": "3641",
+     *   "query": true,
+     *   "admin": false,
+     *   "protocol": "TCP"
+     * }
+     */
     @Test
     public void test() {
+        Map<String,Object> config = new HashMap<>();
+        config.put("ip","139.198.126.227");
+        config.put("port","2644");
+        config.put("query",true);
+        config.put("admin",false);
+        config.put("protocol","TCP");
+        Configuration.getInstance().setConfig(config);
         try {
-            Long l = monitor("88.111.1",5);
+            Long l = monitor("88.902.000000",2000);
             System.out.println(l);
         } catch (IdentifierException e) {
             e.printStackTrace();
         } catch (IdentifierAdapterException e) {
             e.printStackTrace();
         }
-
     }
 
     private Long monitor(String prefix,int timeout) throws IdentifierException, IdentifierAdapterException {
 
         IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
+
+        IdentifierRecordCache.getInstance().clear();
         PrefixSiteInfo prefixSiteInfo = idAdapter.resolveSiteByProxy(prefix);
 
         Long result = -1l;

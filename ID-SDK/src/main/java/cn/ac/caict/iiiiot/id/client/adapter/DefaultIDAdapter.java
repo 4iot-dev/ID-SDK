@@ -285,8 +285,14 @@ public class DefaultIDAdapter implements IDAdapter {
     }
 
     public PrefixSiteInfo resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
-
         try (IDAdapter idAdapter = IDAdapterFactory.cachedInstance()) {
+            return resolveSiteByProxy(idAdapter,prefixIdentifier);
+        } catch (IOException e) {
+            throw new IdentifierAdapterException("idAdapter close error, caused by: "+e.getMessage());
+        }
+    }
+
+    public PrefixSiteInfo resolveSiteByProxy(IDAdapter idAdapter,String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
             String[] types = {"HS_SITE"};
             IdentifierValue[] valueArray = idAdapter.resolve(prefixIdentifier, types, null);
             if (valueArray.length > 0) {
@@ -306,9 +312,6 @@ public class DefaultIDAdapter implements IDAdapter {
             } else {
                 throw new IdentifierAdapterException("cannot find site type value");
             }
-        } catch (IOException e) {
-            throw new IdentifierAdapterException("idAdapter close error, caused by: "+e.getMessage());
-        }
     }
 
     protected IDCommunicationItems findFirstByProtocolName(ServerInfo serverInfo, String protocolName) {

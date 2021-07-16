@@ -26,14 +26,14 @@ public class IdentifierRecordCache {
         if (identifierRecordCache == null) {
             synchronized (IdentifierRecordCache.class) {
                 if (identifierRecordCache == null) {
-                    identifierRecordCache = new IdentifierRecordCache(1000,30000);
+                    identifierRecordCache = new IdentifierRecordCache(1000, 30000);
                 }
             }
         }
         return identifierRecordCache;
     }
 
-    public void cacheIdentifierRecord(IdentifierRecord identifierRecord){
+    public void cacheIdentifierRecord(IdentifierRecord identifierRecord) {
         if (cache.isFull()) {
             cleanExecutor.submit(new Runnable() {
                 @Override
@@ -42,10 +42,15 @@ public class IdentifierRecordCache {
                 }
             });
         }
-        cache.put(identifierRecord.getIdentifier(),identifierRecord);
+        cache.put(identifierRecord.getIdentifier(), identifierRecord);
     }
 
-    public IdentifierRecord get(String identifier){
-        return  cache.get(identifier);
+    public IdentifierRecord get(String identifier) {
+
+        return cache.get(identifier);
+    }
+
+    public void clear(){
+        cache.clear();
     }
 }

@@ -25,11 +25,13 @@ public class ChannelFactory {
 
     private ChannelFactory() {
         channelManageService = new ChannelManageServiceImpl();
-        Configuration configuration = new Configuration();
-        try {
-            configuration.loadConfig();
-        } catch (IOException e) {
-
+        Configuration configuration = Configuration.getInstance();
+        if(configuration.getConfig().isEmpty()){
+            Map<String,Object> configMap = configuration.loadConfig();
+            if(configMap==null){
+                throw new RuntimeException("can not find config");
+            }
+            configuration.setConfig(configMap);
         }
         Map<String, Object> config = configuration.getConfig();
         this.recursionServerIp = (String) config.get("ip");

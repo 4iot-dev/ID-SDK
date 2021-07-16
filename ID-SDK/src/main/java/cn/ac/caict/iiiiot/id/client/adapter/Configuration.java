@@ -7,14 +7,25 @@ import com.google.gson.Gson;
 import org.apache.commons.logging.Log;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * todo: 不应该通过单例方式来确定配置,应该在初始化传过来,如果没有传则可以使用默认的配置
+ * 防止我们复杂环境的调用需要同时有不同的配置
+ */
 public class Configuration {
 
     private Log logger = IDLog.getLogger(Configuration.class);
 
-    public Configuration() {
+    private static Configuration configuration = new Configuration();
 
+    public static Configuration getInstance() {
+        return configuration;
+    }
+
+    private Configuration() {
+        config = new HashMap<>();
     }
 
     public Configuration(Map<String, Object> config) {
@@ -23,7 +34,7 @@ public class Configuration {
 
     private Map<String, Object> config = null;
 
-    public void loadConfig() throws IOException {
+    public Map<String,Object> loadConfig() {
         logger.info("begin----loadConfig()---");
         String path = System.getProperty("user.dir");
         File fConfig = new File(path, ".id-sdk/config.json");
@@ -50,9 +61,15 @@ public class Configuration {
                 sb.append(s.trim());
             }
             Gson gson = new Gson();
-            config = gson.fromJson(sb.toString(), Map.class);
+            Map<String,Object> configMap = gson.fromJson(sb.toString(), Map.class);
             logger.debug("配置信息：" + config.toString());
             logger.info("end----loadConfig()---");
+
+            return configMap;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             if (input != null) {
                 IoUtil.close(input);
@@ -64,9 +81,14 @@ public class Configuration {
                 IoUtil.close(is);
             }
         }
+        return null;
     }
 
     public Map<String, Object> getConfig() {
         return config;
+    }
+
+    public void setConfig(Map<String, Object> config) {
+        this.config = config;
     }
 }
