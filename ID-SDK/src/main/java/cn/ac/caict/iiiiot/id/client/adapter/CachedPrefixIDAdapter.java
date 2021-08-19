@@ -50,7 +50,6 @@ public class CachedPrefixIDAdapter extends DefaultIDAdapter {
         }
         try (IDAdapter idAdapter = IDAdapterFactory.cachedInstance()) {
             valueArray = idAdapter.resolve(prefixIdentifier, null, null);
-
             valueArray = ValueHelper.getInstance().filter(valueArray, Common.HS_SITE);
             if (valueArray.length > 0) {
                 IdentifierValue iv = valueArray[0];

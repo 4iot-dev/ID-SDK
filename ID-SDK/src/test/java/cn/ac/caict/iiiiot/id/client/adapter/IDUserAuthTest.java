@@ -1,6 +1,7 @@
 package cn.ac.caict.iiiiot.id.client.adapter;
 
 import cn.ac.caict.iiiiot.id.client.data.IdentifierValue;
+import cn.ac.caict.iiiiot.id.client.data.ValueReference;
 import cn.ac.caict.iiiiot.id.client.utils.KeyConverter;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -16,6 +17,10 @@ import java.util.List;
 @FixMethodOrder(value = MethodSorters.NAME_ASCENDING)
 public class IDUserAuthTest {
 
+    /**
+     * 注册用户标识
+     * @throws Exception
+     */
     @Test
     public void test1InitUser() throws Exception {
         IDAdapter idAdapter = IDAdapterFactory.newInstance("192.168.150.37", 5643);
@@ -23,19 +28,22 @@ public class IDUserAuthTest {
         ValueHelper valueHelper = ValueHelper.getInstance();
 
         IdentifierValue[] values = new IdentifierValue[2];
-        values[0] = valueHelper.newAdminValue(100,"88.300.15907541011/user002",300);
+        values[0] = valueHelper.newAdminValue(100,"88.300.15907541011/group",200);
+        ValueReference vr= new ValueReference("88.300.15907541011/user002",300);
+        IdentifierValue vlist = valueHelper.newVListValue(200,new ValueReference[]{vr});
 
-        String publicKeyPem = "-----BEGIN PUBLIC KEY-----\n" +
-                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtIE9mHixJSN17VK8VCJr36H8fEK7HRM3\n" +
-                "4leljEFUmE4vn7GwY9j3JFN5aMug8XQiJ9JUND4tP9wyS+X3X9ZEn9MQeNlUESIDJQQjmTDTfg9k\n" +
-                "HQ1Po39BTB8glXHof9EtzQ23R98p2wA72Z0ldmPElZxy+7ylOE04xeEKEeF1XLbUNQYLJ3rmAeGj\n" +
-                "fSgqVk+Va2WmakrMBiZdGJTqQNBFP6yorEO15wcTTQmvOTbnRD68Vlap6OsQOkOwESQVxHub/yl/\n" +
-                "zvHbk0HOT5WGWfj7iPt9hmBcPOL4qCFSiQAXFEFj0c4/JOIsfK9KSHkOYvq79Hc0Npq9Laa7j1me\n" +
-                "bNeWjQIDAQAB\n" +
-                "-----END PUBLIC KEY-----";
-        PublicKey publicKey = KeyConverter.fromX509Pem(publicKeyPem);
-        values[1] = valueHelper.newPublicKeyValue(300,publicKey);
-        idAdapter.deleteIdentifier("88.300.15907541011/user002");
+
+        // String publicKeyPem = "-----BEGIN PUBLIC KEY-----\n" +
+        //         "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtIE9mHixJSN17VK8VCJr36H8fEK7HRM3\n" +
+        //         "4leljEFUmE4vn7GwY9j3JFN5aMug8XQiJ9JUND4tP9wyS+X3X9ZEn9MQeNlUESIDJQQjmTDTfg9k\n" +
+        //         "HQ1Po39BTB8glXHof9EtzQ23R98p2wA72Z0ldmPElZxy+7ylOE04xeEKEeF1XLbUNQYLJ3rmAeGj\n" +
+        //         "fSgqVk+Va2WmakrMBiZdGJTqQNBFP6yorEO15wcTTQmvOTbnRD68Vlap6OsQOkOwESQVxHub/yl/\n" +
+        //         "zvHbk0HOT5WGWfj7iPt9hmBcPOL4qCFSiQAXFEFj0c4/JOIsfK9KSHkOYvq79Hc0Npq9Laa7j1me\n" +
+        //         "bNeWjQIDAQAB\n" +
+        //         "-----END PUBLIC KEY-----";
+        // PublicKey publicKey = KeyConverter.fromX509Pem(publicKeyPem);
+        // values[1] = valueHelper.newPublicKeyValue(300,publicKey);
+        // idAdapter.deleteIdentifier("88.300.15907541011/user002");
         idAdapter.createIdentifier("88.300.15907541011/user002", values);
 
     }

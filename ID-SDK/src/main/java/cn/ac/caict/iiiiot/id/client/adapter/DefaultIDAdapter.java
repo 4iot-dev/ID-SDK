@@ -136,7 +136,7 @@ public class DefaultIDAdapter implements IDAdapter {
         try {
             prefixSiteInfo = resolveSiteByProxy(serverPrefix);
         } catch (Exception e) {
-            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, caused by: "+e.getMessage(), e);
+            throw new IdentifierAdapterRuntimeException("instance idAdapter failed, caused by: " + e.getMessage(), e);
         }
         this.channel = factory.newChannel(prefixSiteInfo.getIp(), prefixSiteInfo.getPort(), prefixSiteInfo.getProtocolName());
     }
@@ -161,7 +161,7 @@ public class DefaultIDAdapter implements IDAdapter {
                 throw new IdentifierAdapterException(new StringBuilder("add value error,response:").append(response.toString()).toString());
             }
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterException("add value error, caused by: "+e.getMessage(), e);
+            throw new IdentifierAdapterException("add value error, caused by: " + e.getMessage(), e);
         }
     }
 
@@ -177,7 +177,7 @@ public class DefaultIDAdapter implements IDAdapter {
                 throw new IdentifierAdapterException(new StringBuilder("create error,response:").append(createResp.toString()).toString());
             }
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterException("create error, caused by: "+e.getMessage(), e);
+            throw new IdentifierAdapterException("create error, caused by: " + e.getMessage(), e);
         }
     }
 
@@ -197,7 +197,7 @@ public class DefaultIDAdapter implements IDAdapter {
                 throw new IdentifierAdapterException(new StringBuilder("delete value error,response:").append(response.toString()).toString());
             }
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterException("delete value error, caused by: "+e.getMessage(), e);
+            throw new IdentifierAdapterException("delete value error, caused by: " + e.getMessage(), e);
         }
     }
 
@@ -229,7 +229,7 @@ public class DefaultIDAdapter implements IDAdapter {
                 throw new IdentifierAdapterException(new StringBuilder("resolve error,response:").append(lookupResp.toString()).toString());
             }
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterException("resolve error, caused by: "+e.getMessage(), e);
+            throw new IdentifierAdapterException("resolve error, caused by: " + e.getMessage(), e);
 
         }
 
@@ -237,7 +237,7 @@ public class DefaultIDAdapter implements IDAdapter {
 
     @Override
     public IdentifierValue[] resolve(String identifier) throws IdentifierAdapterException {
-        return resolve(identifier,null,null);
+        return resolve(identifier, null, null);
     }
 
     @Override
@@ -253,7 +253,7 @@ public class DefaultIDAdapter implements IDAdapter {
             }
 
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterException("update values error, caused by: "+e.getMessage(), e);
+            throw new IdentifierAdapterException("update values error, caused by: " + e.getMessage(), e);
         }
     }
 
@@ -269,7 +269,7 @@ public class DefaultIDAdapter implements IDAdapter {
                 throw new IdentifierAdapterException(new StringBuilder("delete error,response:").append(response.toString()).toString());
             }
         } catch (IdentifierException e) {
-            throw new IdentifierAdapterException("delete error, caused by: "+e.getMessage(), e);
+            throw new IdentifierAdapterException("delete error, caused by: " + e.getMessage(), e);
         }
     }
 
@@ -279,39 +279,40 @@ public class DefaultIDAdapter implements IDAdapter {
             try {
                 factory.channelManage().closeChannel(channel);
             } catch (IdentifierException e) {
-                throw new IdentifierAdapterRuntimeException("close channel error, caused by: "+e.getMessage(), e);
+                throw new IdentifierAdapterRuntimeException("close channel error, caused by: " + e.getMessage(), e);
             }
         }
     }
 
     public PrefixSiteInfo resolveSiteByProxy(String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
         try (IDAdapter idAdapter = IDAdapterFactory.cachedInstance()) {
-            return resolveSiteByProxy(idAdapter,prefixIdentifier);
+            String[] types = {"HS_SITE"};
+            return resolveSiteByProxy(idAdapter, prefixIdentifier, types);
         } catch (IOException e) {
-            throw new IdentifierAdapterException("idAdapter close error, caused by: "+e.getMessage());
+            throw new IdentifierAdapterException("idAdapter close error, caused by: " + e.getMessage());
         }
     }
 
-    public PrefixSiteInfo resolveSiteByProxy(IDAdapter idAdapter,String prefixIdentifier) throws IdentifierAdapterException, IdentifierException {
-            String[] types = {"HS_SITE"};
-            IdentifierValue[] valueArray = idAdapter.resolve(prefixIdentifier, types, null);
-            if (valueArray.length > 0) {
-                IdentifierValue iv = valueArray[0];
-                SiteInfo siteInfo = BytesObjConvertor.bytesCovertToSiteInfo(iv.getData());
-                ServerInfo[] servers = siteInfo.servers;
+    public PrefixSiteInfo resolveSiteByProxy(IDAdapter idAdapter, String prefixIdentifier, String[] types) throws IdentifierAdapterException, IdentifierException {
+        // String[] types = {"HS_SITE","HS_SITE.PREFIX"};
+        IdentifierValue[] valueArray = idAdapter.resolve(prefixIdentifier, types, null);
+        if (valueArray.length > 0) {
+            IdentifierValue iv = valueArray[0];
+            SiteInfo siteInfo = BytesObjConvertor.bytesCovertToSiteInfo(iv.getData());
+            ServerInfo[] servers = siteInfo.servers;
 
-                if (servers.length > 0) {
+            if (servers.length > 0) {
 
-                    ServerInfo serverInfo = servers[0];
-                    IDCommunicationItems tcpItem = findFirstByProtocolName(serverInfo, "TCP");
-                    return new PrefixSiteInfo(siteInfo,serverInfo, tcpItem);
+                ServerInfo serverInfo = servers[0];
+                IDCommunicationItems tcpItem = findFirstByProtocolName(serverInfo, "TCP");
+                return new PrefixSiteInfo(siteInfo, serverInfo, tcpItem);
 
-                } else {
-                    throw new IdentifierAdapterException("cannot find servers");
-                }
             } else {
-                throw new IdentifierAdapterException("cannot find site type value");
+                throw new IdentifierAdapterException("cannot find servers");
             }
+        } else {
+            throw new IdentifierAdapterException("cannot find site type value");
+        }
     }
 
     protected IDCommunicationItems findFirstByProtocolName(ServerInfo serverInfo, String protocolName) {

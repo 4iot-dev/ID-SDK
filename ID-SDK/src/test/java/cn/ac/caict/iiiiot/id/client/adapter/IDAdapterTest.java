@@ -19,20 +19,48 @@ import java.util.List;
 public class IDAdapterTest {
     @Ignore
     @Test
-    public void resolveTest() throws IdentifierAdapterException, IdentifierException {
+    public void resolveTest() throws IdentifierAdapterException, IdentifierException, InterruptedException {
         //        IdentifierValue[] values = IDAdapterFactory.newInstance().resolve("88.111.1/test test");
 
 
-        IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
-        PrefixSiteInfo prefixSiteInfo = idAdapter.resolveSiteByProxy("88.111.1");
-
-        long begin = System.currentTimeMillis();
-        IDAdapter adapter = IDAdapterFactory.newInstance(prefixSiteInfo.getIp(), prefixSiteInfo.getPort());
-
-        System.out.println((System.currentTimeMillis() - begin));
+        // IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
+        // PrefixSiteInfo prefixSiteInfo = idAdapter.resolveSiteByProxy("88.111.1");
+        // long begin = System.currentTimeMillis();
+        // IDAdapter adapter = IDAdapterFactory.newInstance(prefixSiteInfo.getIp(), prefixSiteInfo.getPort());
+        // System.out.println((System.currentTimeMillis() - begin));
 
         //        IDAdapterFactory.newInstance("88.55").resolve("88.55.1");
+        IDAdapter idAdapter1 = IDAdapterFactory.newInstance("139.198.126.227", 2441);
+        idAdapter1.resolve("88.902.000000");
+        Thread.sleep(1000l);
+    }
 
+    @Ignore
+    @Test
+    public void resolveTest1() throws IdentifierAdapterException, IdentifierException, InterruptedException {
+        //        IdentifierValue[] values = IDAdapterFactory.newInstance().resolve("88.111.1/test test");
+
+
+        // IDAdapter idAdapter = IDAdapterFactory.cachedInstance();
+        // PrefixSiteInfo prefixSiteInfo = idAdapter.resolveSiteByProxy("88.111.1");
+        // long begin = System.currentTimeMillis();
+        // IDAdapter adapter = IDAdapterFactory.newInstance(prefixSiteInfo.getIp(), prefixSiteInfo.getPort());
+        // System.out.println((System.currentTimeMillis() - begin));
+
+        //        IDAdapterFactory.newInstance("88.55").resolve("88.55.1");
+        // IDAdapter idAdapter1 = IDAdapterFactory.newInstance("139.198.126.227", 2645);
+        // idAdapter1.resolve("88.902.6688/1111");
+
+        IDAdapter idAdapter2 = IDAdapterFactory.newInstance("88.111.10086");
+        idAdapter2.resolve("88.111.10086/Test_A");
+    }
+
+    public static void main(String[] args) throws IdentifierAdapterException, InterruptedException {
+        while (true) {
+            IDAdapter idAdapter = IDAdapterFactory.newInstance("139.198.126.227", 2441);
+            idAdapter.resolve("88.902.000000");
+            Thread.sleep(1000l);
+        }
     }
 
     @Ignore
