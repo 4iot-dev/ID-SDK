@@ -110,7 +110,8 @@ public class DefaultIDAdapter implements IDAdapter {
     public DefaultIDAdapter(String serverIp, int port, String adminIdentifier, int keyIndex, String privateKeyPem, int cipher) {
         this.factory = ChannelFactory.getChannelFactory();
         msgSettings = new MsgSettings();
-        msgSettings.setTruestyQuery(false);
+        // msgSettings.setTruestyQuery(true);
+
         this.channel = factory.newChannel(serverIp, port, "TCP");
         PrivateKey privateKey;
         try {

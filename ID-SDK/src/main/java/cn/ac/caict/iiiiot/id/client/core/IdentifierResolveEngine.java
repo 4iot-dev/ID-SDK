@@ -39,6 +39,8 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
+
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import com.google.gson.Gson;
 
@@ -584,7 +586,8 @@ public class IdentifierResolveEngine {
 	 * @return 发送TCP消息后的响应数据
 	 */
 	private BaseResponse sendRequestWithTCP(BaseRequest req, InetAddress addr, int port) throws IdentifierException {
-		logger.info("sendRequestWithTCP--method--begin");
+		logger.info("sendRequestWithTCP--method--begin ["+req+"],requestId:"+req.requestId);
+
 		MsgEnvelope sndEnv = createEnvelope(req);
 		req.encodedMessage = null;
 		byte[] requestMsgBuf = req.getEncodedMessage();
@@ -643,6 +646,7 @@ public class IdentifierResolveEngine {
 	private void checkMessageCredential(BaseRequest request, BaseResponse response) throws IdentifierException {
 		logger.info("checkMessageCredential--method--begin");
 		if (request.returnRequestDigest) {
+			System.err.println("rdHashType---------:"+response.rdHashType);
 			byte[] requestDigest = Util.doDigest(response.rdHashType, request.getEncodedMessageBody());
 			if (!Util.equalsBytes(requestDigest, response.requestDigest)) {
 				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_SECURITY_ALERT, "请求消息与响应消息摘要不同，发出安全警告！！");
