@@ -12,10 +12,10 @@ package cn.ac.caict.iiiiot.id.client.core;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  *© COPYRIGHT 2019 Corporation for Institute of Industrial Internet & Internet of Things (IIIIT);
- *                      All rights reserved. 
- * http://www.caict.ac.cn  
+ *                      All rights reserved.
+ * http://www.caict.ac.cn
  * https://www.citln.cn/
  */
 import java.io.BufferedInputStream;
@@ -39,6 +39,8 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Random;
+
+import cn.hutool.core.util.RandomUtil;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
@@ -64,7 +66,8 @@ public class IdentifierResolveEngine {
 	private static final int RETRY_TIMES = 3;
 	private Map<String, Object> config = null;
 	private Log logger = IDLog.getLogger(IdentifierResolveEngine.class);
-	
+	private int sessionId;
+
 	public SiteInfo getSiteInfo(){
 		return siteInfo;
 	}
@@ -168,6 +171,7 @@ public class IdentifierResolveEngine {
 			messageIDMaker = new SecureRandom();
 		}
 		messageIDMaker.setSeed(System.currentTimeMillis());
+		this.sessionId = RandomUtil.randomInt(10000, 1000000000);
 		initSiteInfo(ip, port, protocol);
 		if (!"TCP".equalsIgnoreCase(protocol))
 			return;
@@ -202,7 +206,7 @@ public class IdentifierResolveEngine {
 			}
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_LONGCONNSOCKET_CREATE_FAILED,
 					IdentifierException.getCodeDescription(ExceptionCommon.EXCEPTIONCODE_LONGCONNSOCKET_CREATE_FAILED));
-		} 
+		}
 		updateSiteInfo();
 	}
 
@@ -249,6 +253,7 @@ public class IdentifierResolveEngine {
 	}
 
 	public BaseResponse processRequest(BaseRequest req, InetAddress caller) throws IdentifierException {
+		req.sessionId = this.sessionId;
 		if (req.opCode == 2 && haveSiteInfo && siteInfo!=null){
 			return new SiteResponse(siteInfo);
 		}
@@ -256,6 +261,7 @@ public class IdentifierResolveEngine {
 	}
 
 	public BaseResponse sendResquestToIDService(BaseRequest req, SiteInfo sites) throws IdentifierException {
+		req.sessionId = this.sessionId;
 		if (sites == null)
 			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_FOUND_NO_SERVICE, "未找到站点信息");
 		BaseResponse response = sendResquestToIDSites(req, sites);
@@ -263,6 +269,7 @@ public class IdentifierResolveEngine {
 	}
 
 	public BaseResponse sendResquestToIDSites(BaseRequest req, SiteInfo sites) throws IdentifierException {
+		req.sessionId = this.sessionId;
 		BaseResponse response = null;
 		for (int p = 0; p < preferredProtocols.length; p++) {
 			response = sendResquestToIDSiteViaProtocol(req, sites, p);
@@ -274,6 +281,7 @@ public class IdentifierResolveEngine {
 
 	public BaseResponse sendResquestToIDSiteViaProtocol(BaseRequest req, SiteInfo siteInfo, int protocol)
 			throws IdentifierException {
+		req.sessionId = this.sessionId;
 		// 1.获取一个服务器server信息 2.调用服务器方法
 		ServerInfo[] servInfos = siteInfo.servers;
 		if (servInfos.length < 1) {
@@ -297,6 +305,7 @@ public class IdentifierResolveEngine {
 
 	public BaseResponse sendResquestToIDServerInfo(BaseRequest req, ServerInfo server, int protocol)
 			throws IdentifierException {
+		req.sessionId = this.sessionId;
 		IDCommunicationItems itemsWithProtocol = server.findIDCommunicationItemsByProtocol(protocol, req);
 		if (itemsWithProtocol == null) {
 			String strPro = "";
@@ -346,7 +355,8 @@ public class IdentifierResolveEngine {
 	}
 
 	public BaseResponse sendRequestToIDCommunicationItems(BaseRequest req, ServerInfo server,
-			IDCommunicationItems items) throws IdentifierException {
+														  IDCommunicationItems items) throws IdentifierException {
+		req.sessionId = this.sessionId;
 		if(siteInfo != null && siteInfo.servers != null && siteInfo.servers.length > 0){
 			req.serverPubKeyBytes = siteInfo.servers[0].publicKey;
 		}
@@ -354,15 +364,15 @@ public class IdentifierResolveEngine {
 		int port = items.port;
 		BaseResponse response = null;
 		switch (items.protocol) {
-		case IDCommunicationItems.TS_IDF_TCP:
-			response = sendRequestWithTCP(req, addr, port);
-			break;
-		case IDCommunicationItems.TS_IDF_UDP:
-			response = sendRequestWithUDP(req, addr, port);
-			break;
-		default:
-			throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_UNKNOWN_PROTOCOL,
-					"unknown protocol: " + items.protocol);
+			case IDCommunicationItems.TS_IDF_TCP:
+				response = sendRequestWithTCP(req, addr, port);
+				break;
+			case IDCommunicationItems.TS_IDF_UDP:
+				response = sendRequestWithUDP(req, addr, port);
+				break;
+			default:
+				throw new IdentifierException(ExceptionCommon.EXCEPTIONCODE_UNKNOWN_PROTOCOL,
+						"unknown protocol: " + items.protocol);
 		}
 
 		if (response != null) {
@@ -380,6 +390,7 @@ public class IdentifierResolveEngine {
 
 	private BaseResponse sendRequestWithUDP(BaseRequest req, InetAddress addr, int port) throws IdentifierException {
 		logger.info("sendRequestWithUDP--method--begin");
+		req.sessionId = this.sessionId;
 		DatagramSocket udpSocket = null;
 		try {
 			udpSocket = new DatagramSocket(port);
@@ -424,6 +435,7 @@ public class IdentifierResolveEngine {
 	private void sendDataByUdp(BaseRequest req, InetAddress addr, int port, DatagramSocket udpSocket)
 			throws IdentifierException {
 		logger.info("sendDataByUdp--method--begin");
+		req.sessionId = this.sessionId;
 		DatagramPacket[] dpArray = getPacketArray(req, addr, port);
 		try {
 			for (int n = 0; n < dpArray.length; n++) {
@@ -440,7 +452,7 @@ public class IdentifierResolveEngine {
 	/**
 	 * 说明：接收UDP传输的消息 1.解析信息，获取到消息长度信息 2.根据长度信息构建容器 3.在未超时的时间范围内获取每一个分包，存入指定容器
 	 * 4.容器内消息接收完整以后，转码为BaseResponse
-	 * 
+	 *
 	 * @param req
 	 *            请求消息
 	 * @param addr
@@ -454,8 +466,9 @@ public class IdentifierResolveEngine {
 	 * @throws IdentifierException
 	 */
 	private BaseResponse receiveDataByUdp(BaseRequest req, InetAddress addr, int port, long timeout,
-			DatagramSocket udpSocket) throws IdentifierException {
+										  DatagramSocket udpSocket) throws IdentifierException {
 		logger.info("receiveDataByUdp--method--begin");
+		req.sessionId = this.sessionId;
 		byte respMsg[] = null;
 		boolean bAllPackets = false;
 		int packetSum = 0;
@@ -495,7 +508,7 @@ public class IdentifierResolveEngine {
 			bAllPackets = (packetSum == ++packageNum);
 			if (bAllPackets) {
 				logger.info("receiveDataByUdp--method--end");
-				response =(BaseResponse) BytesMsgConvertor.bytesConvertInfoMessage(respMsg, 0, rcvEnvelope); 
+				response =(BaseResponse) BytesMsgConvertor.bytesConvertInfoMessage(respMsg, 0, rcvEnvelope);
 				if (req.bCertify)
 					checkMessageCredential(req, response);
 				return response;
@@ -507,7 +520,7 @@ public class IdentifierResolveEngine {
 
 	/**
 	 * 说明：将消息体分成若干数据包
-	 * 
+	 *
 	 * @param req
 	 *            形成数据包的消息体
 	 * @param addr
@@ -517,6 +530,7 @@ public class IdentifierResolveEngine {
 	 */
 	private DatagramPacket[] getPacketArray(BaseRequest req, InetAddress addr, int port) throws IdentifierException {
 		logger.info("getPacketArray--method--begin");
+		req.sessionId = this.sessionId;
 		MsgEnvelope mEnvlp = createEnvelope(req);
 		// 获取编码消息（包括头文件和签名，但不包括信封），为创建一组udp数据包做准备
 		byte[] requestBuf = req.getEncodedMessage();
@@ -548,13 +562,14 @@ public class IdentifierResolveEngine {
 
 	/**
 	 * 说明：为请求消息创建信封对象（定义信封的各标志位信息）
-	 * 
+	 *
 	 * @param req 即将发送的请求消息
 	 * @return 返回信封对象
 	 * @throws IdentifierException
 	 */
 	private MsgEnvelope createEnvelope(BaseRequest req) throws IdentifierException {
 		logger.info("createEnvelope--method--begin");
+		req.sessionId = this.sessionId;
 		MsgEnvelope mEnvlp = new MsgEnvelope();
 		mEnvlp.protocolMajorVersion = req.majorProtocolVersion;
 		mEnvlp.protocolMinorVersion = req.minorProtocolVersion;
@@ -576,7 +591,7 @@ public class IdentifierResolveEngine {
 
 	/**
 	 * 说明：tcp使用长连接收发数据 1.发送数据:信封+请求消息 2.接收数据:接收信息，接收消息体
-	 * 
+	 *
 	 * @param req
 	 *            请求消息
 	 * @param addr
@@ -587,6 +602,8 @@ public class IdentifierResolveEngine {
 	 */
 	private BaseResponse sendRequestWithTCP(BaseRequest req, InetAddress addr, int port) throws IdentifierException {
 		logger.info("sendRequestWithTCP--method--begin ["+req+"],requestId:"+req.requestId);
+
+		req.sessionId = this.sessionId;
 
 		MsgEnvelope sndEnv = createEnvelope(req);
 		req.encodedMessage = null;
@@ -645,6 +662,7 @@ public class IdentifierResolveEngine {
 
 	private void checkMessageCredential(BaseRequest request, BaseResponse response) throws IdentifierException {
 		logger.info("checkMessageCredential--method--begin");
+		request.sessionId = this.sessionId;
 		if (request.returnRequestDigest) {
 			System.err.println("rdHashType---------:"+response.rdHashType);
 			byte[] requestDigest = Util.doDigest(response.rdHashType, request.getEncodedMessageBody());
