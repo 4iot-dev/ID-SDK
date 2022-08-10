@@ -77,8 +77,9 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 
 	public IDManageServiceChannelImpl(IdentifierResolveEngine resolverEngine) {
 		this.resolverEngine = resolverEngine;
-		if(resolverEngine != null)
+		if(resolverEngine != null) {
 			printServInfo += resolverEngine.getSiteInfo().servers[0];
+		}
 	}
 	
 	@Override
@@ -86,7 +87,14 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 			MsgSettings settings) throws IdentifierException {
 		return innerLogin(identifier,index,privakeyFilePath,password,rdType,settings);
 	}
-	
+
+	@Override
+	public BaseResponse login(String identifier, int index, PrivateKey privateKey, int rdType, MsgSettings settings) throws IdentifierException {
+		validateForLogin(identifier,index,rdType);
+		return loginInternal(identifier,index,privateKey,rdType,settings);
+	}
+
+
 	@Override
 	public BaseResponse login(String identifier, int index, String privakeyFilePath, String password, int rdType)
 			throws IdentifierException {
@@ -120,9 +128,9 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		ResolutionRequest req = new ResolutionRequest(id, reqTypes, indexes, null);
 		setMessageSettings(req,settings);
 		long beforeTime = new Date().getTime();
-		log.debug("before processRequest req:" + req);
+//		log.debug("before processRequest req:" + req);
 		BaseResponse response = resolverEngine.processRequest(req,null);
-		log.debug("after processRequest response:" + response);
+//		log.debug("after processRequest response:" + response);
 		long afterTime = new Date().getTime();
 		long time = afterTime - beforeTime;
 		log.debug("查询耗时(毫秒):" + time);
@@ -289,7 +297,6 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 		log.info("getServerSiteInfo---method---end");
 		return response;
 	}
-	/////////////////////////////////////////////////private-functions///////////////////////////////////////////
 	private void setMessageSettings(BaseRequest bm,MsgSettings settings){
 		if(settings == null){
 			log.error("settings=null,无法为请求消息赋予设置值!");
@@ -309,19 +316,47 @@ public class IDManageServiceChannelImpl implements IIDManageServiceChannel{
 	
 	private BaseResponse innerLogin(String identifier, int index, String privakeyFilePath, String password, int rdType,
 			MsgSettings settings) throws IdentifierException{
-		log.info("login---method---begin");
-		if(identifier == null || index<1 || privakeyFilePath == null){
-			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"identifier=" + identifier + ",identifier不能为空");
-		}
-		if(index < 1)
-			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"index=" + index + ",index必须为正整数");
-		if(rdType != 1 && rdType != 2 && rdType != 3)
-			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"不支持该类型摘要rdType=" + rdType);
+
+		validateForLogin(identifier, index, privakeyFilePath, rdType);
+
 		PrivateKey privKey = Util.getPrivateKeyFromFile(privakeyFilePath, null);
 		if (privKey == null) {
 			IDLog.getLogger(IDManageServiceChannelImpl.class).info("private key is null,maybe file is not exit,please check it!");
-			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"privakeyFilePath文件可能不存在");
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"privakeyFilePath文件不存在");
 		}
+
+		return loginInternal(identifier, index, privKey, rdType, settings);
+	}
+
+	private void validateForLogin(String identifier, int index, int rdType) throws IdentifierException {
+		if(identifier == null || index<1 ){
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"identifier=" + identifier + ",identifier不能为空");
+		}
+		if(index < 1) {
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM, "index=" + index + ",index必须为正整数");
+
+		}
+		if(rdType != 1 && rdType != 2 && rdType != 3) {
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM, "不支持该类型摘要rdType=" + rdType);
+		}
+	}
+
+	private void validateForLogin(String identifier, int index, String privakeyFilePath, int rdType) throws IdentifierException {
+		if(identifier == null || index<1 || privakeyFilePath == null){
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM,"identifier=" + identifier + ",identifier不能为空");
+		}
+		if(index < 1) {
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM, "index=" + index + ",index必须为正整数");
+
+		}
+		if(rdType != 1 && rdType != 2 && rdType != 3) {
+			throw new IdentifierException(ExceptionCommon.INVALID_PARM, "不支持该类型摘要rdType=" + rdType);
+		}
+	}
+
+	private BaseResponse loginInternal(String identifier, int index, PrivateKey privKey, int rdType, MsgSettings settings) throws IdentifierException {
+
+		log.info("login---method---begin");
 		byte[] userIdentifier = Util.encodeString(identifier);
 		AbstractAuthentication authInfo = new PubKeyAuthentication(userIdentifier, index, privKey);
 		BaseResponse response = null;

@@ -1252,4 +1252,47 @@ public abstract class Util {
 		}
 		return res;
 	}
+
+	public static boolean isIdentifierUnderPrefix(String identifier, String prefix) {
+		prefix = upperCase(prefix);
+		identifier = upperCasePrefix(identifier);
+		if (!prefix.startsWith("0.NA/")) return false;
+		String actualPrefix = prefix.substring("0.NA/".length());
+		return identifier.startsWith(actualPrefix + "/");
+	}
+
+	public static boolean isDerivedFrom(String identifier, String ancestorIdentifier) {
+		ancestorIdentifier = upperCase(ancestorIdentifier);
+		identifier = upperCase(identifier);
+		if (!identifier.startsWith("0.NA/")) return false;
+		//        if (handle.equals(ancestorHandle)) return true;
+		return identifier.startsWith(ancestorIdentifier + ".");
+	}
+
+	public static final byte[] getPrefixPart(byte identifier[]) {
+		int slashIndex = indexOf(identifier, (byte) '/');
+		return slashIndex < 0 ? Common.NA_IDENTIFIRE_PREFIX : substring(identifier, 0, slashIndex);
+	}
+
+	public static String getPrefixPart(String identifier) {
+		return decodeString(getPrefixPart(encodeString(identifier)));
+	}
+
+	/** Get the 0.NA authority identifier that applies to the specified identifier */
+	public static final byte[] getZeroNAIdentifier(byte identifier[]) {
+		int slashIndex = indexOf(identifier, (byte) '/');
+		if (slashIndex >= 0) {
+			byte naHandle[] = new byte[slashIndex + Common.NA_IDENTIFIRE_PREFIX.length];
+			System.arraycopy(Common.NA_IDENTIFIRE_PREFIX, 0, naHandle, 0, Common.NA_IDENTIFIRE_PREFIX.length);
+			System.arraycopy(identifier, 0, naHandle, Common.NA_IDENTIFIRE_PREFIX.length, slashIndex);
+			upperCaseInPlace(naHandle);
+			return naHandle;
+		} else {
+			return Common.ROOT_HANDLE;
+		}
+	}
+
+	public static String getZeroNAIdentifier(String identifier) {
+		return decodeString(getZeroNAIdentifier(encodeString(identifier)));
+	}
 }

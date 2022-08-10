@@ -1,4 +1,4 @@
-package test1;
+package cn.ac.caict.iiiiot.id.client.test;
 
 import java.io.IOException;
 import java.security.PrivateKey;
@@ -42,7 +42,7 @@ public class TestManageConnection {
 	public static final String CERTIFICATION_PUBKEY_PATH = "D:/sm2key/sm2_public - 副本.pem";
 	public static final String CERTIFICATION_PRVKEY_PATH = "D:/sm2key/sm2_priv - 副本.pem";
 	
-	public static final String IP = "192.168.150.13";
+	public static final String IP = "45.120.243.40";
 	public static final int PORT = 2642;
 	public static final String PROTOCOL = "TCP";
 	public static final String USER = "88.1234.1234/admin";

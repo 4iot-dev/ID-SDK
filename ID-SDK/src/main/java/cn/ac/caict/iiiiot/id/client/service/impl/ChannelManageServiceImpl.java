@@ -18,6 +18,7 @@ package cn.ac.caict.iiiiot.id.client.service.impl;
  * https://www.citln.cn/
  */
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.logging.Log;
 
@@ -31,7 +32,7 @@ public class ChannelManageServiceImpl implements IChannelManageService {
 	private static final int CLOSED = 0;
 	private static final int LOGIN = 1;
 	private static final int LOGOUT = 2;
-	private int channelCount = 0;
+	private AtomicInteger channelCount = new AtomicInteger(0);
 	private Log log = IDLog.getLogger(IDManageServiceChannelImpl.class);
 	private static final String[] BANNER = {
 			"#### ########           ######  ########  ##    ##",
@@ -50,21 +51,21 @@ public class ChannelManageServiceImpl implements IChannelManageService {
 	}
 	
 	public void setChannelCount(int channelCount) {
-		this.channelCount = channelCount;
+		this.channelCount.set(channelCount);
 	}
 	
 	@Override
 	public int getIDManageServiceChannelCount() {
-		return channelCount;
+		return channelCount.get();
 	}
 	
 	@Override
 	public synchronized IIDManageServiceChannel generateChannel(String ip, int port, String protocol) throws IdentifierException {
 		IdentifierResolveEngine resolverEngine = new IdentifierResolveEngine(ip, port, protocol);
 		IIDManageServiceChannel channelService = new IDManageServiceChannelImpl(resolverEngine);
-		log.debug("创建前通道连接数：" + channelCount);
-		channelCount ++;
-		log.debug("创建后通道连接数：" + channelCount);
+		log.debug("创建前通道连接数：" + channelCount.get());
+		int after = channelCount.incrementAndGet();
+		log.debug("创建后通道连接数：" + after);
 		return channelService;
 	}
 	
@@ -72,9 +73,9 @@ public class ChannelManageServiceImpl implements IChannelManageService {
 	public synchronized IIDManageServiceChannel generateChannelByConfig() throws IdentifierException, IOException {
 		IdentifierResolveEngine resolverEngine = new IdentifierResolveEngine();
 		IIDManageServiceChannel channelService = new IDManageServiceChannelImpl(resolverEngine);
-		log.debug("创建前通道连接数：" + channelCount);
-		channelCount ++;
-		log.debug("创建后通道连接数：" + channelCount);
+		log.debug("创建前通道连接数：" + channelCount.get());
+		int after = channelCount.incrementAndGet();
+		log.debug("创建后通道连接数：" + after);
 		return channelService;
 	}
 
@@ -87,9 +88,9 @@ public class ChannelManageServiceImpl implements IChannelManageService {
 		if(channel instanceof IDManageServiceChannelImpl){
 			((IDManageServiceChannelImpl) channel).logout();
 		}
-		log.debug("关闭前通道连接数：" + channelCount);
-		channelCount --;
-		log.debug("关闭后通道连接数：" + channelCount);
+		log.debug("关闭前通道连接数：" + channelCount.get());
+		int after = channelCount.decrementAndGet();
+		log.debug("关闭后通道连接数：" + after);
 	}
 
 	@Override

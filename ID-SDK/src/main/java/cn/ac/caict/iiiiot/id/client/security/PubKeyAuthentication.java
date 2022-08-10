@@ -97,6 +97,8 @@ public class PubKeyAuthentication extends AbstractAuthentication {
 	
 	private byte[] doSignature(ChallengeResponse challenge) throws IdentifierException{
 		logger.info("doSignature--method--begin");
+		System.err.println(Util.bytesToHexString(challenge.nonce));
+		System.err.println(Util.bytesToHexString(challenge.requestDigest));
 		byte signatureBytes[] = null;
 		byte sigHashType[] = null;
 		try {
